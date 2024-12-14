@@ -53,10 +53,10 @@ var sentinel1Kemarau = ee.ImageCollection('COPERNICUS/S1_GRD')
 // Iterasi dengan map untuk mencari citra Sentinel-1 yang cocok dengan setiap citra Sentinel-2
 var matchedS1Images = sentinel2Kemarau.map(function(s2Image) {
   var matchedS1 = getMatchingS1Image(s2Image);
-  return matchedS1 ? matchedS1 : null; // Kembalikan citra Sentinel-1 yang cocok, atau null jika tidak ada
+  return matchedS1 ? matchedS1 : ee.Image(); // Mengembalikan citra kosong jika tidak ada pasangan
 });
 
-// Filter hasil untuk menghapus citra yang null (tidak ada pasangan)
-matchedS1Images = matchedS1Images.filter(ee.Filter.notNull(['system:time_start'])); // Ini akan menghapus nilai null dari koleksi
+// Filter hasil untuk menghapus citra yang kosong
+matchedS1Images = matchedS1Images.filter(ee.Filter.notNull(['system:time_start'])); // Hanya mempertahankan citra yang valid
 
 print('Citra Sentinel-1 yang cocok:', matchedS1Images);
