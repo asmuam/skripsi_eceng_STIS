@@ -62,14 +62,14 @@ function maskS2clouds(image) {
 }
 
 // ROI dan waktu
-var startDate = '2024-01-01';
-var endDate = '2024-12-31';
+var startDate = '2020-01-01';
+var endDate = '2023-12-31';
 
 // Koleksi Sentinel-2 dengan mask cloud dan tanggal dari sistem:index
-var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR")
   .filterBounds(roi)
   .filterDate(startDate, endDate)
-  .filterMetadata('CLOUD_COVERAGE_ASSESSMENT', 'less_than', 10)
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',5))
   .map(maskS2clouds)
   .map(extractDateFromIndex) // Tambahkan properti tanggal
   .sort('CLOUD_COVERAGE_ASSESSMENT'); // Urutkan berdasarkan tutupan awan terendah
@@ -91,3 +91,6 @@ var closestS1 = getClosestS1Image(sentinel1, targetDate);
 // Tampilkan hasil
 Map.addLayer(closestS2.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Closest Sentinel-2');
 Map.addLayer(closestS1.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Closest Sentinel-1');
+
+print("S2", closestS2)
+print("S1", closestS1)
