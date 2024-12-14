@@ -22,14 +22,17 @@ function getClosestS2Image(collection, targetDate) {
   return collection.map(function(image) {
     // Ambil tanggal dari system:index untuk Sentinel-2
     var index = ee.String(image.get('system:index'));
-    var dateStr = index.split('_').get(0); // Ambil bagian tanggal (yyyyMMdd)
-    var imageDate = ee.Date.parse('yyyyMMdd', dateStr); // Konversi ke objek tanggal
+    var dateStr = index.split('_').get(0); // Ambil bagian tanggal (yyyyMMdd'T'HHmmss)
+    
+    // Konversi ke objek tanggal menggunakan format yang benar (yyyyMMdd'T'HHmmss)
+    var imageDate = ee.Date.parse('yyyyMMdd\'T\'HHmmss', dateStr); // Format lengkap untuk tanggal dan waktu
 
     // Hitung selisih hari antara citra dan targetDate
     var diff = ee.Number(imageDate.difference(targetDate, 'day')).abs();
     return image.set('date_diff', diff);
   }).sort('date_diff').first(); // Cari citra dengan selisih paling dekat
 }
+
 
 // Fungsi untuk mendapatkan citra Sentinel-1 dengan tanggal paling dekat
 function getClosestS1Image(collection, targetDate) {
@@ -82,8 +85,8 @@ var targetDate = ee.Date(targetImageS2.get('image_date'));
 print("Target date =", targetDate)
 
 // Ambil citra Sentinel-1 dan Sentinel-2 pada tanggal yang paling dekat
-var closestS2 = getClosestImage(sentinel2, targetDate);
-var closestS1 = getClosestImage(sentinel1, targetDate);
+var closestS2 = getClosestS2Image(sentinel2, targetDate);
+var closestS1 = getClosestS1Image(sentinel1, targetDate);
 
 // Tampilkan hasil
 Map.addLayer(closestS2.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Closest Sentinel-2');
