@@ -1,0 +1,72 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = /* color: #98ff00 */ee.Geometry.Polygon(
+        [[[110.40784521277556, -7.3167508403317845],
+          [110.46243353064665, -7.3167508403317845],
+          [110.46243353064665, -7.261411753752696],
+          [110.40784521277556, -7.261411753752696],
+          [110.40784521277556, -7.3167508403317845]]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Tampilkan ROI di peta
+Map.centerObject(roi, 13); // Zoom level 13 sesuai dengan area
+
+// Fungsi untuk masking cloud Sentinel-2
+function maskS2clouds(image) {
+  var qa = image.select("QA60");
+
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  var mask = qa
+    .bitwiseAnd(cloudBitMask)
+    .eq(0)
+    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+
+  return image.updateMask(mask).divide(10000);
+}
+
+// Fungsi untuk memastikan properti tanggal tersedia
+function ensureDateProperty(image) {
+  return image.set('system:time_start', image.get('system:time_start') || image.get('SENSING_TIME'));
+}
+
+// Fungsi untuk mendapatkan citra Sentinel-1 dan Sentinel-2 pada tanggal yang paling dekat
+function getClosestImage(collection, targetDate) {
+  return collection.map(function(image) {
+    var diff = ee.Number(image.date().difference(ee.Date(targetDate), 'day')).abs();
+    return image.set('date_diff', diff);
+  }).sort('date_diff').first();
+}
+
+// ROI dan waktu
+var startDate = '2024-01-01';
+var endDate = '2024-12-31';
+
+// Koleksi Sentinel-2 dengan mask cloud
+var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+  .filterBounds(roi)
+  .filterDate(startDate, endDate)
+  .filterMetadata('CLOUD_COVERAGE_ASSESSMENT', 'less_than', 10)
+  .map(ensureDateProperty) // Pastikan properti tanggal ada
+  .map(maskS2clouds)
+  .sort('CLOUD_COVERAGE_ASSESSMENT'); // Urutkan berdasarkan tutupan awan terendah
+
+// Koleksi Sentinel-1
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
+  .filterBounds(roi)
+  .filterDate(startDate, endDate)
+  .map(ensureDateProperty); // Pastikan properti tanggal ada
+
+// Ambil citra Sentinel-2 pertama (dengan tutupan awan terendah) sebagai referensi tanggal
+var targetImageS2 = sentinel2.first();
+var targetDate = ee.Date(targetImageS2.get('system:time_start')); // Ambil properti tanggal yang telah dipastikan ada
+
+print(targetImageS2, "Target Image S2");
+print(targetDate, "Target Date");
+
+// // Ambil citra Sentinel-1 dan Sentinel-2 pada tanggal yang paling dekat
+// var closestS2 = getClosestImage(sentinel2, targetDate);
+// var closestS1 = getClosestImage(sentinel1, targetDate);
+
+// // Tampilkan hasil
+// Map.addLayer(closestS2.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Closest Sentinel-2');
+// Map.addLayer(closestS1.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Closest Sentinel-1');
