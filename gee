@@ -43,7 +43,7 @@ var endDateKemarau = '2024-10-30';
 var sentinel2Kemarau = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
   .filterDate(startDateKemarau, endDateKemarau)
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 1))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .map(maskS2clouds)
   .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
 
@@ -53,7 +53,7 @@ var sentinel1Kemarau = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate(startDateKemarau, endDateKemarau);
 
 // Ambil citra Sentinel-2 pertama sebagai referensi tanggal untuk masing-masing musim
-var targetDateKemarau = ee.Date(sentinel2Kemarau.first().get('system:time_start'));
+var targetDateKemarau = ee.Date(ee.Image(sentinel2Kemarau.toList(sentinel2Kemarau.size()).get(0)).get('system:time_start'));
 
 // Ambil citra terdekat untuk setiap musim
 var closestS2Kemarau = getClosestImage(sentinel2Kemarau, targetDateKemarau);
