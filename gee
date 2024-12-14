@@ -43,7 +43,7 @@ var endDateKemarau = '2024-10-30';
 var sentinel2Kemarau = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
   .filterDate(startDateKemarau, endDateKemarau)
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 0))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 1))
   .map(maskS2clouds)
   .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
 
