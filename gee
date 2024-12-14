@@ -41,7 +41,7 @@ var endDateKemarau = '2024-10-30';
 var sentinel2Kemarau = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
   .filterDate(startDateKemarau, endDateKemarau)
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
   .map(maskS2clouds)
   .sort('system:time_start'); // Urutkan berdasarkan waktu
 
@@ -53,10 +53,11 @@ var sentinel1Kemarau = ee.ImageCollection('COPERNICUS/S1_GRD')
 // Iterasi dengan map untuk mencari citra Sentinel-1 yang cocok dengan setiap citra Sentinel-2
 var matchedS1Images = sentinel2Kemarau.map(function(s2Image) {
   var matchedS1 = getMatchingS1Image(s2Image);
-  return matchedS1; // Kembalikan citra Sentinel-1 yang cocok
+  // Jika tidak ada citra Sentinel-1 yang cocok, kita kembalikan citra sentinel-2 kosong (null)
+  return matchedS1 ? matchedS1 : null;
 });
 
 // Filter hasil untuk menghapus citra yang null (tidak ada pasangan)
-matchedS1Images = matchedS1Images.filter(ee.Filter.notNull(['system:time_start'])); // Ini untuk memastikan hanya citra yang ada
+matchedS1Images = matchedS1Images.filter(ee.Filter.notNull([])); // Menjaga hanya citra yang tidak null
 
 print('Citra Sentinel-1 yang cocok:', matchedS1Images);
