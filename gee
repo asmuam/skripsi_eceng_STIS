@@ -45,10 +45,9 @@ var endDate = '2024-12-31';
 var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
   .filterDate(startDate, endDate)
-  .filterMetadata('CLOUD_COVERAGE_ASSESSMENT', 'less_than', 10)
-  .map(ensureDateProperty) // Pastikan properti tanggal ada
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',20))
   .map(maskS2clouds)
-  .sort('CLOUD_COVERAGE_ASSESSMENT'); // Urutkan berdasarkan tutupan awan terendah
+  .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
 
 // Koleksi Sentinel-1
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
@@ -58,7 +57,7 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
 
 // Ambil citra Sentinel-2 pertama (dengan tutupan awan terendah) sebagai referensi tanggal
 var targetImageS2 = sentinel2.first();
-var targetDate = ee.Date(targetImageS2.get('system:time_start')); // Ambil properti tanggal yang telah dipastikan ada
+// var targetDate = ee.Date(targetImageS2.get('system:time_start')); // Ambil properti tanggal yang telah dipastikan ada
 
 print(targetImageS2, "Target Image S2");
 print(targetDate, "Target Date");
@@ -70,3 +69,4 @@ print(targetDate, "Target Date");
 // // Tampilkan hasil
 // Map.addLayer(closestS2.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Closest Sentinel-2');
 // Map.addLayer(closestS1.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Closest Sentinel-1');
+Map.addLayer(sentinel2.first, {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2');
