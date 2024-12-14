@@ -9,10 +9,10 @@ var roi =
           [110.40784521277556, -7.261411753752696],
           [110.40784521277556, -7.3167508403317845]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Fungsi untuk mencari citra Sentinel-1 dengan tanggal yang sama persis dengan citra Sentinel-2 (tanpa memperhatikan jam)
+// Fungsi untuk mencari citra Sentinel-1 dengan tanggal yang sama persis dengan citra Sentinel-2
 function getMatchingS1Image(s2Image, sentinel1Collection) {
-  var s2Date = ee.Date(s2Image.get('system:time_start')).format('YYYY-MM-dd'); // Ambil hanya tanggal (tanpa jam)
-  // Cari citra Sentinel-1 dengan tanggal yang sama persis (hanya tanggal, tanpa jam)
+  var s2Date = ee.Date(s2Image.get('system:time_start').format('YYYY-MM-dd')); // Ambil tanggal citra Sentinel-2
+  // Cari citra Sentinel-1 dengan tanggal yang sama persis
   var matchingS1 = sentinel1Collection.filter(ee.Filter.eq('system:time_start', s2Date));
   return matchingS1.first(); // Ambil citra pertama yang cocok
 }
@@ -52,18 +52,19 @@ var sentinel1Kemarau = ee.ImageCollection('COPERNICUS/S1_GRD')
   .sort('system:time_start'); // Urutkan berdasarkan tanggal
 
 // Iterasi untuk mencari pasangan citra Sentinel-2 dan Sentinel-1 dengan tanggal yang sama
-sentinel2Kemarau.map(function(s2Image) {
-  var s2Date = ee.Date(s2Image.get('system:time_start')).format('YYYY-MM-dd'); // Ambil hanya tanggal (tanpa jam)
-  // Cari citra Sentinel-1 yang memiliki tanggal yang sama
-  var matchingS1Image = getMatchingS1Image(s2Image, sentinel1Kemarau);
-  
-  if (matchingS1Image !== null) {
-    // Tambahkan layer citra yang cocok ke peta
-    Map.addLayer(s2Image.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Kemarau ' + s2Image.date().format('YYYY-MM-dd'));
-    Map.addLayer(matchingS1Image.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 5}, 'Sentinel-1 Kemarau ' + matchingS1Image.date().format('YYYY-MM-dd'));
+sentinel2Kemarau.toList(sentinel2Kemarau.size()).evaluate(function(s2List) {
+  s2List.forEach(function(s2Item) {
+    var s2Image = ee.Image(s2Item);
+    var matchingS1Image = getMatchingS1Image(s2Image, sentinel1Kemarau);
     
-    // Cetak hasil ke konsol
-    print("Sentinel-2 Kemarau:", s2Image);
-    print("Sentinel-1 Kemarau:", matchingS1Image);
-  }
+    if (matchingS1Image !== null) {
+      // Tambahkan layer citra yang cocok ke peta
+      Map.addLayer(s2Image.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Kemarau ' + s2Image.date().format('YYYY-MM-dd'));
+      Map.addLayer(matchingS1Image.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 5}, 'Sentinel-1 Kemarau ' + matchingS1Image.date().format('YYYY-MM-dd'));
+      
+      // Cetak hasil ke konsol
+      print("Sentinel-2 Kemarau:", s2Image);
+      print("Sentinel-1 Kemarau:", matchingS1Image);
+    }
+  });
 });
