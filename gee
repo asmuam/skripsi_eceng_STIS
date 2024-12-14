@@ -29,10 +29,10 @@ function maskS2clouds(image) {
 function getExactDatePair(s2Collection, s1Collection) {
   var pairs = s2Collection.map(function(s2Image) {
     var s2Date = ee.Date(s2Image.get('system:time_start'));
-
+    print("s2Date",s2Date)
     // Cari citra S1 dengan tanggal yang sama
     var exactS1 = s1Collection.filter(ee.Filter.date(s2Date, s2Date.advance(1, 'day'))).first();
-
+    print("exactS1",exactS1)
     // Jika tidak ada citra S1 dengan tanggal yang sama, kembalikan null
     return ee.Feature(null, {
       s2_id: s2Image.id(),
