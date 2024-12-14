@@ -9,15 +9,6 @@ var roi =
           [110.40784521277556, -7.261411753752696],
           [110.40784521277556, -7.3167508403317845]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Fungsi untuk mendapatkan citra dengan tanggal paling dekat
-function getClosestImage(collection, targetDate) {
-  return collection.map(function(image) {
-    var imageDate = ee.Date(image.get('system:time_start')); // Gunakan system:time_start
-    var diff = ee.Number(imageDate.difference(targetDate, 'day')).abs(); // Selisih waktu
-    return image.set('date_diff', diff);
-  }).sort('date_diff').first(); // Citra dengan selisih waktu terkecil
-}
-
 // Fungsi untuk masking cloud Sentinel-2 dengan mempertahankan properti awal
 function maskS2clouds(image) {
   var qa = image.select("QA60");
@@ -34,56 +25,60 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }
 
+// Fungsi untuk mendapatkan pasangan citra S1 dan S2 dengan tanggal yang sama
+function getExactDatePair(s2Collection, s1Collection) {
+  var pairs = s2Collection.map(function(s2Image) {
+    var s2Date = ee.Date(s2Image.get('system:time_start'));
+
+    // Cari citra S1 dengan tanggal yang sama
+    var exactS1 = s1Collection.filter(ee.Filter.date(s2Date, s2Date.advance(1, 'day'))).first();
+
+    // Jika tidak ada citra S1 dengan tanggal yang sama, kembalikan null
+    return ee.Feature(null, {
+      s2_id: s2Image.id(),
+      s2_date: s2Date.format('YYYY-MM-dd'),
+      s1_id: exactS1 ? exactS1.id() : null,
+      s1_date: exactS1 ? ee.Date(exactS1.get('system:time_start')).format('YYYY-MM-dd') : null
+    });
+  });
+
+  // Ambil pasangan pertama dengan S1 yang valid (tidak null) atau kembalikan null jika tidak ada pasangan
+  return pairs.filter(ee.Filter.notNull(['s1_id'])).first();
+}
+
 // Definisi ROI dan waktu untuk musim
 var startDateKemarau = '2024-06-01';
 var endDateKemarau = '2024-10-30';
-// var startDateHujan = '2024-11-01';
-// var endDateHujan = '2024-12-31';
 
-// Koleksi Sentinel-2 untuk musim kemarau dan musim hujan
+// Koleksi Sentinel-2 untuk musim kemarau
 var sentinel2Kemarau = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
   .filterDate(startDateKemarau, endDateKemarau)
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .map(maskS2clouds)
-  .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
+  .sort('CLOUDY_PIXEL_PERCENTAGE');
 
-// var sentinel2Hujan = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-//   .filterBounds(roi)
-//   .filterDate(startDateHujan, endDateHujan)
-//   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 40))
-//   .map(maskS2clouds)
-//   .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
-
-// Koleksi Sentinel-1 untuk musim kemarau dan musim hujan
+// Koleksi Sentinel-1 untuk musim kemarau
 var sentinel1Kemarau = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
   .filterDate(startDateKemarau, endDateKemarau);
 
-// var sentinel1Hujan = ee.ImageCollection('COPERNICUS/S1_GRD')
-//   .filterBounds(roi)
-//   .filterDate(startDateHujan, endDateHujan);
+// Cari pasangan citra S2 dan S1 dengan tanggal yang sama
+var exactPairKemarau = getExactDatePair(sentinel2Kemarau, sentinel1Kemarau);
 
-// Ambil citra Sentinel-2 pertama sebagai referensi tanggal untuk masing-masing musim
-var targetDateKemarau = ee.Date(sentinel2Kemarau.first().get('system:time_start'));
-var targetDateHujan = ee.Date(sentinel2Hujan.first().get('system:time_start'));
+// Ambil citra S2 dan S1 berdasarkan pasangan yang ditemukan
+var closestS2Kemarau = exactPairKemarau ? sentinel2Kemarau.filter(ee.Filter.eq('system:index', exactPairKemarau.get('s2_id'))).first() : null;
+var closestS1Kemarau = exactPairKemarau ? sentinel1Kemarau.filter(ee.Filter.eq('system:index', exactPairKemarau.get('s1_id'))).first() : null;
 
-// Ambil citra terdekat untuk setiap musim
-var closestS2Kemarau = getClosestImage(sentinel2Kemarau, targetDateKemarau);
-var closestS1Kemarau = getClosestImage(sentinel1Kemarau, targetDateKemarau);
-
-var closestS2Hujan = getClosestImage(sentinel2Hujan, targetDateHujan);
-var closestS1Hujan = getClosestImage(sentinel1Hujan, targetDateHujan);
-
-// Tambahkan layer untuk setiap musim
-Map.addLayer(closestS2Kemarau.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Kemarau');
-Map.addLayer(closestS1Kemarau.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Sentinel-1 Kemarau');
-
-Map.addLayer(closestS2Hujan.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Hujan');
-Map.addLayer(closestS1Hujan.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Sentinel-1 Hujan');
+// Tambahkan layer untuk setiap musim jika pasangan ditemukan
+if (closestS2Kemarau) {
+  Map.addLayer(closestS2Kemarau.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Kemarau');
+}
+if (closestS1Kemarau) {
+  Map.addLayer(closestS1Kemarau.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Sentinel-1 Kemarau');
+}
 
 // Cetak hasil ke konsol
+print("Pasangan dengan tanggal yang sama Kemarau:", exactPairKemarau);
 print("Sentinel-2 Kemarau:", closestS2Kemarau);
 print("Sentinel-1 Kemarau:", closestS1Kemarau);
-print("Sentinel-2 Hujan:", closestS2Hujan);
-print("Sentinel-1 Hujan:", closestS1Hujan);
