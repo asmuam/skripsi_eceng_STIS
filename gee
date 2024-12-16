@@ -66,3 +66,4 @@ Map.addLayer(closestS1Kemarau.clip(roi), {bands: ['VV','VH'], min: -30, max: 5},
 // Cetak hasil ke konsol
 print("Sentinel-2 Kemarau:", closestS2Kemarau);
 print("Sentinel-1 Kemarau:", closestS1Kemarau);
+
