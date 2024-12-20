@@ -1,24 +1,11 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[110.40784521277556, -7.3167508403317845],
-          [110.46243353064665, -7.3167508403317845],
-          [110.46243353064665, -7.261411753752696],
-          [110.40784521277556, -7.261411753752696],
-          [110.40784521277556, -7.3167508403317845]]]);
+var roi = /* color: #d63000 */ee.Geometry.Polygon(
+        [[[110.4071587047578, -7.31436695571265],
+          [110.46174673105065, -7.314366955929029],
+          [110.46174673238838, -7.259027869349942],
+          [110.40715870386597, -7.259027869133561],
+          [110.4071587047578, -7.31436695571265]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Definisikan koordinat untuk poligon (ROI)
-var roi = ee.Geometry.Polygon([
-  [
-    [110.40784521277556, -7.3167508403317845],
-    [110.46243353064665, -7.3167508403317845],
-    [110.46243353064665, -7.261411753752696],
-    [110.40784521277556, -7.261411753752696],
-    [110.40784521277556, -7.3167508403317845]
-  ]
-]);
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
 function getClosestImage(collection, targetDate) {
@@ -74,50 +61,3 @@ Map.addLayer(image_sen1.clip(roi), {bands: ['VH'], min: -30, max: 5}, 'Sentinel-
 print("Sentinel-2 (RGB) 20 Juni 2024:", image_sen2);
 print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
 
-// memilih band
-image_sen2 = image_sen2
-  .select([
-    "B1",
-    "B2",
-    "B3",
-    "B4",
-    "B5",
-    "B6",
-    "B7",
-    "B8",
-    "B8A",
-    "B9",
-    "B11",
-    "B12"
-  ])
-  .toFloat();
-
-  image_sen1 = image_sen1
-  .select([
-    "VV",
-    "VH"
-  ])
-  .toFloat();
-
-
-// Ekspor Citra Sentinel-2 untuk Musim Kemarau dan Musim Hujan ke Google Drive
-Export.image.toDrive({
-  image: image_sen2.clip(roi), // Citra yang akan diekspor
-  description: 'Sentinel2', // Nama file ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive (bisa disesuaikan)
-  region: roi, // Wilayah (ROI) untuk pemotongan citra
-  scale: 10, // Skala dalam meter (10 meter untuk citra Sentinel-2)
-  crs: 'EPSG:4326', // Sistem koordinat (WGS84)
-  maxPixels: 1e8 // Batasan jumlah piksel untuk ekspor
-});
-
-// Ekspor Citra Sentinel-1 untuk Musim Kemarau dan Musim Hujan ke Google Drive
-Export.image.toDrive({
-  image: image_sen1.clip(roi), // Citra yang akan diekspor
-  description: 'Sentinel1', // Nama file ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive (bisa disesuaikan)
-  region: roi, // Wilayah (ROI) untuk pemotongan citra
-  scale: 10, // Skala dalam meter (10 meter untuk citra Sentinel-1)
-  crs: 'EPSG:4326', // Sistem koordinat (WGS84)
-  maxPixels: 1e8 // Batasan jumlah piksel untuk ekspor
-});
