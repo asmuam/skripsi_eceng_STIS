@@ -51,7 +51,7 @@ var targetDate = ee.Date('2024-06-20');
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
-  .filterDate(targetDate, targetDate.advance(1, 'day')) // Citra untuk satu hari
+  .filterDate(targetDate, targetDate.advance(5, 'day')) // Citra untuk satu hari
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start'); // Urutkan berdasarkan waktu citra
@@ -59,7 +59,7 @@ var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate(targetDate, targetDate.advance(1, 'day')); // Citra untuk satu hari
+  .filterDate(targetDate, targetDate.advance(5, 'day')); // Citra untuk satu hari
 
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate);
