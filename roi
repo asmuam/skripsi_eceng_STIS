@@ -1,3 +1,14 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[110.40784521277556, -7.3167508403317845],
+          [110.46243353064665, -7.3167508403317845],
+          [110.46243353064665, -7.261411753752696],
+          [110.40784521277556, -7.261411753752696],
+          [110.40784521277556, -7.3167508403317845]]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Definisikan koordinat untuk poligon (ROI)
 var roi = ee.Geometry.Polygon([
   [
@@ -5,7 +16,7 @@ var roi = ee.Geometry.Polygon([
     [110.46243353064665, -7.3167508403317845],
     [110.46243353064665, -7.261411753752696],
     [110.40784521277556, -7.261411753752696],
-    [110.40784521277556, -7.3167508403317845] // Tutup poligon dengan titik awal
+    [110.40784521277556, -7.3167508403317845]
   ]
 ]);
 
@@ -34,59 +45,79 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }
 
-// Definisi ROI dan waktu untuk musim
-var startDateHujan = '2023-11-01';
-var endDateHujan = '2024-03-31';
-var startDateKemarau = '2024-03-01';
-var endDateKemarau = '2024-11-30';
+// Tentukan tanggal tetap untuk citra (20 Juni 2024)
+var targetDate = ee.Date('2024-06-20');
 
-
-// Koleksi Sentinel-2 untuk musim kemarau dan musim hujan
-var sentinel2Kemarau = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+// Koleksi Sentinel-2 pada tanggal 20 Juni 2024
+var sentinel2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
   .filterBounds(roi)
-  .filterDate(startDateKemarau, endDateKemarau)
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .filterDate(targetDate, targetDate.advance(1, 'day')) // Citra untuk satu hari
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
   .map(maskS2clouds)
-  .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
+  .sort('system:time_start'); // Urutkan berdasarkan waktu citra
 
-var sentinel2Hujan = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+// Koleksi Sentinel-1 pada tanggal 20 Juni 2024
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate(startDateHujan, endDateHujan)
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 50))
-  .map(maskS2clouds)
-  .sort('CLOUDY_PIXEL_PERCENTAGE'); // Urutkan berdasarkan tutupan awan terendah
+  .filterDate(targetDate, targetDate.advance(1, 'day')); // Citra untuk satu hari
 
-// Koleksi Sentinel-1 untuk musim kemarau dan musim hujan
-var sentinel1Kemarau = ee.ImageCollection('COPERNICUS/S1_GRD')
-  .filterBounds(roi)
-  .filterDate(startDateKemarau, endDateKemarau);
+// Ambil citra pertama dalam koleksi setelah filter
+var image_sen2 = getClosestImage(sentinel2, targetDate);
+var image_sen1 = getClosestImage(sentinel1, targetDate);
 
-var sentinel1Hujan = ee.ImageCollection('COPERNICUS/S1_GRD')
-  .filterBounds(roi)
-  .filterDate(startDateHujan, endDateHujan);
-
-// Ambil citra Sentinel-2 pertama sebagai referensi tanggal untuk masing-masing musim
-var targetDateKemarau = ee.Date(ee.Image(sentinel2Kemarau.toList(sentinel2Kemarau.size()).get(0)).get('system:time_start'));
-var targetDateHujan = ee.Date(ee.Image(sentinel2Hujan.toList(sentinel2Hujan.size()).get(0)).get('system:time_start'));
-
-// Ambil citra terdekat untuk setiap musim
-var image_sen2Kemarau = getClosestImage(sentinel2Kemarau, targetDateKemarau);
-var image_sen1Kemarau = getClosestImage(sentinel1Kemarau, targetDateKemarau);
-
-var image_sen2Hujan = getClosestImage(sentinel2Hujan, targetDateHujan);
-var image_sen1Hujan = getClosestImage(sentinel1Hujan, targetDateHujan);
-
-// Tambahkan layer untuk setiap musim
-Map.addLayer(image_sen2Kemarau.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Kemarau');
-Map.addLayer(image_sen1Kemarau.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Sentinel-1 VV Kemarau');
-Map.addLayer(image_sen1Kemarau.clip(roi), {bands: ['VH'], min: -30, max: 5}, 'Sentinel-1 VH Kemarau');
-
-Map.addLayer(image_sen2Hujan.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 Hujan');
-Map.addLayer(image_sen1Hujan.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Sentinel-1 VV Hujan');
-Map.addLayer(image_sen1Hujan.clip(roi), {bands: ['VH'], min: -30, max: 5}, 'Sentinel-1 VH Hujan');
+// Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
+Map.addLayer(image_sen2.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2 (RGB) 20 Juni 2024');
+Map.addLayer(image_sen1.clip(roi), {bands: ['VV'], min: -30, max: 5}, 'Sentinel-1 VV 20 Juni 2024');
+Map.addLayer(image_sen1.clip(roi), {bands: ['VH'], min: -30, max: 5}, 'Sentinel-1 VH 20 Juni 2024');
 
 // Cetak hasil ke konsol
-print("Sentinel-2 Kemarau:", image_sen2Kemarau);
-print("Sentinel-1 Kemarau:", image_sen1Kemarau);
-print("Sentinel-2 Hujan:", image_sen2Hujan);
-print("Sentinel-1 Hujan:", image_sen1Hujan);
+print("Sentinel-2 (RGB) 20 Juni 2024:", image_sen2);
+print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
+
+// memilih band
+image_sen2 = image_sen2
+  .select([
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6",
+    "B7",
+    "B8",
+    "B8A",
+    "B9",
+    "B11",
+    "B12"
+  ])
+  .toFloat();
+
+  image_sen1 = image_sen1
+  .select([
+    "VV",
+    "VH"
+  ])
+  .toFloat();
+
+
+// Ekspor Citra Sentinel-2 untuk Musim Kemarau dan Musim Hujan ke Google Drive
+Export.image.toDrive({
+  image: image_sen2.clip(roi), // Citra yang akan diekspor
+  description: 'Sentinel2', // Nama file ekspor
+  folder: 'GEE_Exports', // Folder di Google Drive (bisa disesuaikan)
+  region: roi, // Wilayah (ROI) untuk pemotongan citra
+  scale: 10, // Skala dalam meter (10 meter untuk citra Sentinel-2)
+  crs: 'EPSG:4326', // Sistem koordinat (WGS84)
+  maxPixels: 1e8 // Batasan jumlah piksel untuk ekspor
+});
+
+// Ekspor Citra Sentinel-1 untuk Musim Kemarau dan Musim Hujan ke Google Drive
+Export.image.toDrive({
+  image: image_sen1.clip(roi), // Citra yang akan diekspor
+  description: 'Sentinel1', // Nama file ekspor
+  folder: 'GEE_Exports', // Folder di Google Drive (bisa disesuaikan)
+  region: roi, // Wilayah (ROI) untuk pemotongan citra
+  scale: 10, // Skala dalam meter (10 meter untuk citra Sentinel-1)
+  crs: 'EPSG:4326', // Sistem koordinat (WGS84)
+  maxPixels: 1e8 // Batasan jumlah piksel untuk ekspor
+});
