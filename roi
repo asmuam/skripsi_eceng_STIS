@@ -2485,8 +2485,8 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 
 var random_column = sampled.randomColumn();
 
-var training_sample = random_column.filter(ee.filter.gte('random',0.2)); // 80%
-var test_sample = random_column.filter(ee.filter.lte('random',0.2)); // 20%
+var training_sample = random_column.filter(ee.Filter.gte('random',0.2)); // 80%
+var test_sample = random_column.filter(ee.Filter.lte('random',0.2)); // 20%
 
 // Ekspor data training gabungan ke Google Drive dalam bentuk CSV
 Export.table.toDrive({
