@@ -1,14 +1,14 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #d6c6c6 */
-    /* shown: false */
-    ee.Geometry.Polygon(
+var roi = /* color: #d6c6c6 */ee.Geometry.Polygon(
         [[[110.4075018622231, -7.316750824882465],
           [110.46209018009229, -7.316750824882469],
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
-    eceng = /* color: #98ff00 */ee.FeatureCollection(
+    eceng = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.45114010081181, -7.286163561448659]),
             {
@@ -609,7 +609,10 @@ var roi =
               "landcover": 0,
               "system:index": "99"
             })]),
-    bukan_eceng = /* color: #0b4a8b */ee.FeatureCollection(
+    bukan_eceng = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.42809316826072, -7.298160720906401]),
             {
@@ -2509,3 +2512,6 @@ Export.image.toDrive({
 });
 
 print(test_sample)
+
+// Pusatkan peta ke koordinat tersebut
+Map.centerObject(roi, 12); // Zoom level 10
