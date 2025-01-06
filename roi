@@ -2490,7 +2490,7 @@ var test_sample = random_column.filter(ee.Filter.lte('random',0.2)); // 20%
 
 // Ekspor data training gabungan ke Google Drive dalam bentuk CSV
 Export.table.toDrive({
-  collection: trainingCombined,
+  collection: training_sample,
   description: "data_training_combined",
   folder: "GEE_Exports", // Folder di Google Drive
   fileFormat: "CSV", // Format file CSV untuk Excel
