@@ -5,10 +5,7 @@ var roi = /* color: #d6c6c6 */ee.Geometry.Polygon(
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
-    eceng = 
-    /* color: #98ff00 */
-    /* shown: false */
-    ee.FeatureCollection(
+    eceng = /* color: #98ff00 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.45114010081181, -7.286163561448659]),
             {
@@ -2515,3 +2512,4 @@ print(test_sample)
 
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 12); // Zoom level 10
+
