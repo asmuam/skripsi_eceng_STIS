@@ -2491,7 +2491,7 @@ var test_sample = random_column.filter(ee.Filter.lte('random',0.2)); // 20%
 // Ekspor data training gabungan ke Google Drive dalam bentuk CSV
 Export.table.toDrive({
   collection: training_sample,
-  description: "data_training_combined",
+  description: "data_training",
   folder: "GEE_Exports", // Folder di Google Drive
   fileFormat: "CSV", // Format file CSV untuk Excel
 });
@@ -2499,7 +2499,7 @@ Export.table.toDrive({
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi), // Citra yang akan diekspor
-  description: "Sentinel_Combined", // Nama file ekspor
+  description: "Sentinel_1_and_2", // Nama file ekspor
   folder: "GEE_Exports", // Folder di Google Drive
   fileNamePrefix: "combined",
   region: roi, // Wilayah (ROI) untuk pemotongan citra
