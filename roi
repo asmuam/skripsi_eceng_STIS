@@ -2476,12 +2476,17 @@ var combinedImage = image_sen2.addBands(image_sen1);
 var combinedBands = sen2_bands.concat(sen1_bands); // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
 
 // Training data dari citra gabungan
-var trainingCombined = combinedImage.select(combinedBands).sampleRegions({
+var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: classNames, // Ini harus sesuai dengan shapefile atau koleksi titik untuk klasifikasi
   properties: ["landcover"], // Atribut target, seperti tipe tutupan lahan
   scale: 10, // Skala pengambilan sampel
   geometries: true, // Menyertakan geometri
 });
+
+var random_column = sampled.randomColumn();
+
+var training_sample = random_column.filter(ee.filter.gte('random',0.2)); // 80%
+var test_sample = random_column.filter(ee.filter.lte('random',0.2)); // 20%
 
 // Ekspor data training gabungan ke Google Drive dalam bentuk CSV
 Export.table.toDrive({
