@@ -2146,7 +2146,8 @@ var roi =
               "landcover": 1,
               "system:index": "254"
             })]),
-    sentinel_1_and_2_combined_mean = ee.Image("users/222111840/sentinel_1_and_2_combined");
+    sentinel_1_and_2_combined_mean = ee.Image("users/222111840/sentinel_1_and_2_combined"),
+    sentinel_1_and_2_combined_def_sample = ee.Image("users/222111840/sentinel_1_and_2_combined_default_sample");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
