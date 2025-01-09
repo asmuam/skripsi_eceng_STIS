@@ -2570,19 +2570,6 @@ Export.image.toAsset({
   maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
 });
 
-Map.addLayer(
-  image.clip(roi),
-  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
-  "sentinel_1_and_2_combined_mean"
-);
-
-Map.addLayer(
-  image2.clip(roi),
-  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
-  "sentinel_1_and_2_combined_sample"
-);
-
-
 
 
 
