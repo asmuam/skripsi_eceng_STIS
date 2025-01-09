@@ -2147,7 +2147,11 @@ var roi =
               "system:index": "254"
             })]),
     image = ee.Image("users/222111840/sentinel_1_and_2_combined_mean"),
-    image2 = ee.Image("users/222111840/sentinel_1_and_2_combined_sample");
+    image2 = ee.Image("users/222111840/sentinel_1_and_2_combined_sample"),
+    geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Point([110.4358259894212, -7.288911255883613]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
@@ -2224,16 +2228,6 @@ print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
 // Menggabungkan Kelas
 var classNames = eceng
   .merge(bukan_eceng)
-
-// True Color (RGB) - Menggunakan band B4 (Red), B3 (Green), B2 (Blue)
-var trueColor = image_sen2
-  .expression("float(B4) + float(B3) + float(B2)", {
-    B4: image_sen2.select("B4"), // Red band
-    B3: image_sen2.select("B3"), // Green band
-    B2: image_sen2.select("B2")  // Blue band
-  })
-  .rename("TrueColor")
-  .copyProperties(image_sen2, image_sen2.propertyNames());
 
 // Indeks Vegetasi
 var ndvi = image_sen2
@@ -2396,7 +2390,6 @@ var ndii = image_sen2
 
 // Membuat komposit dari semua indeks yang telah dihitung
 image_sen2 = image_sen2.addBands([
-  trueColor,
   ndvi,
   gndvi,
   evi,
@@ -2418,7 +2411,6 @@ image_sen2 = image_sen2.addBands([
 // Memilih band yang dibutuhkan dari citra Sentinel-2, termasuk band indeks komposit
 image_sen2 = image_sen2
   .select([
-    "TrueColor",
     "B1",
     "B2",
     "B3",
@@ -2454,7 +2446,6 @@ image_sen1 = image_sen1.select(["VV", "VH"]).toFloat();
 
 // Membuat dataframe untuk training dengan variabel X dan Y
 var sen2_bands = [
-  "TrueColor",
   "B1",
   "B2",
   "B3",
