@@ -2145,7 +2145,9 @@ var roi =
             {
               "landcover": 1,
               "system:index": "254"
-            })]);
+            })]),
+    image = ee.Image("users/222111840/sentinel_1_and_2_combined_mean"),
+    image2 = ee.Image("users/222111840/sentinel_1_and_2_combined_sample");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
@@ -2509,17 +2511,17 @@ Map.centerObject(roi, 12); // Zoom level 10
 //   fileFormat: "CSV", // Format file CSV untuk Excel
 // });
 
-// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke Google Drive
-// Export.image.toDrive({
-//   image: combinedImage.clip(roi), // Citra yang akan diekspor
-//   description: "Sentinel_1_and_2_to_drive", // Nama file ekspor
-//   folder: "GEE_Exports", // Folder di Google Drive
-//   fileNamePrefix: "sentinel_1_and_2_combined",
-//   region: roi, // Wilayah (ROI) untuk pemotongan citra
-//   scale: 10, // Skala dalam meter
-//   crs: "EPSG:4326", // Sistem koordinat (WGS84)
-//   maxPixels: 1e8, // Batasan jumlah piksel untuk ekspor
-// });
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke Google Drive
+Export.image.toDrive({
+  image: combinedImage.clip(roi), // Citra yang akan diekspor
+  description: "Sentinel_1_and_2_to_drive", // Nama file ekspor
+  folder: "GEE_Exports", // Folder di Google Drive
+  fileNamePrefix: "sentinel_1_and_2_combined",
+  region: roi, // Wilayah (ROI) untuk pemotongan citra
+  scale: 10, // Skala dalam meter
+  crs: "EPSG:4326", // Sistem koordinat (WGS84)
+  maxPixels: 1e8, // Batasan jumlah piksel untuk ekspor
+});
 
 
 // Ekspor data training ke Asset di GEE
