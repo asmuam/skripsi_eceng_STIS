@@ -2535,6 +2535,13 @@ Export.table.toAsset({
   assetId: "users/222111840/data_training",  // ID asset untuk tabel di GEE
 });
 
+// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
+Export.table.toAsset({
+  collection: test_sample,  // FeatureCollection yang ingin disimpan
+  description: "data_test_to_asset",  // Nama deskripsi untuk ekspor
+  assetId: "users/222111840/data_test",  // ID asset untuk tabel di GEE
+});
+
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
