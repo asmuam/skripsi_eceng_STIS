@@ -2488,31 +2488,33 @@ var random_column = sampled.randomColumn();
 var training_sample = random_column.filter(ee.Filter.gte('random',0.2)); // 80%
 var test_sample = random_column.filter(ee.Filter.lte('random',0.2)); // 20%
 
-// Ekspor data training gabungan ke Google Drive dalam bentuk CSV
-Export.table.toDrive({
-  collection: training_sample,
-  description: "data_training_to_drive",
-  folder: "GEE_Exports", // Folder di Google Drive
-  fileFormat: "CSV", // Format file CSV untuk Excel
-});
-
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke Google Drive
-Export.image.toDrive({
-  image: combinedImage.clip(roi), // Citra yang akan diekspor
-  description: "Sentinel_1_and_2_to_drive", // Nama file ekspor
-  folder: "GEE_Exports", // Folder di Google Drive
-  fileNamePrefix: "sentinel_1_and_2_combined",
-  region: roi, // Wilayah (ROI) untuk pemotongan citra
-  scale: 10, // Skala dalam meter
-  crs: "EPSG:4326", // Sistem koordinat (WGS84)
-  maxPixels: 1e8, // Batasan jumlah piksel untuk ekspor
-});
 
 print(training_sample)
 print(test_sample)
 
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 12); // Zoom level 10
+
+// // Ekspor data training gabungan ke Google Drive dalam bentuk CSV
+// Export.table.toDrive({
+//   collection: training_sample,
+//   description: "data_training_to_drive",
+//   folder: "GEE_Exports", // Folder di Google Drive
+//   fileFormat: "CSV", // Format file CSV untuk Excel
+// });
+
+// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke Google Drive
+// Export.image.toDrive({
+//   image: combinedImage.clip(roi), // Citra yang akan diekspor
+//   description: "Sentinel_1_and_2_to_drive", // Nama file ekspor
+//   folder: "GEE_Exports", // Folder di Google Drive
+//   fileNamePrefix: "sentinel_1_and_2_combined",
+//   region: roi, // Wilayah (ROI) untuk pemotongan citra
+//   scale: 10, // Skala dalam meter
+//   crs: "EPSG:4326", // Sistem koordinat (WGS84)
+//   maxPixels: 1e8, // Batasan jumlah piksel untuk ekspor
+// });
+
 
 // Ekspor data training ke Asset di GEE
 Export.table.toAsset({
