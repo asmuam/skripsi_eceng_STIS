@@ -2519,8 +2519,7 @@ Export.image.toDrive({
   fileNamePrefix: "sentinel_1_and_2_combined",
   region: roi, // Wilayah (ROI) untuk pemotongan citra
   scale: 10, // Skala dalam meter
-  crs: "EPSG:4326", // Sistem koordinat (WGS84)
-  maxPixels: 1e8, // Batasan jumlah piksel untuk ekspor
+  maxPixels: 1e9, // Batasan jumlah piksel untuk ekspor
 });
 
 
@@ -2559,8 +2558,7 @@ Export.image.toAsset({
   assetId: "users/222111840/sentinel_1_and_2_combined_sample",  // ID asset untuk citra di GEE
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
-  crs: "EPSG:4326",  // Sistem koordinat (WGS84)
-  maxPixels: 1e8,  // Batasan jumlah piksel yang akan diekspor
+  maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
 });
 
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
@@ -2570,8 +2568,7 @@ Export.image.toAsset({
   assetId: "users/222111840/sentinel_1_and_2_combined_mean",  // ID asset untuk citra di GEE
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
-  crs: "EPSG:4326",  // Sistem koordinat (WGS84)
-  maxPixels: 1e8,  // Batasan jumlah piksel yang akan diekspor
+  maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
 });
 
 Map.addLayer(
