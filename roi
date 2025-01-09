@@ -2145,9 +2145,7 @@ var roi =
             {
               "landcover": 1,
               "system:index": "254"
-            })]),
-    image = ee.Image("users/222111840/sentinel_1_and_2_combined_mean"),
-    image2 = ee.Image("users/222111840/sentinel_1_and_2_combined_sample");
+            })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
@@ -2561,7 +2559,6 @@ Export.image.toAsset({
   scale: 10,  // Skala dalam meter
   crs: "EPSG:4326",  // Sistem koordinat (WGS84)
   maxPixels: 1e8,  // Batasan jumlah piksel yang akan diekspor
-  pyramidingPolicy: {'.default': 'sample'}
 });
 
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
@@ -2573,7 +2570,6 @@ Export.image.toAsset({
   scale: 10,  // Skala dalam meter
   crs: "EPSG:4326",  // Sistem koordinat (WGS84)
   maxPixels: 1e8,  // Batasan jumlah piksel yang akan diekspor
-  pyramidingPolicy: {'.default': 'mean'}
 });
 
 Map.addLayer(
@@ -2585,7 +2581,7 @@ Map.addLayer(
 Map.addLayer(
   image2.clip(roi),
   { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
-  "sentinel_1_and_2_combined_def_sample"
+  "sentinel_1_and_2_combined_sample"
 );
 
 
