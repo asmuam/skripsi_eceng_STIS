@@ -2139,7 +2139,8 @@ var roi = /* color: #d6c6c6 */ee.Geometry.Polygon(
             {
               "landcover": 1,
               "system:index": "254"
-            })]);
+            })]),
+    sentinel_1_and_2_combined = ee.Image("users/222111840/sentinel_1_and_2_combined");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
@@ -2553,5 +2554,11 @@ Export.image.toAsset({
   scale: 10,  // Skala dalam meter
   crs: "EPSG:4326",  // Sistem koordinat (WGS84)
   maxPixels: 1e8,  // Batasan jumlah piksel yang akan diekspor
+  pyramidingPolicy: {'.default': 'sample'}
 });
 
+Map.addLayer(
+  sentinel_1_and_2_combined.clip(roi),
+  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
+  "sentinel_1_and_2_combined"
+);
