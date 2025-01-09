@@ -2553,16 +2553,6 @@ Export.table.toAsset({
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
-  description: "Sentinel_1_and_2_to_asset_sample",  // Nama deskripsi untuk ekspor
-  assetId: "users/222111840/sentinel_1_and_2_combined_sample",  // ID asset untuk citra di GEE
-  region: roi,  // Wilayah (ROI) tempat citra akan dipotong
-  scale: 10,  // Skala dalam meter
-  maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
-});
-
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
-Export.image.toAsset({
-  image: combinedImage.clip(roi),  // Citra yang akan diekspor
   description: "Sentinel_1_and_2_to_asset_mean",  // Nama deskripsi untuk ekspor
   assetId: "users/222111840/sentinel_1_and_2_combined_mean",  // ID asset untuk citra di GEE
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
