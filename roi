@@ -2508,6 +2508,7 @@ Export.image.toDrive({
   maxPixels: 1e8, // Batasan jumlah piksel untuk ekspor
 });
 
+print(training_sample)
 print(test_sample)
 
 // Pusatkan peta ke koordinat tersebut
