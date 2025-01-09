@@ -2145,9 +2145,7 @@ var roi =
             {
               "landcover": 1,
               "system:index": "254"
-            })]),
-    sentinel_1_and_2_combined_mean = ee.Image("users/222111840/sentinel_1_and_2_combined"),
-    sentinel_1_and_2_combined_def_sample = ee.Image("users/222111840/sentinel_1_and_2_combined_default_sample");
+            })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
@@ -2555,8 +2553,8 @@ Export.table.toAsset({
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
-  description: "Sentinel_1_and_2_to_asset",  // Nama deskripsi untuk ekspor
-  assetId: "users/222111840/sentinel_1_and_2_combined",  // ID asset untuk citra di GEE
+  description: "Sentinel_1_and_2_to_asset_sample",  // Nama deskripsi untuk ekspor
+  assetId: "users/222111840/sentinel_1_and_2_combined_sample",  // ID asset untuk citra di GEE
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
   crs: "EPSG:4326",  // Sistem koordinat (WGS84)
@@ -2564,14 +2562,31 @@ Export.image.toAsset({
   pyramidingPolicy: {'.default': 'sample'}
 });
 
-Map.addLayer(
-  sentinel_1_and_2_combined_mean.clip(roi),
-  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
-  "sentinel_1_and_2_combined_mean"
-);
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
+Export.image.toAsset({
+  image: combinedImage.clip(roi),  // Citra yang akan diekspor
+  description: "Sentinel_1_and_2_to_asset_mean",  // Nama deskripsi untuk ekspor
+  assetId: "users/222111840/sentinel_1_and_2_combined_mean",  // ID asset untuk citra di GEE
+  region: roi,  // Wilayah (ROI) tempat citra akan dipotong
+  scale: 10,  // Skala dalam meter
+  crs: "EPSG:4326",  // Sistem koordinat (WGS84)
+  maxPixels: 1e8,  // Batasan jumlah piksel yang akan diekspor
+  pyramidingPolicy: {'.default': 'mean'}
+});
 
-Map.addLayer(
-  sentinel_1_and_2_combined_def_sample.clip(roi),
-  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
-  "sentinel_1_and_2_combined_def_sample"
-);
+// Map.addLayer(
+//   .clip(roi),
+//   { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
+//   "sentinel_1_and_2_combined_mean"
+// );
+
+// Map.addLayer(
+//   .clip(roi),
+//   { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
+//   "sentinel_1_and_2_combined_def_sample"
+// );
+
+
+
+
+
