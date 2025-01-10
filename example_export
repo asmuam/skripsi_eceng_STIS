@@ -24,12 +24,8 @@ var clipped = mosaic.clip(ROI);
 print(clipped,'Clipped Image');
 // Lets Visualize the Image
 Map.addLayer(clipped,{min:250, max: 2500, bands:['B4','B3','B2']}, 'Sentinel-2 Image Clipped',false);
-
-// Mendapatkan titik pusat (centroid) dari ROI
-var center_of_roi = ROI.geometry().centroid();
-
-// Mendapatkan koordinat dari centroid
-var center_coords = center_of_roi.coordinates();
-print(center_coords.get(0))
+Map.addLayer(tile_4,{min:250, max: 2500, bands:['B4','B3','B2']}, 'tile_4',false);
+Map.addLayer(tile_5,{min:250, max: 2500, bands:['B4','B3','B2']}, 'tile_5',false);
+print(ROI)
 // Mengatur pusat peta ke koordinat centroid
-Map.setCenter(center_coords.get(0), center_coords.get(1), 12);  // 12 adalah tingkat zoom
+Map.centerObject(ROI, 12);  // 12 adalah tingkat zoom
