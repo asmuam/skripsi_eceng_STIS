@@ -2215,10 +2215,6 @@ Map.addLayer(
   "Sentinel-1 VH 20 Juni 2024"
 );
 
-// Cetak hasil ke konsol
-print("Sentinel-2 (RGB) 20 Juni 2024:", image_sen2);
-print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
-
 // Menggabungkan Kelas
 var classNames = eceng
   .merge(bukan_eceng)
@@ -2481,6 +2477,7 @@ var combinedImage = image_sen2.addBands(image_sen1);
 // Membuat dataframe untuk training dengan variabel X dan Y
 var combinedBands = sen2_bands.concat(sen1_bands); // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
 
+
 // Training data dari citra gabungan
 var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: classNames, // Ini harus sesuai dengan shapefile atau koleksi titik untuk klasifikasi
@@ -2494,7 +2491,10 @@ var random_column = sampled.randomColumn();
 var training_sample = random_column.filter(ee.Filter.gte('random',0.2)); // 80%
 var test_sample = random_column.filter(ee.Filter.lte('random',0.2)); // 20%
 
-
+// Cetak hasil ke konsol
+print("Sentinel-2 (RGB) 20 Juni 2024:", image_sen2);
+print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
+print(sampled)
 print(training_sample)
 print(test_sample)
 
@@ -2559,7 +2559,4 @@ Export.image.toAsset({
   scale: 10,  // Skala dalam meter
   maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
 });
-
-
-
 
