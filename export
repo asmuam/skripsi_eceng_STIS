@@ -2594,7 +2594,7 @@ Export.image.toAsset({
 Export.image.toAsset({
   image: training_image,
   description: 'ExportTestImage',
-  assetId: 'users/222111840/test_image',
+  assetId: 'users/222111840/training_image',
   scale: 10,
   region: roi, // Sesuaikan dengan wilayah Anda
   maxPixels: 1e9
