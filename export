@@ -2587,7 +2587,7 @@ Export.image.toAsset({
   description: 'ExportTrainingImage',
   assetId: 'users/222111840/test_image',
   scale: 10,
-  region: geometry, // Sesuaikan dengan wilayah Anda
+  region: roi, // Sesuaikan dengan wilayah Anda
   maxPixels: 1e9
 });
 
@@ -2596,7 +2596,7 @@ Export.image.toAsset({
   description: 'ExportTestImage',
   assetId: 'users/222111840/test_image',
   scale: 10,
-  region: geometry, // Sesuaikan dengan wilayah Anda
+  region: roi, // Sesuaikan dengan wilayah Anda
   maxPixels: 1e9
 });
 
