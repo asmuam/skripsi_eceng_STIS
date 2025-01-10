@@ -2198,23 +2198,6 @@ var sentinel1 = ee
 var image_sen2 = getClosestImage(sentinel2, targetDate);
 var image_sen1 = getClosestImage(sentinel1, targetDate);
 
-// Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
-Map.addLayer(
-  image_sen2.clip(roi),
-  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
-  "Sentinel-2 (RGB) 20 Juni 2024"
-);
-Map.addLayer(
-  image_sen1.clip(roi),
-  { bands: ["VV"], min: -30, max: 5 },
-  "Sentinel-1 VV 20 Juni 2024"
-);
-Map.addLayer(
-  image_sen1.clip(roi),
-  { bands: ["VH"], min: -30, max: 5 },
-  "Sentinel-1 VH 20 Juni 2024"
-);
-
 // Menggabungkan Kelas
 var classNames = eceng
   .merge(bukan_eceng)
@@ -2499,7 +2482,23 @@ print(training_sample)
 print(test_sample)
 
 // Pusatkan peta ke koordinat tersebut
-Map.centerObject(roi, 12); // Zoom level 10
+Map.centerObject(roi, 14);
+// Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
+Map.addLayer(
+  image_sen2.clip(roi),
+  { bands: ["B4", "B3", "B2"], min: 0, max: 0.3 },
+  "Sentinel-2 (RGB) 20 Juni 2024"
+);
+Map.addLayer(
+  image_sen1.clip(roi),
+  { bands: ["VV"], min: -30, max: 5 },
+  "Sentinel-1 VV 20 Juni 2024"
+);
+Map.addLayer(
+  image_sen1.clip(roi),
+  { bands: ["VH"], min: -30, max: 5 },
+  "Sentinel-1 VH 20 Juni 2024"
+);
 
 // Ekspor data training gabungan ke Google Drive dalam bentuk CSV
 Export.table.toDrive({
@@ -2560,3 +2559,25 @@ Export.image.toAsset({
   maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
 });
 
+
+// Ambil mask dari FeatureCollection untuk setiap sample
+var trainingMask = training_sample.reduceToImage({
+  properties: ['landcover'], // Ambil properti 'landcover' sebagai nilai
+  reducer: ee.Reducer.first() // Ambil nilai pertama dari properti
+});
+
+var testMask = test_sample.reduceToImage({
+  properties: ['landcover'], // Ambil properti 'landcover' sebagai nilai
+  reducer: ee.Reducer.first() // Ambil nilai pertama dari properti
+});
+
+// Gabungkan mask dengan citra gabungan untuk training
+var trainingImage = combinedImage.addBands(trainingMask.rename('label'));
+var testImage = combinedImage.addBands(testMask.rename('label'));
+
+print(trainingImage)
+Map.addLayer(
+  trainingImage.clip(roi),
+  { bands: ["B4","B3","B2"], min: 0, max: 0.3 },
+  "train"
+);
