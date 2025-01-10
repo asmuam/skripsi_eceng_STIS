@@ -1,0 +1,35 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var ROI = ee.FeatureCollection("projects/ee-muddasir-shah/assets/islamabad"),
+    sentinel2_l2A = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Webinar Part 1 - Data Filtering and Exporting for TF
+
+
+var filtering_images = sentinel2_l2A.filterBounds(ROI)
+                      .filterDate('2023-05-01','2023-05-31')
+                      .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',5));
+                      print(filtering_images,'Filtered Collection');
+
+
+// Our Study Area is Covered in 2 Tiles of Same Date
+// Lets Mosic them first and then Clip the mosaiced Image
+// I am interested in tile 4 and 5 dated 2023-05-20
+var images_ids_list = filtering_images.toList(filtering_images.size());
+var tile_4 = ee.Image(images_ids_list.get(4));
+var tile_5 = ee.Image(images_ids_list.get(5));
+// to make a mosaic we need to make an image collection again out of these tiles
+var collection = ee.ImageCollection([tile_4,tile_5]);
+var mosaic = collection.mosaic();
+var clipped = mosaic.clip(ROI);
+print(clipped,'Clipped Image');
+// Lets Visualize the Image
+Map.addLayer(clipped,{min:250, max: 2500, bands:['B4','B3','B2']}, 'Sentinel-2 Image Clipped',false);
+
+// Mendapatkan titik pusat (centroid) dari ROI
+var center_of_roi = ROI.geometry().centroid();
+
+// Mendapatkan koordinat dari centroid
+var center_coords = center_of_roi.coordinates();
+print(center_coords.get(0))
+// Mengatur pusat peta ke koordinat centroid
+Map.setCenter(center_coords.get(0), center_coords.get(1), 12);  // 12 adalah tingkat zoom
