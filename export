@@ -2583,7 +2583,7 @@ Export.image.toAsset({
 });
 
 Export.image.toAsset({
-  image: training_image,
+  image: test_image,
   description: 'ExportTrainingImage',
   assetId: 'users/222111840/test_image',
   scale: 10,
