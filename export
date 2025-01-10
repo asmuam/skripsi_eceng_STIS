@@ -2588,7 +2588,7 @@ Export.image.toAsset({
   assetId: 'users/222111840/test_image',
   scale: 10,
   region: geometry, // Sesuaikan dengan wilayah Anda
-  maxPixels: 1e13
+  maxPixels: 1e9
 });
 
 Export.image.toAsset({
@@ -2597,6 +2597,6 @@ Export.image.toAsset({
   assetId: 'users/222111840/test_image',
   scale: 10,
   region: geometry, // Sesuaikan dengan wilayah Anda
-  maxPixels: 1e13
+  maxPixels: 1e9
 });
 
