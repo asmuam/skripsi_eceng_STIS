@@ -2497,12 +2497,12 @@ Map.addLayer(
 Map.addLayer(
   image_sen1raw.clip(roi),
   { bands: ["VH"], min: -30, max: 5 },
-  "VV"
+  "VH"
 );
 Map.addLayer(
   combinedImage.clip(roi),
   { bands: ["Sigma0_VH"], min: -30, max: 5 },
-  "sigmaVV"
+  "sigmaVH"
 );
 Map.addLayer(
   combinedImage.clip(roi),
