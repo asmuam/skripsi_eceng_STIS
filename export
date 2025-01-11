@@ -2220,7 +2220,7 @@ var sentinel1 = sentinel1VV.combine(sentinel1VH);
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate);
 var image_sen1 = getClosestImage(sentinel1, targetDate);
-var image_sen1raw = getClosestImage(sentinel1, targetDate);
+var image_sen1raw = getClosestImage(sentinel1raw, targetDate);
 // Menggabungkan Kelas
 var classNames = eceng
   .merge(bukan_eceng)
