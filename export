@@ -2171,6 +2171,22 @@ function maskS2clouds(image) {
   var maskedImage = image.updateMask(mask).divide(10000);
   return maskedImage.copyProperties(image, image.propertyNames());
 }
+/** Function to apply speckle noise removal filter by Focal Median: */
+// The window (the kernel) used to apply the filter is in pixel number, that is odd number
+function MedianVV(image) {
+  return image.addBands(
+    image
+      .focal_median({ radius: 5, kernelType: 'square', units: 'pixels' })
+      .rename(['Sigma0_VV'])
+  )
+}
+function MedianVH(image) {
+  return image.addBands(
+    image
+      .focal_median({ radius: 5, kernelType: 'square', units: 'pixels' })
+      .rename(['Sigma0_VH'])
+  )
+}
 // Tentukan tanggal tetap untuk citra (20 Juni 2024)
 var targetDate = ee.Date("2024-06-20");
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
