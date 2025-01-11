@@ -2198,13 +2198,31 @@ var sentinel2 = ee
   .map(maskS2clouds)
   .sort("system:time_start"); // Urutkan berdasarkan waktu citra
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
-var sentinel1 = ee
+var sentinel1VH = ee
   .ImageCollection("COPERNICUS/S1_GRD")
   .filterBounds(roi)
-  .filterDate(targetDate, targetDate.advance(5, "day")); // Citra untuk satu hari
+  .filterDate(targetDate, targetDate.advance(5, "day"))
+  .select('VH')
+  .map(maskVH)
+  .map(MedianVH)
+  .select('Sigma0_VH');
+var sentinel1VV = ee
+  .ImageCollection("COPERNICUS/S1_GRD")
+  .filterBounds(roi)
+  .filterDate(targetDate, targetDate.advance(5, "day"))
+  .select('VV')
+  .map(maskVV)
+  .map(MedianVV)
+  .select('Sigma0_VV');
+var sentinel1raw = ee
+  .ImageCollection("COPERNICUS/S1_GRD")
+  .filterBounds(roi)
+  .filterDate(targetDate, targetDate.advance(5, "day"))
+var sentinel1 = sentinel1VV.combine(sentinel1VH);
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate);
 var image_sen1 = getClosestImage(sentinel1, targetDate);
+var image_sen1raw = getClosestImage(sentinel1, targetDate);
 // Menggabungkan Kelas
 var classNames = eceng
   .merge(bukan_eceng)
@@ -2402,7 +2420,7 @@ image_sen2 = image_sen2
     "NDII",
   ])
   .toFloat(); // Mengubah tipe data menjadi float untuk pemrosesan lebih lanjut
-image_sen1 = image_sen1.select(["VV", "VH"]).toFloat();
+image_sen1 = image_sen1.select(["Sigma0_VH", "Sigma0_VV"]).toFloat();
 // Membuat dataframe untuk training dengan variabel X dan Y
 var sen2_bands = [
   "B1",
@@ -2435,8 +2453,8 @@ var sen2_bands = [
   "NDII",
 ];
 var sen1_bands = [
-  "VV",
-  "VH",
+  "Sigma0_VH",
+  "Sigma0_VV",
 ];
 // Gabungkan citra Sentinel-1 dan Sentinel-2
 var combinedImage = image_sen2.addBands(image_sen1);
@@ -2461,7 +2479,7 @@ var imageExportOptions = {
 }
 // Cetak hasil ke konsol
 print("Sentinel-2 (RGB) 20 Juni 2024:", image_sen2);
-print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
+print("Sentinel-1 20 Juni 2024:", image_sen1);
 print(sampled)
 print(training_sample)
 print(test_sample)
@@ -2474,14 +2492,24 @@ Map.addLayer(
   "Sentinel-2 (RGB) 20 Juni 2024"
 );
 Map.addLayer(
-  image_sen1.clip(roi),
+  image_sen1raw.clip(roi),
   { bands: ["VV"], min: -30, max: 5 },
-  "Sentinel-1 VV 20 Juni 2024"
+  "VV"
 );
 Map.addLayer(
-  image_sen1.clip(roi),
+  image_sen1raw.clip(roi),
   { bands: ["VH"], min: -30, max: 5 },
-  "Sentinel-1 VH 20 Juni 2024"
+  "VV"
+);
+Map.addLayer(
+  combinedImage.clip(roi),
+  { bands: ["Sigma0_VH"], min: -30, max: 5 },
+  "sigmaVV"
+);
+Map.addLayer(
+  combinedImage.clip(roi),
+  { bands: ["Sigma0_VV"], min: -30, max: 5 },
+  "sigmaVV"
 );
 // Ekspor data training gabungan ke drive dalam bentuk tfr
 Export.table.toDrive({
