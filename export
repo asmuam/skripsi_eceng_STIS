@@ -2203,8 +2203,6 @@ function findMatchingDates(s1Collection, s2Collection) {
 }
 // Contoh penggunaan fungsi dengan koleksi S1 dan S2
 var matchingDates = findMatchingDates(sentinel1, sentinel2);
-// Tampilkan tanggal yang sama
-print('Matching Dates:', matchingDates);
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate)
 var image_sen1 = getClosestImage(sentinel1, targetDate)
@@ -2464,9 +2462,16 @@ print('Sentinel-1 VV 20 Juni 2024:', image_sen1)
 print(sampled)
 print(training_sample)
 print(test_sample)
+// Tampilkan tanggal yang sama
+print('Matching Dates:', matchingDates);
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
+Map.addLayer(
+  image_sen2.clip(roi),
+  { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
+  'Sentinel-2 (RGB) 20 Juni 2024'
+)
 Map.addLayer(
   image_sen2.clip(roi),
   { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
