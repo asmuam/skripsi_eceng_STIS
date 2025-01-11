@@ -2203,7 +2203,6 @@ var sentinel1VH = ee
   .filterBounds(roi)
   .filterDate(targetDate, targetDate.advance(5, "day"))
   .select('VH')
-  .map(maskVH)
   .map(MedianVH)
   .select('Sigma0_VH');
 var sentinel1VV = ee
@@ -2211,7 +2210,6 @@ var sentinel1VV = ee
   .filterBounds(roi)
   .filterDate(targetDate, targetDate.advance(5, "day"))
   .select('VV')
-  .map(maskVV)
   .map(MedianVV)
   .select('Sigma0_VV');
 var sentinel1raw = ee
