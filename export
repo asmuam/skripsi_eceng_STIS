@@ -2187,8 +2187,6 @@ var sentinel1 = ee
   .ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-
-
 // Fungsi untuk mencocokkan citra berdasarkan tanggal
 function findMatchingDates(s1Collection, s2Collection) {
   // Ambil daftar tanggal dari Sentinel-1 dan Sentinel-2
@@ -2207,11 +2205,6 @@ function findMatchingDates(s1Collection, s2Collection) {
 var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
-
-
-
-
-
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate)
 var image_sen1 = getClosestImage(sentinel1, targetDate)
