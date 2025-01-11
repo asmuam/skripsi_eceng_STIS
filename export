@@ -2543,7 +2543,6 @@ var imageExportOptions = {
 Export.image.toDrive({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
   description: "Sentinel_1_and_2_to_asset_mean",  // Nama deskripsi untuk ekspor
-  assetId: "users/222111840/sentinel_1_and_2_combined_mean",  // ID asset untuk citra di GEE
   fileNamePrefix: 'sentinel_1_and_2_combined',
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
