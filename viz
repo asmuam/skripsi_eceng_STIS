@@ -10,13 +10,13 @@ var roi =
           [110.4075018622231, -7.316750824882465]]]),
     cnn = ee.Image("projects/ee-222111840/assets/cnn"),
     rf = ee.Image("users/222111840/rf"),
-    image = ee.Image("users/222111840/rawa_pening_image");
+    rawa_pening_image = ee.Image("users/222111840/rawa_pening_image");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14);
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
 Map.addLayer(
-  image.clip(roi),
+  rawa_pening_image.clip(roi),
  {bands:['B4','B3','B2'],min: 0, max: 0.3},
  "s2"
 );
