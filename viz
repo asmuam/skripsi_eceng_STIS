@@ -27,7 +27,7 @@ Map.addLayer(
 );
 
 Map.addLayer(
-  cnn.clip(roi),
+  image.clip(roi),
  {bands:['B4','B3','B2'],min: 0, max: 0.3, opacity: 0.3},
  "s2"
 );
