@@ -2506,7 +2506,7 @@ Export.table.toDrive({
   description: "tfr_data_train_to_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'TFRecord',
-  fileNamePrefix: 'data_training_tfr'
+  fileNamePrefix: 'data_training'
 });
 
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
@@ -2515,39 +2515,39 @@ Export.table.toDrive({
   description: "tfr_data_test_to_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'TFRecord',
-  fileNamePrefix: 'data_test_tfr'
+  fileNamePrefix: 'data_test'
 });
 
 // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toDrive({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
-  description: "csv_data_train_to_drive",  // Nama deskripsi untuk ekspor
+  description: "csv_train_to_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'csv',
-  fileNamePrefix: 'data_training_csv'
+  fileNamePrefix: 'data_training'
 });
 
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toDrive({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
-  description: "csv_data_test_to_drive",  // Nama deskripsi untuk ekspor
+  description: "csv_test_to_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'csv',
-  fileNamePrefix: 'data_test_csv'
+  fileNamePrefix: 'data_test'
 });
 
 // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toAsset({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
-  description: "data_training_to_asset",  // Nama deskripsi untuk ekspor
-  assetId: "users/222111840/data_training_csv",  // ID asset untuk tabel di GEE
+  description: "csv_train_asset",  // Nama deskripsi untuk ekspor
+  assetId: "users/222111840/data_training",  // ID asset untuk tabel di GEE
 });
 
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toAsset({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
-  description: "data_test_to_asset",  // Nama deskripsi untuk ekspor
-  assetId: "users/222111840/data_test_csv",  // ID asset untuk tabel di GEE
+  description: "csv_test_asset",  // Nama deskripsi untuk ekspor
+  assetId: "users/222111840/data_test",  // ID asset untuk tabel di GEE
 });
 
 // Exporting the image in small patches
@@ -2561,8 +2561,9 @@ var imageExportOptions = {
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toDrive({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
-  description: "Sentinel_1_and_2_to_asset_mean",  // Nama deskripsi untuk ekspor
+  description: "Sentinel_1_and_2_to_asset",  // Nama deskripsi untuk ekspor
   fileNamePrefix: 'sentinel_1_and_2_combined',
+  folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
   maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
