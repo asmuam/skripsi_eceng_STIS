@@ -16,6 +16,11 @@ var roi =
 Map.centerObject(roi, 14);
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
 Map.addLayer(
+  image.clip(roi),
+ {bands:['B4','B3','B2'],min: 0, max: 0.3},
+ "s2"
+);
+Map.addLayer(
   rf.clip(roi),
  {min: 0, max: 1, palette: ['red', 'white'], opacity: 0.3},
   "rf"
@@ -26,8 +31,3 @@ Map.addLayer(
  "cnn"
 );
 
-Map.addLayer(
-  image.clip(roi),
- {bands:['B4','B3','B2'],min: 0, max: 0.3},
- "s2"
-);
