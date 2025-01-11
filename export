@@ -2561,8 +2561,8 @@ var imageExportOptions = {
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toDrive({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
-  description: "Sentinel_1_and_2_to_asset",  // Nama deskripsi untuk ekspor
-  fileNamePrefix: 'sentinel_1_and_2_combined',
+  description: "rawa_pening_image",  // Nama deskripsi untuk ekspor
+  fileNamePrefix: 'rawa_pening_image',
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
