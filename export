@@ -2558,7 +2558,7 @@ var imageExportOptions = {
   'compressed': true
 }
 
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
   description: "rawa_pening_image",  // Nama deskripsi untuk ekspor
@@ -2571,5 +2571,14 @@ Export.image.toDrive({
   formatOptions: imageExportOptions
 });
 
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
+Export.image.toAsset({
+  image: combinedImage.clip(roi),  // Citra yang akan diekspor
+  description: "rawa_pening_image",  // Nama deskripsi untuk ekspor
+  assetId: "users/222111840/rawa_pening_image",  // ID asset untuk tabel di GEE
+  region: roi,  // Wilayah (ROI) tempat citra akan dipotong
+  scale: 10,  // Skala dalam meter
+  maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
+});
 
 
