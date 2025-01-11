@@ -2546,6 +2546,8 @@ Export.image.toAsset({
   region: roi,  // Wilayah (ROI) tempat citra akan dipotong
   scale: 10,  // Skala dalam meter
   maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
+  fileFormat: 'TFRecord',
+  formatOptions: imageExportOptions
 });
 
 
