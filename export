@@ -2147,15 +2147,6 @@ var roi =
               "system:index": "254"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var roi = 
-    /* color: #d6c6c6 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[110.4075018622231, -7.316750824882465],
-          [110.46209018009229, -7.316750824882469],
-          [110.4620901800923, -7.2614117383033845],
-          [110.40750186222311, -7.26141173830338],
-          [110.4075018622231, -7.316750824882465]]])
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
 function getClosestImage(collection, targetDate) {
   return collection
@@ -2511,13 +2502,13 @@ Export.table.toDrive({
 // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toAsset({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
-  description: "csv_train_asset",  // Nama deskripsi untuk ekspor
+  description: "train_asset",  // Nama deskripsi untuk ekspor
   assetId: "users/222111840/data_training",  // ID asset untuk tabel di GEE
 });
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toAsset({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
-  description: "csv_test_asset",  // Nama deskripsi untuk ekspor
+  description: "test_asset",  // Nama deskripsi untuk ekspor
   assetId: "users/222111840/data_test",  // ID asset untuk tabel di GEE
 });
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
