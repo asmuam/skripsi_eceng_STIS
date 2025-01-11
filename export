@@ -2147,7 +2147,15 @@ var roi =
               "system:index": "254"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
+var roi = 
+    /* color: #d6c6c6 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[110.4075018622231, -7.316750824882465],
+          [110.46209018009229, -7.316750824882469],
+          [110.4620901800923, -7.2614117383033845],
+          [110.40750186222311, -7.26141173830338],
+          [110.4075018622231, -7.316750824882465]]])
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat
 function getClosestImage(collection, targetDate) {
   return collection
@@ -2159,14 +2167,11 @@ function getClosestImage(collection, targetDate) {
     .sort("date_diff")
     .first(); // Citra dengan selisih waktu terkecil
 }
-
 // Fungsi untuk masking cloud Sentinel-2 dengan mempertahankan properti awal
 function maskS2clouds(image) {
   var qa = image.select("QA60");
-
   var cloudBitMask = 1 << 10;
   var cirrusBitMask = 1 << 11;
-
   var mask = qa
     .bitwiseAnd(cloudBitMask)
     .eq(0)
@@ -2175,10 +2180,8 @@ function maskS2clouds(image) {
   var maskedImage = image.updateMask(mask).divide(10000);
   return maskedImage.copyProperties(image, image.propertyNames());
 }
-
 // Tentukan tanggal tetap untuk citra (20 Juni 2024)
 var targetDate = ee.Date("2024-06-20");
-
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
@@ -2187,21 +2190,17 @@ var sentinel2 = ee
   .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort("system:time_start"); // Urutkan berdasarkan waktu citra
-
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
 var sentinel1 = ee
   .ImageCollection("COPERNICUS/S1_GRD")
   .filterBounds(roi)
   .filterDate(targetDate, targetDate.advance(5, "day")); // Citra untuk satu hari
-
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate);
 var image_sen1 = getClosestImage(sentinel1, targetDate);
-
 // Menggabungkan Kelas
 var classNames = eceng
   .merge(bukan_eceng)
-
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression("(NIR - RED) / (NIR + RED)", {
@@ -2210,7 +2209,6 @@ var ndvi = image_sen2
   })
   .rename("NDVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var gndvi = image_sen2
   .expression("(NIR - GREEN) / (NIR + GREEN)", {
     GREEN: image_sen2.select("B3"),
@@ -2218,7 +2216,6 @@ var gndvi = image_sen2
   })
   .rename("GNDVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var evi = image_sen2
   .expression("2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))", {
     RED: image_sen2.select("B4"),
@@ -2227,7 +2224,6 @@ var evi = image_sen2
   })
   .rename("EVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var savi = image_sen2
   .expression("((NIR - RED) * (1 + L)) / (NIR + RED + L)", {
     RED: image_sen2.select("B4"),
@@ -2236,7 +2232,6 @@ var savi = image_sen2
   })
   .rename("SAVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var wavi = image_sen2
   .expression("((NIR - BLUE) * (1 + L)) / (NIR + BLUE + L)", {
     NIR: image_sen2.select("B8"),
@@ -2245,7 +2240,6 @@ var wavi = image_sen2
   })
   .rename("WAVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var rendvi = image_sen2
   .expression("(NIR - RE) / (NIR + RE)", {
     NIR: image_sen2.select("B8"),
@@ -2253,7 +2247,6 @@ var rendvi = image_sen2
   })
   .rename("RENDVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var gari = image_sen2
   .expression(
     "(NIR - (GREEN - (BLUE - RED))) / (NIR - (GREEN + (BLUE - RED)))",
@@ -2266,7 +2259,6 @@ var gari = image_sen2
   )
   .rename("GARI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 // Indeks Air
 var ndwi = image_sen2
   .expression("(GREEN - NIR) / (GREEN + NIR)", {
@@ -2275,7 +2267,6 @@ var ndwi = image_sen2
   })
   .rename("NDWI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var mndwi = image_sen2
   .expression("(GREEN - SWIR1) / (GREEN + SWIR1)", {
     GREEN: image_sen2.select("B3"),
@@ -2283,7 +2274,6 @@ var mndwi = image_sen2
   })
   .rename("MNDWI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var lswi = image_sen2
   .expression("(NIR - SWIR1) / (NIR + SWIR1)", {
     NIR: image_sen2.select("B8"),
@@ -2291,7 +2281,6 @@ var lswi = image_sen2
   })
   .rename("LSWI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var ndavi = image_sen2
   .expression("(NIR - BLUE) / (NIR + BLUE)", {
     NIR: image_sen2.select("B8"),
@@ -2299,7 +2288,6 @@ var ndavi = image_sen2
   })
   .rename("NDAVI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var fai = image_sen2
   .expression("B8 - (B4 + (B11 - B4) * ((832.8 - 664.6) / (1613.7 - 664.6)))", {
     B4: image_sen2.select("B4"), // Red
@@ -2308,12 +2296,10 @@ var fai = image_sen2
   })
   .rename("FAI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 // Define the wavelength values (in meters)
 var wavelength_nir = 842 * 1e-9; // NIR
 var wavelength_red = 665 * 1e-9; // Red
 var wavelength_swir1 = 1610 * 1e-9; // SWIR1
-
 // Calculate the Floating Debris Index (FDI)
 var fdi = image_sen2
   .expression(
@@ -2329,7 +2315,6 @@ var fdi = image_sen2
   )
   .rename("FDI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 // Indeks Bangunan
 var ndbi = image_sen2
   .expression("(SWIR2 - NIR) / (SWIR2 + NIR)", {
@@ -2338,7 +2323,6 @@ var ndbi = image_sen2
   })
   .rename("NDBI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 // Indeks Tanah
 var bsi = image_sen2
   .expression(
@@ -2352,7 +2336,6 @@ var bsi = image_sen2
   )
   .rename("BSI")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var ndii = image_sen2
   .expression("(NIR - SWIR1) / (NIR + SWIR1)", {
     SWIR1: image_sen2.select("B11"),
@@ -2360,7 +2343,6 @@ var ndii = image_sen2
   })
   .rename("NDII")
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 // Membuat komposit dari semua indeks yang telah dihitung
 image_sen2 = image_sen2.addBands([
   ndvi,
@@ -2380,7 +2362,6 @@ image_sen2 = image_sen2.addBands([
   bsi,
   ndii,
 ]);
-
 // Memilih band yang dibutuhkan dari citra Sentinel-2, termasuk band indeks komposit
 image_sen2 = image_sen2
   .select([
@@ -2414,9 +2395,7 @@ image_sen2 = image_sen2
     "NDII",
   ])
   .toFloat(); // Mengubah tipe data menjadi float untuk pemrosesan lebih lanjut
-
 image_sen1 = image_sen1.select(["VV", "VH"]).toFloat();
-
 // Membuat dataframe untuk training dengan variabel X dan Y
 var sen2_bands = [
   "B1",
@@ -2448,19 +2427,14 @@ var sen2_bands = [
   "BSI",
   "NDII",
 ];
-
 var sen1_bands = [
   "VV",
   "VH",
 ];
-
 // Gabungkan citra Sentinel-1 dan Sentinel-2
 var combinedImage = image_sen2.addBands(image_sen1);
-
 // Membuat dataframe untuk training dengan variabel X dan Y
 var combinedBands = sen2_bands.concat(sen1_bands); // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
-
-
 // Training data dari citra gabungan
 var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: classNames, // Ini harus sesuai dengan shapefile atau koleksi titik untuk klasifikasi
@@ -2468,19 +2442,22 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   scale: 10, // Skala pengambilan sampel
   geometries: true, // Menyertakan geometri
 });
-
 var random_column = sampled.randomColumn();
-
 var training_sample = random_column.filter(ee.Filter.gte('random',0.2)); // 80%
 var test_sample = random_column.filter(ee.Filter.lte('random',0.2)); // 20%
-
+// Exporting the image in small patches
+// Export Image Patches
+var imageExportOptions = {
+  'patchDimensions': [64, 64],
+  'maxFileSize': 104857600,
+  'compressed': true
+}
 // Cetak hasil ke konsol
 print("Sentinel-2 (RGB) 20 Juni 2024:", image_sen2);
 print("Sentinel-1 VV 20 Juni 2024:", image_sen1);
 print(sampled)
 print(training_sample)
 print(test_sample)
-
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14);
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
@@ -2499,8 +2476,7 @@ Map.addLayer(
   { bands: ["VH"], min: -30, max: 5 },
   "Sentinel-1 VH 20 Juni 2024"
 );
-
-// Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Ekspor data training gabungan ke drive dalam bentuk tfr
 Export.table.toDrive({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
   description: "tfr_train_drive",  // Nama deskripsi untuk ekspor
@@ -2508,8 +2484,7 @@ Export.table.toDrive({
   fileFormat: 'TFRecord',
   fileNamePrefix: 'data_training'
 });
-
-// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Ekspor data test gabungan ke drive dalam bentuk tfr
 Export.table.toDrive({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
   description: "tfr_test_drive",  // Nama deskripsi untuk ekspor
@@ -2517,8 +2492,7 @@ Export.table.toDrive({
   fileFormat: 'TFRecord',
   fileNamePrefix: 'data_test'
 });
-
-// Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
   description: "csv_train_drive",  // Nama deskripsi untuk ekspor
@@ -2526,8 +2500,7 @@ Export.table.toDrive({
   fileFormat: 'csv',
   fileNamePrefix: 'data_training'
 });
-
-// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Ekspor data test gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
   description: "csv_test_drive",  // Nama deskripsi untuk ekspor
@@ -2535,29 +2508,18 @@ Export.table.toDrive({
   fileFormat: 'csv',
   fileNamePrefix: 'data_test'
 });
-
 // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toAsset({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
   description: "csv_train_asset",  // Nama deskripsi untuk ekspor
   assetId: "users/222111840/data_training",  // ID asset untuk tabel di GEE
 });
-
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toAsset({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
   description: "csv_test_asset",  // Nama deskripsi untuk ekspor
   assetId: "users/222111840/data_test",  // ID asset untuk tabel di GEE
 });
-
-// Exporting the image in small patches
-// Export Image Patches
-var imageExportOptions = {
-  'patchDimensions': [64, 64],
-  'maxFileSize': 104857600,
-  'compressed': true
-}
-
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
@@ -2570,7 +2532,6 @@ Export.image.toDrive({
   fileFormat: 'TFRecord',
   formatOptions: imageExportOptions
 });
-
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
   image: combinedImage.clip(roi),  // Citra yang akan diekspor
@@ -2580,5 +2541,3 @@ Export.image.toAsset({
   scale: 10,  // Skala dalam meter
   maxPixels: 1e9,  // Batasan jumlah piksel yang akan diekspor
 });
-
-
