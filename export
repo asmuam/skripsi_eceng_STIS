@@ -2503,7 +2503,7 @@ Map.addLayer(
 // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toDrive({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
-  description: "tfr_train_to_drive",  // Nama deskripsi untuk ekspor
+  description: "tfr_train_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'TFRecord',
   fileNamePrefix: 'data_training'
@@ -2512,7 +2512,7 @@ Export.table.toDrive({
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toDrive({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
-  description: "tfr_test_to_drive",  // Nama deskripsi untuk ekspor
+  description: "tfr_test_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'TFRecord',
   fileNamePrefix: 'data_test'
@@ -2521,7 +2521,7 @@ Export.table.toDrive({
 // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toDrive({
   collection: training_sample,  // FeatureCollection yang ingin disimpan
-  description: "csv_train_to_drive",  // Nama deskripsi untuk ekspor
+  description: "csv_train_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'csv',
   fileNamePrefix: 'data_training'
@@ -2530,7 +2530,7 @@ Export.table.toDrive({
 // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
 Export.table.toDrive({
   collection: test_sample,  // FeatureCollection yang ingin disimpan
-  description: "csv_test_to_drive",  // Nama deskripsi untuk ekspor
+  description: "csv_test_drive",  // Nama deskripsi untuk ekspor
   folder: "GEE_Exports", // Folder di Google Drive  fileFormat: 'TFRecord'
   fileFormat: 'csv',
   fileNamePrefix: 'data_test'
