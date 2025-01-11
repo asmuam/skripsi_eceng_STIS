@@ -2173,11 +2173,12 @@ function maskS2clouds(image) {
 }
 // Tentukan tanggal tetap untuk citra (20 Juni 2024)
 var targetDate = ee.Date('2024-06-20')
+var range = 50
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate(targetDate.advance(-2, 'day'), targetDate.advance(2, 'day')) // Citra untuk satu hari
+  .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
@@ -2185,7 +2186,30 @@ var sentinel2 = ee
 var sentinel1 = ee
   .ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate(targetDate.advance(-5, 'day'), targetDate.advance(5, 'day')) // Citra untuk satu hari
+  .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
+
+
+// Fungsi untuk mencocokkan citra berdasarkan tanggal
+function findMatchingDates(s1Collection, s2Collection) {
+  // Ambil daftar tanggal dari Sentinel-1 dan Sentinel-2
+  var s1Dates = s1Collection.aggregate_array('system:time_start');
+  var s2Dates = s2Collection.aggregate_array('system:time_start');
+  // Ubah ke format tanggal untuk pencocokan
+  s1Dates = s1Dates.map(function(date) { return ee.Date(date).format('YYYY-MM-dd'); });
+  s2Dates = s2Dates.map(function(date) { return ee.Date(date).format('YYYY-MM-dd'); });
+  // Temukan irisan antara dua koleksi berdasarkan tanggal
+  var commonDates = s1Dates.filter(ee.Filter.inList('item', s2Dates));
+  return commonDates;
+}
+// Contoh penggunaan fungsi dengan koleksi S1 dan S2
+var matchingDates = findMatchingDates(sentinel1, sentinel2);
+// Tampilkan tanggal yang sama
+print('Matching Dates:', matchingDates);
+
+
+
+
+
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate)
 var image_sen1 = getClosestImage(sentinel1, targetDate)
