@@ -5,3 +5,6 @@ var filtering_images = sentinel2_l2A.filterBounds(ROI)
                       .filterDate('2023-05-01','2023-05-31')
                       .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',5));
                       print(filtering_images,'Filtered Collection');
+var images_ids_list = filtering_images.toList(filtering_images.size());
+var tile_4 = ee.Image(images_ids_list.get(4));
+var tile_5 = ee.Image(images_ids_list.get(5));
