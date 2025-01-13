@@ -44,6 +44,8 @@ var sentinel2 = ee
   .sort('system:time_start', false); // Urutkan dari yang terbaru
 print(sentinel2)
 Map.centerObject(roi,12)
+var images_ids_list = sentinel2.toList(sentinel2.size());
+print(images_ids_list)
 
 var sentinel2 = ee.Image('COPERNICUS/S2_SR_HARMONIZED/20241029T023821_20241029T025815_T49MDN');
 Map.addLayer(sentinel2, {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000}, 'sentinel2');
