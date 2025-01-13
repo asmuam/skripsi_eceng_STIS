@@ -2171,6 +2171,19 @@ function maskS2clouds(image) {
   var maskedImage = image.updateMask(mask).divide(10000)
   return maskedImage.copyProperties(image, image.propertyNames())
 }
+function findMatchingDates(s1Collection, s2Collection) {
+  // Ambil daftar tanggal dari Sentinel-1 dan Sentinel-2
+  var s1Dates = s1Collection.aggregate_array('system:time_start');
+  var s2Dates = s2Collection.aggregate_array('system:time_start');
+  // Ubah ke format tanggal untuk pencocokan
+  s1Dates = s1Dates.map(function(date) { return ee.Date(date).format('YYYY-MM-dd'); });
+  s2Dates = s2Dates.map(function(date) { return ee.Date(date).format('YYYY-MM-dd'); });
+  // Temukan irisan antara dua koleksi berdasarkan tanggal
+  var commonDates = s1Dates.filter(ee.Filter.inList('item', s2Dates));
+    // Urutkan tanggal berdasarkan yang terbaru
+  commonDates = commonDates.sort();
+  return commonDates;
+}
 // Tentukan tanggal tetap untuk citra (20 Juni 2024)
 var targetDate = ee.Date('2023-08-16')
 var range = 10000
@@ -2190,19 +2203,6 @@ var sentinel1 = ee
 // Fungsi untuk mencocokkan citra berdasarkan tanggal
 print(sentinel2.toList(sentinel2.size()));
 print(sentinel1.toList(sentinel1.size()));
-function findMatchingDates(s1Collection, s2Collection) {
-  // Ambil daftar tanggal dari Sentinel-1 dan Sentinel-2
-  var s1Dates = s1Collection.aggregate_array('system:time_start');
-  var s2Dates = s2Collection.aggregate_array('system:time_start');
-  // Ubah ke format tanggal untuk pencocokan
-  s1Dates = s1Dates.map(function(date) { return ee.Date(date).format('YYYY-MM-dd'); });
-  s2Dates = s2Dates.map(function(date) { return ee.Date(date).format('YYYY-MM-dd'); });
-  // Temukan irisan antara dua koleksi berdasarkan tanggal
-  var commonDates = s1Dates.filter(ee.Filter.inList('item', s2Dates));
-    // Urutkan tanggal berdasarkan yang terbaru
-  commonDates = commonDates.sort();
-  return commonDates;
-}
 // Contoh penggunaan fungsi dengan koleksi S1 dan S2
 var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Ambil citra pertama dalam koleksi setelah filter
