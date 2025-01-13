@@ -8,5 +8,6 @@ var filtering_images = sentinel2_l2A.filterBounds(ROI)
 var images_ids_list = filtering_images.toList(filtering_images.size());
 var tile_4 = ee.Image(images_ids_list.get(4));
 var tile_5 = ee.Image(images_ids_list.get(5));
-Map.addLayer(tile_4,{min:250, max: 2500, bands:['B4','B3','B2']}, 'Sentinel-2 Image Clipped',false);
+Map.addLayer(tile_5,{min:250, max: 2500, bands:['B4','B3','B2']}, '5',true);
+Map.addLayer(tile_4,{min:250, max: 2500, bands:['B4','B3','B2']}, '4',true);
 Map.centerObject(tile_4,12)
