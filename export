@@ -2188,6 +2188,8 @@ var sentinel1 = ee
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
 // Fungsi untuk mencocokkan citra berdasarkan tanggal
+print(sentinel2.toList(sentinel2.size()));
+print(sentinel1.toList(sentinel1.size()));
 function findMatchingDates(s1Collection, s2Collection) {
   // Ambil daftar tanggal dari Sentinel-1 dan Sentinel-2
   var s1Dates = s1Collection.aggregate_array('system:time_start');
