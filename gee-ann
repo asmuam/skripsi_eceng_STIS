@@ -1,17 +1,13 @@
-// Webinar Part 1 - Data Filtering and Exporting for TF
-var ROI = ee.FeatureCollection('projects/ee-muddasir-shah/assets/islamabad');
-var sentinel2_l2A = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED");
-var filtering_images = sentinel2_l2A.filterBounds(ROI)
-                      .filterDate('2023-05-01','2023-05-31')
-                      .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',5));
-                      print(filtering_images,'Filtered Collection');
-var images_ids_list = filtering_images.toList(filtering_images.size());
-var tile_4 = ee.Image(images_ids_list.get(4));
-var tile_5 = ee.Image(images_ids_list.get(5));
-Map.addLayer(tile_5,{min:250, max: 2500, bands:['B4','B3','B2']}, '5');
-Map.addLayer(tile_4,{min:250, max: 2500, bands:['B4','B3','B2']}, '4');
-Map.centerObject(tile_4,12)
-
+var roi = 
+    /* color: #d6c6c6 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[110.4075018622231, -7.316750824882465],
+          [110.46209018009229, -7.316750824882469],
+          [110.4620901800923, -7.2614117383033845],
+          [110.40750186222311, -7.26141173830338],
+          [110.4075018622231, -7.316750824882465]]])
+          
 function getClosestImage(collection, targetDate) {
   return collection
     .map(function (image) {
@@ -41,8 +37,9 @@ var range = 10000
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-  .filterBounds(roi)
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30)) // Filter untuk awan rendah
   .filterDate('2025-01-01', '2025-12-31') // Filter untuk tanggal terbaru
   .map(maskS2clouds)
   .sort('system:time_start', false); // Urutkan dari yang terbaru
+
+Map.centerObject(roi,12)
