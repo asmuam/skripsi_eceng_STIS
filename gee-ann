@@ -37,9 +37,11 @@ var range = 10000
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterBounds(roi)
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30)) // Filter untuk awan rendah
   .filterDate('2025-01-01', '2025-12-31') // Filter untuk tanggal terbaru
   .map(maskS2clouds)
   .sort('system:time_start', false); // Urutkan dari yang terbaru
 
+Map.addLayer(sentinel2,{min:250, max: 2500, bands:['B4','B3','B2']}, 'Sentinel-2 Image Clipped',false);
 Map.centerObject(roi,12)
