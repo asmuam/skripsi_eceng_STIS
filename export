@@ -2167,10 +2167,10 @@ function maskS2clouds(image) {
     .bitwiseAnd(cloudBitMask)
     .eq(0)
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0))
-
   var maskedImage = image.updateMask(mask).divide(10000)
   return maskedImage.copyProperties(image, image.propertyNames())
 }
+// Fungsi untuk mencocokkan citra berdasarkan tanggal
 function findMatchingDates(s1Collection, s2Collection) {
   // Ambil daftar tanggal dari Sentinel-1 dan Sentinel-2
   var s1Dates = s1Collection.aggregate_array('system:time_start');
@@ -2200,9 +2200,6 @@ var sentinel1 = ee
   .ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-// Fungsi untuk mencocokkan citra berdasarkan tanggal
-print(sentinel2.toList(sentinel2.size()));
-print(sentinel1.toList(sentinel1.size()));
 // Contoh penggunaan fungsi dengan koleksi S1 dan S2
 var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Ambil citra pertama dalam koleksi setelah filter
@@ -2459,8 +2456,10 @@ var imageExportOptions = {
   compressed: true,
 }
 // Cetak hasil ke konsol
-print('Sentinel-2 (RGB) 20 Juni 2024:', image_sen2)
-print('Sentinel-1 VV 20 Juni 2024:', image_sen1)
+print(sentinel2.toList(sentinel2.size()));
+print(sentinel1.toList(sentinel1.size()));
+print('Sentinel-2 (RGB) 16 Ags 2023:', image_sen2)
+print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 print(sampled)
 print(training_sample)
 print(test_sample)
