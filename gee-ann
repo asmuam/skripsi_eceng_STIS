@@ -1,0 +1,7 @@
+// Webinar Part 1 - Data Filtering and Exporting for TF
+var ROI = ee.FeatureCollection('projects/ee-muddasir-shah/assets/islamabad');
+var sentinel2_l2A = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED");
+var filtering_images = sentinel2_l2A.filterBounds(ROI)
+                      .filterDate('2023-05-01','2023-05-31')
+                      .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',5));
+                      print(filtering_images,'Filtered Collection');
