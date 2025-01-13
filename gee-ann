@@ -42,6 +42,6 @@ var sentinel2 = ee
   .filterDate('2025-01-01', '2025-12-31') // Filter untuk tanggal terbaru
   .map(maskS2clouds)
   .sort('system:time_start', false); // Urutkan dari yang terbaru
-
-Map.addLayer(sentinel2,{min:250, max: 2500, bands:['B4','B3','B2']}, 'Sentinel-2 Image Clipped',false);
+print(sentinel2)
+Map.addLayer(sentinel2,{min:250, max: 2500, bands:['B4','B3','B2']}, 'Sentinel-2');
 Map.centerObject(roi,12)
