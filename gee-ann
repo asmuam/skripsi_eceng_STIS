@@ -39,7 +39,7 @@ var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30)) // Filter untuk awan rendah
-  .filterDate('2024-12-01', '2025-12-31') // Filter untuk tanggal terbaru
+  .filterDate('2024-11-01', '2025-12-31') // Filter untuk tanggal terbaru
   .map(maskS2clouds)
   .sort('system:time_start', false); // Urutkan dari yang terbaru
 print(sentinel2)
