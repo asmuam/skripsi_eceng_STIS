@@ -2192,7 +2192,7 @@ var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 50)) // Filter untuk awan rendah
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 70)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
@@ -2488,19 +2488,9 @@ Map.addLayer(
   'Sentinel-2 (RGB) 16 Ags 2023'
 )
 Map.addLayer(
-  image_sen2.clip(roi),
-  { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
-  'Sentinel-2 (RGB) 16 Ags 2023'
-)
-Map.addLayer(
   image_sen1.clip(roi),
   { bands: ['VV'], min: -30, max: 5 },
   'Sentinel-1 VV 20 Juni 2024'
-)
-Map.addLayer(
-  image_sen1.clip(roi),
-  { bands: ['VH'], min: -30, max: 5 },
-  'Sentinel-1 VH 20 Juni 2024'
 )
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
