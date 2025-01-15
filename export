@@ -2449,6 +2449,10 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   scale: 10, // Skala pengambilan sampel
   geometries: true, // Menyertakan geometri
 });
+// Buat variabel untuk data pelatihan 
+var training_sample = sampled.filter(ee.Filter.eq('sample', 'train')); 
+// Buat variabel untuk data pengujian 
+var test_sample = sampled.filter(ee.Filter.eq('sample', 'test'));
 // Hitung jumlah piksel dalam area
 var pixelCount = roi.area().divide(10 * 10);
 // Cetak hasil ke konsol
@@ -2458,6 +2462,8 @@ print(sentinel1.toList(sentinel1.size()));
 print('Sentinel-2:', image_sen2)
 print('Sentinel-1:', image_sen1)
 print(sampled)
+print(training_sample)
+print(test_sample)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
