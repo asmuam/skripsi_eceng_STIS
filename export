@@ -2515,11 +2515,23 @@ Export.table.toAsset({
   description: 'test_asset', // Nama deskripsi untuk ekspor
   assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
 })
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 () ke drive
 Export.image.toDrive({
   image: combinedImage.clip(roi), // Citra yang akan diekspor
   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
   fileNamePrefix: 'rawa_pening_image',
+  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+  region: roi, // Wilayah (ROI) tempat citra akan dipotong
+  scale: 10, // Skala dalam meter
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+})
+Export.image.toDrive({
+  image: sampled.clip(roi), // Citra yang akan diekspor
+  description: 'rawa_pening_lc_drive', // Nama deskripsi untuk ekspor
+  fileNamePrefix: 'rawa_pening_lc',
   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
   region: roi, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
