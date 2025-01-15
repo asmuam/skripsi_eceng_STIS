@@ -2442,8 +2442,6 @@ var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
   var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
   return train.merge(test);
 })).flatten();
-var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
-var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
 // Training data dari citra gabungan
 var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: stratifiedSample,
@@ -2460,8 +2458,6 @@ print(sentinel1.toList(sentinel1.size()));
 print('Sentinel-2:', image_sen2)
 print('Sentinel-1:', image_sen1)
 print(sampled)
-print(training_sample)
-print(test_sample)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
