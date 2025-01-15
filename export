@@ -8,10 +8,7 @@ var roi =
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
-    eceng = 
-    /* color: #98ff00 */
-    /* shown: false */
-    ee.FeatureCollection(
+    eceng = /* color: #98ff00 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.45114010081181, -7.286163561448659]),
             {
@@ -612,10 +609,7 @@ var roi =
               "landcover": 0,
               "system:index": "99"
             })]),
-    bukan_eceng = 
-    /* color: #0b4a8b */
-    /* shown: false */
-    ee.FeatureCollection(
+    bukan_eceng = /* color: #0b4a8b */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.42809316826072, -7.298160720906401]),
             {
@@ -2185,7 +2179,7 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 // Tentukan tanggal tetap untuk citra (16 Ags 2023)
-var targetDate = ee.Date('2023-08-16')
+var targetDate = ee.Date('2024-06-20')
 var range = 20
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
