@@ -24,9 +24,9 @@ function maskS2clouds(image) {
 
 // Inisialisasi Google Earth Engine
 var imageCollection = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-  .filterDate('2024-07-01', '2024-07-02') // Filter berdasarkan tanggal
+  .filterDate('2024-07-01', '2024-07-31') // Filter berdasarkan tanggal
   .filterBounds(roi) // Filter berdasarkan wilayah
-  .map(maskS2clouds)
+  // .map(maskS2clouds)
 // Ambil citra dengan awan paling sedikit
 var image = imageCollection.sort('CLOUDY_PIXEL_PERCENTAGE').first();
 
@@ -36,4 +36,3 @@ var clippedImage = image.clip(roi);
 // Tambahkan layer ke peta
 Map.centerObject(roi, 10);
 Map.addLayer(clippedImage, {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000}, 'Sentinel-2 Image');
-Map.addLayer(roi, {}, 'ROI');
