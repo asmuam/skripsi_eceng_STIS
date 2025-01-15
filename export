@@ -2205,8 +2205,6 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate)
 var image_sen1 = getClosestImage(sentinel1, targetDate)
-// Menggabungkan Kelas
-var classNames = eceng.merge(bukan_eceng)
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
@@ -2438,23 +2436,30 @@ var sen1_bands = ['VV', 'VH']
 var combinedImage = image_sen2.addBands(image_sen1);
 // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
 var combinedBands = sen2_bands.concat(sen1_bands);
-// Training data dari citra gabungan
-var sampled = combinedImage.select(combinedBands).sampleRegions({
-  collection: classNames, // Ini harus sesuai dengan shapefile atau koleksi titik untuk klasifikasi
-  properties: ['landcover'], // Atribut target, seperti tipe tutupan lahan
-  scale: 10, // Skala pengambilan sampel
-  geometries: true, // Menyertakan geometri
-});
+// Menggabungkan Kelas
+var classNames = eceng.merge(bukan_eceng);
+// dengan buffer
+// var classNames = eceng.merge(bukan_eceng).map(function(feat) { return feat.buffer(30); });
 // Stratified sampling
-var classValues = sampled.aggregate_array('landcover').distinct();
+var classValues = classNames.aggregate_array('landcover').distinct();
 var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
-  var features = sampled.filter(ee.Filter.eq('landcover', value)).randomColumn();
+  var features = classNames.filter(ee.Filter.eq('landcover', value)).randomColumn();
   var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
   var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
   return train.merge(test);
 })).flatten();
 var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
 var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
+// Training data dari citra gabungan
+var sampled = combinedImage.select(combinedBands).sampleRegions({
+  collection: stratifiedSample,
+  properties: ['landcover', 'sample'], // Atribut target, seperti tipe tutupan lahan
+  scale: 10, // Skala pengambilan sampel
+  geometries: true, // Menyertakan geometri
+});
+// Extract train and test samples
+var train = sampled.filter(ee.Filter.eq('sample', 'train'));
+var test = sampled.filter(ee.Filter.eq('sample', 'test'));
 // Exporting the image in small patches
 // Export Image Patches
 var imageExportOptions = {
@@ -2473,8 +2478,8 @@ print(test_sample)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples 
-print('Training sample size:', training_sample.size()); 
-print('Testing sample size:', test_sample.size());
+print('Test sample size:', test.size());
+print('Train sample size:', train.size());
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
