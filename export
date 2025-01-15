@@ -2460,14 +2460,10 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 // Extract train and test samples
 var train = sampled.filter(ee.Filter.eq('sample', 'train'));
 var test = sampled.filter(ee.Filter.eq('sample', 'test'));
-// Exporting the image in small patches
-// Export Image Patches
-var imageExportOptions = {
-  patchDimensions: [64, 64],
-  maxFileSize: 104857600,
-  compressed: true,
-}
+// Hitung jumlah piksel dalam area
+var pixelCount = roi.area().divide(scale * scale);
 // Cetak hasil ke konsol
+print('Jumlah Piksel:', pixelCount);
 print(sentinel2.toList(sentinel2.size()));
 print(sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 16 Ags 2023:', image_sen2)
@@ -2509,22 +2505,6 @@ Map.addLayer(
   { bands: ['VH'], min: -30, max: 5 },
   'Sentinel-1 VH 20 Juni 2024'
 )
-// Ekspor data training gabungan ke drive dalam bentuk tfr
-Export.table.toDrive({
-  collection: training_sample, // FeatureCollection yang ingin disimpan
-  description: 'tfr_train_drive', // Nama deskripsi untuk ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  fileFormat: 'TFRecord',
-  fileNamePrefix: 'data_training',
-})
-// Ekspor data test gabungan ke drive dalam bentuk tfr
-Export.table.toDrive({
-  collection: test_sample, // FeatureCollection yang ingin disimpan
-  description: 'tfr_test_drive', // Nama deskripsi untuk ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  fileFormat: 'TFRecord',
-  fileNamePrefix: 'data_test',
-})
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: training_sample, // FeatureCollection yang ingin disimpan
@@ -2562,8 +2542,10 @@ Export.image.toDrive({
   region: roi, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
   maxPixels: 1e9, // Batasan jumlah piksel yang akan diekspor
-  fileFormat: 'TFRecord',
-  formatOptions: imageExportOptions,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
 })
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
