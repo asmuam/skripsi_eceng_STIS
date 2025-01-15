@@ -2475,7 +2475,7 @@ classValues.evaluate(function(values) {
   values.forEach(function(value) { 
     var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size().getInfo(); 
     var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size().getInfo(); 
-    print('value:', value, 'train:', trainSize, 'test:', testSize); 
+    print('lc:', value, 'train:', trainSize, 'test:', testSize); 
   }); 
 });
 // Pusatkan peta ke koordinat tersebut
