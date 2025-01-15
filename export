@@ -2477,9 +2477,15 @@ print(training_sample)
 print(test_sample)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
-// Print the sizes of the training and testing samples 
-print('Test sample size:', test.size());
-print('Train sample size:', train.size());
+// Print the sizes of the training and testing samples per class 
+classValues.evaluate(function(values) { 
+  values.forEach(function(value) { 
+    var trainSize = train.filter(ee.Filter.eq('landcover', value)).size(); 
+    var testSize = test.filter(ee.Filter.eq('landcover', value)).size(); 
+    print('Class:', value, 'Train sample size:', trainSize); 
+    print('Class:', value, 'Test sample size:', testSize); }); 
+  
+});
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
