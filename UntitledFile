@@ -10,7 +10,12 @@ var roi =
           [110.4075018622231, -7.316750824882465]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Inisialisasi Google Earth Engine
-var image = ee.Image('COPERNICUS/S2_SR/20210701T030541_20210701T030537_T48MYT');
+var imageCollection = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterDate('2024-07-01', '2024-07-02') // Filter berdasarkan tanggal
+  .filterBounds(roi) // Filter berdasarkan wilayah
+
+// Ambil citra dengan awan paling sedikit
+var image = imageCollection.sort('CLOUDY_PIXEL_PERCENTAGE').first();
 
 // Klip gambar ke ROI
 var clippedImage = image.clip(roi);
