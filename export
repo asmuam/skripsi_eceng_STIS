@@ -2147,7 +2147,7 @@ var roi =
               "system:index": "254"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Fungsi untuk mendapatkan citra dengan tanggal paling dekat
+// Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
   return collection
     .map(function (image) {
@@ -2435,19 +2435,26 @@ var sen2_bands = [
 ]
 var sen1_bands = ['VV', 'VH']
 // Gabungkan citra Sentinel-1 dan Sentinel-2
-var combinedImage = image_sen2.addBands(image_sen1)
-// Membuat dataframe untuk training dengan variabel X dan Y
-var combinedBands = sen2_bands.concat(sen1_bands) // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
+var combinedImage = image_sen2.addBands(image_sen1);
+// Gabungkan band-band dari Sentinel-2 dan Sentinel-1
+var combinedBands = sen2_bands.concat(sen1_bands);
 // Training data dari citra gabungan
 var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: classNames, // Ini harus sesuai dengan shapefile atau koleksi titik untuk klasifikasi
   properties: ['landcover'], // Atribut target, seperti tipe tutupan lahan
   scale: 10, // Skala pengambilan sampel
   geometries: true, // Menyertakan geometri
-})
-var random_column = sampled.randomColumn()
-var training_sample = random_column.filter(ee.Filter.gte('random', 0.2)) // 80%
-var test_sample = random_column.filter(ee.Filter.lte('random', 0.2)) // 20%
+});
+// Stratified sampling
+var classValues = sampled.aggregate_array('landcover').distinct();
+var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
+  var features = sampled.filter(ee.Filter.eq('landcover', value)).randomColumn();
+  var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
+  var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
+  return train.merge(test);
+})).flatten();
+var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
+var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
 // Exporting the image in small patches
 // Export Image Patches
 var imageExportOptions = {
@@ -2465,6 +2472,9 @@ print(training_sample)
 print(test_sample)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
+// Print the sizes of the training and testing samples 
+print('Training sample size:', training_sample.size()); 
+print('Testing sample size:', test_sample.size());
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
