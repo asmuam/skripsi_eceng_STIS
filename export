@@ -2471,6 +2471,8 @@ print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 print(sampled)
 print(training_sample)
 print(test_sample)
+print(train)
+print(test)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
