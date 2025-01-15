@@ -1,0 +1,21 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = 
+    /* color: #d6c6c6 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[110.4075018622231, -7.316750824882465],
+          [110.46209018009229, -7.316750824882469],
+          [110.4620901800923, -7.2614117383033845],
+          [110.40750186222311, -7.26141173830338],
+          [110.4075018622231, -7.316750824882465]]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Inisialisasi Google Earth Engine
+var image = ee.Image('COPERNICUS/S2_SR/20210701T030541_20210701T030537_T48MYT');
+
+// Klip gambar ke ROI
+var clippedImage = image.clip(roi);
+
+// Tambahkan layer ke peta
+Map.centerObject(roi, 10);
+Map.addLayer(clippedImage, {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000}, 'Sentinel-2 Image');
+Map.addLayer(roi, {}, 'ROI');
