@@ -2185,7 +2185,7 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 // Tentukan tanggal tetap untuk citra (16 Ags 2023)
-var targetDate = ee.Date('2024-07-16')
+var targetDate = ee.Date('2024-07-01')
 var range = 20
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
