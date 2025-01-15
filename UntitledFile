@@ -9,11 +9,24 @@ var roi =
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Fungsi untuk masking cloud Sentinel-2 dengan mempertahankan properti awal
+function maskS2clouds(image) {
+  var qa = image.select('QA60')
+  var cloudBitMask = 1 << 10
+  var cirrusBitMask = 1 << 11
+  var mask = qa
+    .bitwiseAnd(cloudBitMask)
+    .eq(0)
+    .and(qa.bitwiseAnd(cirrusBitMask).eq(0))
+  var maskedImage = image.updateMask(mask).divide(10000)
+  return maskedImage.copyProperties(image, image.propertyNames())
+}
+
 // Inisialisasi Google Earth Engine
 var imageCollection = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterDate('2024-07-01', '2024-07-02') // Filter berdasarkan tanggal
   .filterBounds(roi) // Filter berdasarkan wilayah
-
+  .mas
 // Ambil citra dengan awan paling sedikit
 var image = imageCollection.sort('CLOUDY_PIXEL_PERCENTAGE').first();
 
