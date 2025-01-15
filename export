@@ -2185,7 +2185,7 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 // Tentukan tanggal tetap untuk citra (16 Ags 2023)
-var targetDate = ee.Date('2024-07-01')
+var targetDate = ee.Date('2024-07-16')
 var range = 20
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
@@ -2488,9 +2488,19 @@ Map.addLayer(
   'Sentinel-2 (RGB) 16 Ags 2023'
 )
 Map.addLayer(
+  image_sen2.clip(roi),
+  { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
+  'Sentinel-2 (RGB) 16 Ags 2023'
+)
+Map.addLayer(
   image_sen1.clip(roi),
   { bands: ['VV'], min: -30, max: 5 },
   'Sentinel-1 VV 20 Juni 2024'
+)
+Map.addLayer(
+  image_sen1.clip(roi),
+  { bands: ['VH'], min: -30, max: 5 },
+  'Sentinel-1 VH 20 Juni 2024'
 )
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
@@ -2541,3 +2551,6 @@ Export.image.toAsset({
   region: roi, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
+
+// Cetak sistem indeks dari setiap fitur dalam koleksi
+eceng.aggregate_array('system:index').getInfo();
