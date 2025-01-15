@@ -2461,7 +2461,7 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 var train = sampled.filter(ee.Filter.eq('sample', 'train'));
 var test = sampled.filter(ee.Filter.eq('sample', 'test'));
 // Hitung jumlah piksel dalam area
-var pixelCount = roi.area().divide(10 * scale);
+var pixelCount = roi.area().divide(10 * 10);
 // Cetak hasil ke konsol
 print('Jumlah Piksel:', pixelCount);
 print(sentinel2.toList(sentinel2.size()));
