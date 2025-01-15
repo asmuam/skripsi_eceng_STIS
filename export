@@ -2501,18 +2501,18 @@ Export.table.toDrive({
   fileFormat: 'csv',
   fileNamePrefix: 'data_test',
 })
-// Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
-Export.table.toAsset({
-  collection: training_sample, // FeatureCollection yang ingin disimpan
-  description: 'train_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
-})
-// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
-Export.table.toAsset({
-  collection: test_sample, // FeatureCollection yang ingin disimpan
-  description: 'test_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
-})
+// // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Export.table.toAsset({
+//   collection: training_sample, // FeatureCollection yang ingin disimpan
+//   description: 'train_asset', // Nama deskripsi untuk ekspor
+//   assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
+// })
+// // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Export.table.toAsset({
+//   collection: test_sample, // FeatureCollection yang ingin disimpan
+//   description: 'test_asset', // Nama deskripsi untuk ekspor
+//   assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
+// })
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
 Export.image.toDrive({
   image: combinedImage.clip(roi), // Citra yang akan diekspor
@@ -2526,11 +2526,11 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 })
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
-Export.image.toAsset({
-  image: combinedImage.clip(roi), // Citra yang akan diekspor
-  description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
-  region: roi, // Wilayah (ROI) tempat citra akan dipotong
-  scale: 10, // Skala dalam meter
-})
+// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
+// Export.image.toAsset({
+//   image: combinedImage.clip(roi), // Citra yang akan diekspor
+//   description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
+//   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
+//   region: roi, // Wilayah (ROI) tempat citra akan dipotong
+//   scale: 10, // Skala dalam meter
+// })
