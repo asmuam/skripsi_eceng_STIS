@@ -2475,7 +2475,7 @@ classValues.evaluate(function(values) {
   values.forEach(function(value) { 
     var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size(); 
     var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size(); 
-    print(value, trainSize,); 
+    print(value, trainSize); 
     print(value, testSize); 
     
   }); 
