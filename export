@@ -2541,7 +2541,6 @@ Export.image.toDrive({
   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
   region: roi, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
-  maxPixels: 1e9, // Batasan jumlah piksel yang akan diekspor
   fileFormat: 'GeoTIFF',
   formatOptions: {
     cloudOptimized: true
@@ -2554,5 +2553,4 @@ Export.image.toAsset({
   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
   region: roi, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
-  maxPixels: 1e9, // Batasan jumlah piksel yang akan diekspor
 })
