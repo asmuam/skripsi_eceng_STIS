@@ -7,7 +7,8 @@ var roi =
           [110.46209018009229, -7.316750824882469],
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
-          [110.4075018622231, -7.316750824882465]]]);
+          [110.4075018622231, -7.316750824882465]]]),
+    image = ee.Image("users/222111840/LC_Image_v1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk masking cloud Sentinel-2 dengan mempertahankan properti awal
 function maskS2clouds(image) {
@@ -34,5 +35,5 @@ var image = imageCollection.sort('CLOUDY_PIXEL_PERCENTAGE').first();
 var clippedImage = image.clip(roi);
 
 // Tambahkan layer ke peta
-Map.centerObject(roi, 10);
+Map.centerObject(image, 10);
 Map.addLayer(clippedImage, {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000}, 'Sentinel-2 Image');
