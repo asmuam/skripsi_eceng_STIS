@@ -2189,7 +2189,7 @@ var sentinel2 = ee
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
-// Koleksi Sentinel-1 pada tanggal 20 Juni 2024
+// Koleksi Sentinel-1 pada tanggal ()
 var sentinel1 = ee
   .ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
