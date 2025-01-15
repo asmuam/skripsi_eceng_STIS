@@ -2473,13 +2473,10 @@ print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
 classValues.evaluate(function(values) { 
   values.forEach(function(value) { 
-    var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size(); 
-    var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size(); 
-    print(value, trainSize); 
-    print(value, testSize); 
-    
+    var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size().getInfo(); 
+    var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size().getInfo(); 
+    print('value:', value, 'train:', trainSize, 'test:', testSize); 
   }); 
-  
 });
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
