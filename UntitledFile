@@ -63,6 +63,6 @@ Map.addLayer(S2_rgb_26Juli.clip(danau), {min: 0, max: 0.3}, 'S2 RGB 26 Juli 2024
 
 
 // Menampilkan shapefile di peta
-Map.addLayer(shapefile, {}, 'Shapefile');
-Map.centerObject(shapefile);
+Map.addLayer(danau, {}, 'Shapefile');
+Map.centerObject(danau);
 
