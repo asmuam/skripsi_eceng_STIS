@@ -63,6 +63,10 @@ Map.addLayer(S2_rgb_26Juli.clip(danau), {min: 0, max: 0.3}, 'S2 RGB 26 Juli 2024
 Map.addLayer(danau, {color: 'FF0000'}, 'Shapefile Batas Danau'); // Menambahkan shapefile dengan warna merah
 Map.centerObject(danau); // Memusatkan peta ke shapefile
 
-// Cek apakah shapefile memiliki area yang valid
-print('Shapefile geometries:', danau.geometryType()); // Memeriksa tipe geometri dari shapefile
-print('Shapefile area:', danau.area()); // Memeriksa luas area dari shapefile
+// Memeriksa tipe geometri dari shapefile (polygon)
+var geometryType = danau.first().geometry().type(); // Mengambil tipe geometri dari elemen pertama
+print('Tipe geometri shapefile:', geometryType);
+
+// Memeriksa luas area dari shapefile
+var area = danau.area(); // Menghitung luas area
+print('Luas area shapefile (meter persegi):', area);
