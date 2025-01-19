@@ -2185,14 +2185,14 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 // Tentukan tanggal tetap untuk citra ()
-var targetDate = ee.Date('2024-08-10')
-var range = 30
+var targetDate = ee.Date('2024-10-29')
+var range = 100
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)) // Filter untuk awan rendah
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
