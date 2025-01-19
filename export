@@ -2460,7 +2460,7 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   geometries: true, // Menyertakan geometri
 });
 // Hitung jumlah piksel dalam area
-var pixelCount = roi.area().divide(10 * 10);
+var pixelCount = danau.area().divide(10 * 10);
 // Cetak hasil ke konsol
 print('Jumlah Piksel:', pixelCount);
 print(sentinel2.toList(sentinel2.size()));
