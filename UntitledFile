@@ -1,8 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #d6c6c6 */
-    /* shown: false */
-    ee.Geometry.Polygon(
+var roi = /* color: #d6c6c6 */ee.Geometry.Polygon(
         [[[110.4075018622231, -7.316750824882465],
           [110.46209018009229, -7.316750824882469],
           [110.4620901800923, -7.2614117383033845],
@@ -64,3 +61,6 @@ var danau = roi.difference(shapefile.geometry());
 // Tampilkan hasil di peta
 Map.addLayer(danau, {color: 'blue'}, 'Danau');
 Map.centerObject(danau);
+
+// Menampilkan shapefile di peta
+Map.addLayer(shapefile, {}, 'Shapefile');
