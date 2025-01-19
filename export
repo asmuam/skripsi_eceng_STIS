@@ -1,14 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #d6c6c6 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[110.4075018622231, -7.316750824882465],
-          [110.46209018009229, -7.316750824882469],
-          [110.4620901800923, -7.2614117383033845],
-          [110.40750186222311, -7.26141173830338],
-          [110.4075018622231, -7.316750824882465]]]),
-    eceng = 
+var eceng = 
     /* color: #98ff00 */
     /* shown: false */
     ee.FeatureCollection(
@@ -2145,7 +2136,16 @@ var roi =
             {
               "landcover": 1,
               "system:index": "254"
-            })]);
+            })]),
+    roi = 
+    /* color: #ff9797 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[110.40784518497604, -7.261173849220073],
+          [110.40784518497604, -7.313959002794661],
+          [110.45934359806198, -7.313959002794661],
+          [110.45934359806198, -7.261173849220073]]], null, false),
+    shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
@@ -2184,6 +2184,8 @@ function findMatchingDates(s1Collection, s2Collection) {
   commonDates = commonDates.sort();
   return commonDates;
 }
+// daerah danau
+var danau = roi.difference(shapefile.geometry(), ee.ErrorMargin(1));
 // Tentukan tanggal tetap untuk citra ()
 var targetDate = ee.Date('2024-10-29')
 var range = 100
@@ -2483,17 +2485,17 @@ classValues.evaluate(function(values) {
 Map.centerObject(roi, 14)
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
 Map.addLayer(
-  image_sen2.clip(roi),
+  image_sen2.clip(danau),
   { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
   'Sentinel-2 (RGB) 16 Ags 2023'
 )
 Map.addLayer(
-  image_sen1.clip(roi),
+  image_sen1.clip(danau),
   { bands: ['VV'], min: -30, max: 5 },
   'Sentinel-1 VV 20 Juni 2024'
 )
 Map.addLayer(
-  image_sen1.clip(roi),
+  image_sen1.clip(danau),
   { bands: ['VH'], min: -30, max: 5 },
   'Sentinel-1 VH 20 Juni 2024'
 )
@@ -2527,11 +2529,11 @@ Export.table.toAsset({
 })
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
 Export.image.toDrive({
-  image: combinedImage.clip(roi), // Citra yang akan diekspor
+  image: combinedImage.clip(danau), // Citra yang akan diekspor
   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
   fileNamePrefix: 'rawa_pening_image',
   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  region: roi, // Wilayah (ROI) tempat citra akan dipotong
+  region: danau, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
   fileFormat: 'GeoTIFF',
   formatOptions: {
@@ -2540,9 +2542,9 @@ Export.image.toDrive({
 })
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
-  image: combinedImage.clip(roi), // Citra yang akan diekspor
+  image: combinedImage.clip(danau), // Citra yang akan diekspor
   description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
-  region: roi, // Wilayah (ROI) tempat citra akan dipotong
+  region: danau, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
