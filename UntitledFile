@@ -12,7 +12,6 @@ var roi =
           [110.40784518497604, -7.313959002794661],
           [110.45934359806198, -7.313959002794661],
           [110.45934359806198, -7.261173849220073]]], null, false),
-    image = ee.Image("users/222111840/LC_Image_v1"),
     shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk masking cloud Sentinel-2 dengan mempertahankan properti awal
