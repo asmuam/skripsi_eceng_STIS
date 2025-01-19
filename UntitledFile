@@ -59,11 +59,6 @@ var S2_26_Juli_2024 = ee.Image(imageCollectionS2.toList(imageCollectionS2.size()
 var S2_rgb_26Juli = S2_26_Juli_2024.select(['B4', 'B3', 'B2']);
 Map.addLayer(S2_rgb_26Juli.clip(danau), {min: 0, max: 0.3}, 'S2 RGB 26 Juli 2024');
 
-// Menambahkan layer shapefile dan memeriksa jika geometrinya valid
-Map.addLayer(danau, {color: 'FF0000'}, 'Shapefile Batas Danau'); // Menambahkan shapefile dengan warna merah
-Map.centerObject(danau); // Memusatkan peta ke shapefile
-
-// Dapatkan wilayah danau dengan mengurangi batas danau dari poligon wilayah
 var danau = roi.difference(shapefile.geometry());
 
 // Tampilkan hasil di peta
