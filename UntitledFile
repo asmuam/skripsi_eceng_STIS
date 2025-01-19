@@ -8,7 +8,9 @@ var roi =
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
-    image = ee.Image("users/222111840/LC_Image_v1");
+    image = ee.Image("users/222111840/LC_Image_v1"),
+    table = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening"),
+    shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk masking cloud Sentinel-2 dengan mempertahankan properti awal
 function maskS2clouds(image) {
@@ -39,3 +41,25 @@ var imageCollectionS1 = ee.ImageCollection('COPERNICUS/S1_GRD')
 
 print(imageCollectionS1)
 print(imageCollectionS2)
+
+// Menampilkan citra Sentinel-1 dengan polarisasi VV (single-band)
+var S1_25_Juli_2024 = ee.Image(imageCollectionS1.toList(imageCollectionS1.size()).get(4)); // Ambil citra ke-5 (indeks 4)
+var S1_VV = S1_25_Juli_2024.select('VV'); // Band 'VV' untuk polarisasi Vertical-Vertical
+Map.addLayer(S1_VV.clip(shapefile), {min: -30, max: 5, palette: ['blue', 'green', 'red']}, 'S1 VV 25 Juli 2024');
+
+// Menampilkan citra Sentinel-2 RGB (Red, Green, Blue)
+var S2_21_Juli_2024 = ee.Image(imageCollectionS2.toList(imageCollectionS2.size()).get(3)); // Ambil citra ke-4 (indeks 3)
+var S2_rgb = S2_21_Juli_2024.select(['B4', 'B3', 'B2']); // Band 4 = Red, Band 3 = Green, Band 2 = Blue
+Map.addLayer(S2_rgb.clip(shapefile), {min: 0, max: 0.3}, 'S2 RGB 21 Juli 2024'); // Normalisasi nilai citra untuk visualisasi
+
+// Menampilkan citra Sentinel-2 RGB untuk citra lainnya
+var S2_26_Juli_2024 = ee.Image(imageCollectionS2.toList(imageCollectionS2.size()).get(5)); // Ambil citra ke-6 (indeks 5)
+var S2_rgb_26Juli = S2_26_Juli_2024.select(['B4', 'B3', 'B2']);
+Map.addLayer(S2_rgb_26Juli.clip(shapefile), {min: 0, max: 0.3}, 'S2 RGB 26 Juli 2024');
+
+// Mengimpor shapefile sebagai FeatureCollection
+
+
+// Menampilkan shapefile di peta
+Map.addLayer(shapefile, {}, 'Shapefile');
+Map.centerObject(shapefile);
