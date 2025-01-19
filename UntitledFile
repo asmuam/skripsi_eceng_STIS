@@ -67,7 +67,7 @@ Map.addLayer(S2_rgb_26Juli.clip(danau), {min: 0, max: 0.3}, 'S2 RGB 26 Juli 2024
 // Menampilkan shapefile di peta
 Map.addLayer(shapefile, {}, 'Shapefile');
 
-var danau = wilayah.difference(batasDanau.geometry(), ee.ErrorMargin(1));
+var danau = roi.difference(shapefile.geometry(), ee.ErrorMargin(1));
 
 // Tampilkan hasil di peta
 Map.addLayer(danau, {color: 'blue'}, 'Danau');
