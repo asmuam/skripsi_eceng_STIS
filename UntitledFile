@@ -1,10 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = /* color: #d6c6c6 */ee.Geometry.Polygon(
-        [[[110.4075018622231, -7.316750824882465],
-          [110.46209018009229, -7.316750824882469],
-          [110.4620901800923, -7.2614117383033845],
-          [110.40750186222311, -7.26141173830338],
-          [110.4075018622231, -7.316750824882465]]]),
+var roi = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[110.4109350897612, -7.263046977101489],
+          [110.4109350897612, -7.312596883543346],
+          [110.45865695255416, -7.312596883543346],
+          [110.45865695255416, -7.263046977101489]]], null, false),
     image = ee.Image("users/222111840/LC_Image_v1"),
     shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
