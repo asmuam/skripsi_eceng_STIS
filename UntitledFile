@@ -70,4 +70,3 @@ var danau = roi.difference(shapefile.geometry());
 
 // Tampilkan hasil di peta
 Map.addLayer(danau, {color: 'blue'}, 'Danau');
-Map.centerObject(danau);
