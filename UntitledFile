@@ -30,6 +30,6 @@ var imageCollectionS2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .map(maskS2clouds)
 
 
-var imageCollectionS2 = ee.ImageCollection('COPERNICUS/S1_')
+var imageCollectionS2 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate('2024-07-01', '2024-07-31') // Filter berdasarkan tanggal
   .filterBounds(roi) // Filter berdasarkan wilayah
