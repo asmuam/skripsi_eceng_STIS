@@ -8,7 +8,10 @@ var roi =
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
-    eceng = /* color: #98ff00 */ee.FeatureCollection(
+    eceng = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.45114010081181, -7.286163561448659]),
             {
@@ -609,7 +612,10 @@ var roi =
               "landcover": 0,
               "system:index": "99"
             })]),
-    bukan_eceng = /* color: #0b4a8b */ee.FeatureCollection(
+    bukan_eceng = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.42809316826072, -7.298160720906401]),
             {
@@ -2179,17 +2185,17 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 // Tentukan tanggal tetap untuk citra ()
-var targetDate = ee.Date('2024-06-20')
+var targetDate = ee.Date('2024-07-16')
 var range = 20
-// Koleksi Sentinel-2 pada tanggal ()
+// Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 50)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
-// Koleksi Sentinel-1 pada tanggal ()
+// Koleksi Sentinel-1 pada tanggal 20 Juni 2024
 var sentinel1 = ee
   .ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
@@ -2442,6 +2448,8 @@ var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
   var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
   return train.merge(test);
 })).flatten();
+var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
+var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
 // Training data dari citra gabungan
 var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: stratifiedSample,
@@ -2449,18 +2457,14 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   scale: 10, // Skala pengambilan sampel
   geometries: true, // Menyertakan geometri
 });
-// Buat variabel untuk data pelatihan 
-var training_sample = sampled.filter(ee.Filter.eq('sample', 'train')); 
-// Buat variabel untuk data pengujian 
-var test_sample = sampled.filter(ee.Filter.eq('sample', 'test'));
 // Hitung jumlah piksel dalam area
 var pixelCount = roi.area().divide(10 * 10);
 // Cetak hasil ke konsol
 print('Jumlah Piksel:', pixelCount);
 print(sentinel2.toList(sentinel2.size()));
 print(sentinel1.toList(sentinel1.size()));
-print('Sentinel-2:', image_sen2)
-print('Sentinel-1:', image_sen1)
+print('Sentinel-2 (RGB) 16 Ags 2023:', image_sen2)
+print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 print(sampled)
 print(training_sample)
 print(test_sample)
@@ -2469,10 +2473,11 @@ print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
 classValues.evaluate(function(values) { 
   values.forEach(function(value) { 
-    var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size().getInfo(); 
-    var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size().getInfo(); 
-    print('lc:', value, 'train:', trainSize, 'test:', testSize); 
-  }); 
+    var trainSize = train.filter(ee.Filter.eq('landcover', value)).size(); 
+    var testSize = test.filter(ee.Filter.eq('landcover', value)).size(); 
+    print('Class:', value, 'Train sample size:', trainSize); 
+    print('Class:', value, 'Test sample size:', testSize); }); 
+  
 });
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
@@ -2480,12 +2485,22 @@ Map.centerObject(roi, 14)
 Map.addLayer(
   image_sen2.clip(roi),
   { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
-  'Sentinel-2'
+  'Sentinel-2 (RGB) 16 Ags 2023'
+)
+Map.addLayer(
+  image_sen2.clip(roi),
+  { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
+  'Sentinel-2 (RGB) 16 Ags 2023'
+)
+Map.addLayer(
+  image_sen1.clip(roi),
+  { bands: ['VV'], min: -30, max: 5 },
+  'Sentinel-1 VV 20 Juni 2024'
 )
 Map.addLayer(
   image_sen1.clip(roi),
   { bands: ['VH'], min: -30, max: 5 },
-  'Sentinel-1'
+  'Sentinel-1 VH 20 Juni 2024'
 )
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
@@ -2515,23 +2530,11 @@ Export.table.toAsset({
   description: 'test_asset', // Nama deskripsi untuk ekspor
   assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
 })
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 () ke drive
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
 Export.image.toDrive({
   image: combinedImage.clip(roi), // Citra yang akan diekspor
   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
   fileNamePrefix: 'rawa_pening_image',
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  region: roi, // Wilayah (ROI) tempat citra akan dipotong
-  scale: 10, // Skala dalam meter
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-})
-Export.image.toDrive({
-  image: sampled.clip(roi), // Citra yang akan diekspor
-  description: 'rawa_pening_lc_drive', // Nama deskripsi untuk ekspor
-  fileNamePrefix: 'rawa_pening_lc',
   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
   region: roi, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
