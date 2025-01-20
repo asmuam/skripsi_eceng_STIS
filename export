@@ -1,8 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var eceng = 
-    /* color: #98ff00 */
-    /* shown: false */
-    ee.FeatureCollection(
+var eceng = /* color: #98ff00 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.45114010081181, -7.286163561448659]),
             {
@@ -2147,7 +2144,10 @@ var eceng =
           [110.45934359806198, -7.261173849220073]]], null, false),
     shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening"),
     bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
-    point = /* color: #ffc82d */ee.Geometry.Point([110.42875470989232, -7.275469281835314]);
+    point = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Geometry.Point([110.42875470989232, -7.275469281835314]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
