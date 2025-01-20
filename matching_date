@@ -2443,10 +2443,12 @@ var endDate = ee.Date('2015-08-31');
 
 // Filter the Landsat 8 image collection for the specified date range
 var landsat8August2015 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
-  .filterDate(startDate, endDate);
+  .filterDate(startDate, endDate)
+  .filterBounds(roi)
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
 
 // Add the image collection to the map
-Map.addLayer(landsat8August2015, {bands: ['B4', 'B3', 'B2'], max: 3000}, 'Landsat 8 August 2015');
+Map.addLayer(landsat8August2015.first().clip(roi), {bands: ['B4', 'B3', 'B2'], max: 3000}, 'Landsat 8 August 2015');
 
 // Print the list of images
 print('Landsat 8 images for August 2015:', landsat8August2015);
