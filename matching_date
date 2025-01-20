@@ -2229,6 +2229,9 @@ var lakePixels = calculateLakePixels(sentinel2.first(), danau);
 print('Number of lake pixels:', lakePixels);
 // Example usage with a Sentinel-2 image and a feature collection
 var pixelCounts = calculatePixelsInFeatureCollection(sentinel2.first(), eceng);
-print('Pixel counts in feature collection:', pixelCounts);
-print(matchingDates)
-
+// Print the pixel count for each feature 
+pixelCounts.evaluate(function(fc) { 
+  fc.features.forEach(function(feature) { 
+    print('Feature ID:', feature.id, 'Pixel Count:', feature.properties.count);
+  });
+});
