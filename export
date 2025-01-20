@@ -2216,9 +2216,9 @@ var image_sen2_7_21 = ee.Image(sentinel2List.get(4));
 var image_sen2_7_26 = ee.Image(sentinel2List.get(5));
 var image_sen1_7_25 = ee.Image(sentinel1List.get(4));
 
-Map.addLayer(image_sen2_7_21.clip(danau), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
-Map.addLayer(image_sen2_7_26.clip(danau), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
-Map.addLayer(image_sen1_7_25.clip(danau), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
+Map.addLayer(image_sen2_7_21.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
+Map.addLayer(image_sen2_7_26.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
+Map.addLayer(image_sen1_7_25.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
@@ -2497,20 +2497,22 @@ classValues.evaluate(function(values) {
 Map.centerObject(roi, 14)
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
 Map.addLayer(
-  image_sen2.clip(danau),
+  image_sen2.clip(roi),
   { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
   'Sentinel-2 (RGB) 16 Ags 2023'
 )
 Map.addLayer(
-  image_sen1.clip(danau),
+  image_sen1.clip(roi),
   { bands: ['VV'], min: -30, max: 5 },
   'Sentinel-1 VV 20 Juni 2024'
 )
 Map.addLayer(
-  image_sen1.clip(danau),
+  image_sen1.clip(roi),
   { bands: ['VH'], min: -30, max: 5 },
   'Sentinel-1 VH 20 Juni 2024'
 )
+Map.addLayer(danau, {}, 'danau'); 
+Map.addLayer(shapefile, {}, 'shapefile');
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: training_sample, // FeatureCollection yang ingin disimpan
