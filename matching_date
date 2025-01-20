@@ -2195,15 +2195,6 @@ function calculateLakePixels(image, lakeGeometry) {
   });
   return lakePixels;
 }
-// Function to calculate the number of pixels within a feature collection
-function calculatePixelsInFeatureCollection(image, featureCollection) {
-  var pixelCount = image.reduceRegions({
-    collection: featureCollection,
-    reducer: ee.Reducer.count(),
-    scale: 10,
-  });
-  return pixelCount;
-}
 // daerah danau
 var danau = roi.difference(shapefile.geometry(), ee.ErrorMargin(1));
 // Tentukan tanggal tetap untuk citra ()
@@ -2227,11 +2218,3 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Example usage with a Sentinel-2 image
 var lakePixels = calculateLakePixels(sentinel2.first(), danau);
 print('Number of lake pixels:', lakePixels);
-// Example usage with a Sentinel-2 image and a feature collection
-var pixelCounts = calculatePixelsInFeatureCollection(sentinel2.first(), eceng);
-// Print the pixel count for each feature 
-pixelCounts.evaluate(function(fc) { 
-  fc.features.forEach(function(feature) { 
-    print('Feature ID:', feature.id, 'Pixel Count:', feature.properties.count);
-  });
-});
