@@ -2439,7 +2439,7 @@ print('Number of lake pixels:', lakePixels);
 
 // Define the date range for August 2015
 var startDate = ee.Date('2015-08-01');
-var endDate = ee.Date('2015-09-30');
+var endDate = ee.Date('2016-01-01');
 
 // Filter the Sentinel-2 image collection for the specified date range
 var sentinel2August2015 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
