@@ -2442,12 +2442,13 @@ var startDate = ee.Date('2015-08-01');
 var endDate = ee.Date('2015-08-31');
 
 // Filter the Landsat 8 image collection for the specified date range
-var landsat8August2015 = ee.ImageCollection('LANDSAT/LC08/C02/T1')
+var landsat8August2015 = ee.ImageCollection('LANDSAT/LC08/C02/T1_TOA')
   .filterDate(startDate, endDate)
   .filterBounds(roi)
 
-// Add the image collection to the map
-Map.addLayer(landsat8August2015.first().clip(roi), {bands: ['B4', 'B3', 'B2'], max: 30000}, 'Landsat 8 August 2015');
-
+// Get the image at index 1 and clip it to the region of interest 
+var imageAtIndex = ee.Image(landsat8August2015.toList(landsat8August2015.size()).get(1)).clip(roi); 
+// Add the image to the map 
+Map.addLayer(imageAtIndex, {bands: ['B4', 'B3', 'B2'], max: 0.4}, 'Landsat 8 August 2015');
 // Print the list of images
 print('Landsat 8 images for August 2015:', landsat8August2015);
