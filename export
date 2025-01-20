@@ -2188,7 +2188,7 @@ function findMatchingDates(s1Collection, s2Collection) {
 // daerah danau
 var danau = roi.difference(shapefile.geometry(), ee.ErrorMargin(1));
 // Tentukan tanggal tetap untuk citra ()
-var targetDate = ee.Date('2015-8-15')
+var targetDate = ee.Date('2024-7-15')
 var range = 20
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
