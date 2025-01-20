@@ -2417,13 +2417,13 @@ function calculateLakePixels(image, lakeGeometry) {
 var danau = roi.difference(shapefile.geometry(), ee.ErrorMargin(1));
 // Tentukan tanggal tetap untuk citra ()
 var targetDate = ee.Date('2024-7-15')
-var range = 20
+var range = 200
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
 var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 45)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
@@ -2436,19 +2436,46 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Example usage with a Sentinel-2 image
 var lakePixels = calculateLakePixels(sentinel2.first(), danau);
 print('Number of lake pixels:', lakePixels);
+print(matchingDates)
 
-// Define the date range for August 2015
-var startDate = ee.Date('2015-08-01');
-var endDate = ee.Date('2015-08-31');
+// Define the dates
+var dates = [
+  '2024-02-12',
+  '2024-04-12',
+  '2024-05-02',
+  '2024-06-11',
+  '2024-07-01',
+  '2024-08-10',
+  '2024-08-30',
+  '2024-10-29'
+];
 
-// Filter the Landsat 8 image collection for the specified date range
-var landsat8August2015 = ee.ImageCollection('LANDSAT/LC08/C02/T1_TOA')
-  .filterDate(startDate, endDate)
-  .filterBounds(roi)
+// Create variables for each date
+var sentinel2Images = dates.map(function(date) {
+  return ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+    .filterDate(date, ee.Date(date).advance(1, 'day'))
+    .filterBounds(roi)
+    .map(maskS2clouds)
+    .first()
+    .clip(roi);
+});
 
-// Get the image at index 1 and clip it to the region of interest 
-var imageAtIndex = ee.Image(landsat8August2015.toList(landsat8August2015.size()).get(1)).clip(roi); 
-// Add the image to the map 
-Map.addLayer(imageAtIndex, {bands: ['B4', 'B3', 'B2'], max: 0.4}, 'Landsat 8 August 2015');
-// Print the list of images
-print('Landsat 8 images for August 2015:', landsat8August2015);
+// Assign each image to a variable
+var sentinel2_20240212 = sentinel2Images[0];
+var sentinel2_20240412 = sentinel2Images[1];
+var sentinel2_20240502 = sentinel2Images[2];
+var sentinel2_20240611 = sentinel2Images[3];
+var sentinel2_20240701 = sentinel2Images[4];
+var sentinel2_20240810 = sentinel2Images[5];
+var sentinel2_20240830 = sentinel2Images[6];
+var sentinel2_20241029 = sentinel2Images[7];
+
+// Add the images to the map
+Map.addLayer(sentinel2_20240212, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-02-12');
+Map.addLayer(sentinel2_20240412, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-04-12');
+Map.addLayer(sentinel2_20240502, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-05-02');
+Map.addLayer(sentinel2_20240611, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-06-11');
+Map.addLayer(sentinel2_20240701, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-07-01');
+Map.addLayer(sentinel2_20240810, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-08-10');
+Map.addLayer(sentinel2_20240830, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-08-30');
+Map.addLayer(sentinel2_20241029, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-10-29');
