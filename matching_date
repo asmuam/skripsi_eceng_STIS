@@ -338,3 +338,5 @@ Export.table.toAsset({
   description: 'koordinat_drone',
   assetId: 'projects/ee-222111840/assets/droneDJI'
 });
+
+Map.addLayer(droneDJI, {color: 'red'}, 'drone DJI');
