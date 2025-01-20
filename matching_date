@@ -2147,112 +2147,178 @@ var roi =
               "landcover": 1,
               "system:index": "254"
             })]),
-    dji0095 = /* color: #ff00ff */ee.Feature(
+    dji0095 = 
+    /* color: #ff00ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.447865194444, -7.26668133333333]),
         {
           "system:index": "0"
         }),
-    dji0121 = /* color: #ff9999 */ee.Feature(
+    dji0121 = 
+    /* color: #ff9999 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.42236875, -7.30435008333333]),
         {
           "system:index": "0"
         }),
-    dji0122 = /* color: #99ff99 */ee.Feature(
+    dji0122 = 
+    /* color: #99ff99 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.42288325, -7.30369816666667]),
         {
           "system:index": "0"
         }),
-    dji0120 = /* color: #9999ff */ee.Feature(
+    dji0120 = 
+    /* color: #9999ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.422376305556, -7.30434944444444]),
         {
           "system:index": "0"
         }),
-    dji0119 = /* color: #ffff99 */ee.Feature(
+    dji0119 = 
+    /* color: #ffff99 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.423018694444, -7.30536213888889]),
         {
           "system:index": "0"
         }),
-    dji0117 = /* color: #99ffff */ee.Feature(
+    dji0117 = 
+    /* color: #99ffff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.4230205, -7.30536827777778]),
         {
           "system:index": "0"
         }),
-    dji0114 = /* color: #ff99ff */ee.Feature(
+    dji0114 = 
+    /* color: #ff99ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.447676388889, -7.27494127777778]),
         {
           "system:index": "0"
         }),
-    dji0113 = /* color: #d63000 */ee.Feature(
+    dji0113 = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.44744425, -7.2780285]),
         {
           "system:index": "0"
         }),
-    dji0112 = /* color: #98ff00 */ee.Feature(
+    dji0112 = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.447443305556, -7.27802783333333]),
         {
           "system:index": "0"
         }),
-    dji0110 = /* color: #0B4A8B */ee.Feature(
+    dji0110 = 
+    /* color: #0B4A8B */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.444154055556, -7.27244091666667]),
         {
           "system:index": "0"
         }),
-    dji0109 = /* color: #ffc82d */ee.Feature(
+    dji0109 = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.444274138889, -7.27224408333333]),
         {
           "system:index": "0"
         }),
-    dji0108 = /* color: #00ffff */ee.Feature(
+    dji0108 = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.444194694444, -7.27237541666667]),
         {
           "system:index": "0"
         }),
-    dji0107 = /* color: #bf04c2 */ee.Feature(
+    dji0107 = 
+    /* color: #bf04c2 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.4443155, -7.27217716666667]),
         {
           "system:index": "0"
         }),
-    dji0104 = /* color: #ff0000 */ee.Feature(
+    dji0104 = 
+    /* color: #ff0000 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445214694444, -7.27086080555556]),
         {
           "system:index": "0"
         }),
-    dji0103 = /* color: #00ff00 */ee.Feature(
+    dji0103 = 
+    /* color: #00ff00 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445219527778, -7.27086544444444]),
         {
           "system:index": "0"
         }),
-    dji0102 = /* color: #0000ff */ee.Feature(
+    dji0102 = 
+    /* color: #0000ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445221722222, -7.27086591666667]),
         {
           "system:index": "0"
         }),
-    dji0101 = /* color: #999900 */ee.Feature(
+    dji0101 = 
+    /* color: #999900 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.4452205, -7.27086597222222]),
         {
           "system:index": "0"
         }),
-    dji0100 = /* color: #009999 */ee.Feature(
+    dji0100 = 
+    /* color: #009999 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445177305556, -7.27091152777778]),
         {
           "system:index": "0"
         }),
-    dji0099 = /* color: #ff00ff */ee.Feature(
+    dji0099 = 
+    /* color: #ff00ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445177916667, -7.27091080555556]),
         {
           "system:index": "0"
         }),
-    dji0098 = /* color: #ff9999 */ee.Feature(
+    dji0098 = 
+    /* color: #ff9999 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445179055556, -7.27091097222222]),
         {
           "system:index": "0"
         }),
-    dji0097 = /* color: #99ff99 */ee.Feature(
+    dji0097 = 
+    /* color: #99ff99 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445178666667, -7.27091072222222]),
         {
           "system:index": "0"
         }),
-    dji0096 = /* color: #9999ff */ee.Feature(
+    dji0096 = 
+    /* color: #9999ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.Point([110.445178916667, -7.27091152777778]),
         {
           "system:index": "0"
@@ -2370,3 +2436,15 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Example usage with a Sentinel-2 image
 var lakePixels = calculateLakePixels(sentinel2.first(), danau);
 print('Number of lake pixels:', lakePixels);
+
+// Define the date range for August 2015
+var startDate = ee.Date('2015-08-01');
+var endDate = ee.Date('2015-09-30');
+
+// Filter the Sentinel-2 image collection for the specified date range
+var sentinel2August2015 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+  .filterDate(startDate, endDate)
+  .filterBounds(roi)
+
+// Print the list of images
+print('Sentinel-2 images for August 2015:', sentinel2August2015);
