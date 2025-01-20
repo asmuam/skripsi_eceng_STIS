@@ -2145,7 +2145,8 @@ var eceng =
           [110.40784518497604, -7.313959002794661],
           [110.45934359806198, -7.313959002794661],
           [110.45934359806198, -7.261173849220073]]], null, false),
-    shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening");
+    shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening"),
+    bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
