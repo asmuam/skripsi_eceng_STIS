@@ -2439,13 +2439,14 @@ print('Number of lake pixels:', lakePixels);
 
 // Define the date range for August 2015
 var startDate = ee.Date('2015-08-01');
-var endDate = ee.Date('2016-01-01');
+var endDate = ee.Date('2017-01-01');
 
 // Filter the Sentinel-2 image collection for the specified date range
 var sentinel2August2015 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
   .filterDate(startDate, endDate)
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
   .filterBounds(roi)
+  .sort('CLOUDY_PIXEL_PERCENTAGE')
 
 // Print the list of images
 print('Sentinel-2 images for August 2015:', sentinel2August2015);
