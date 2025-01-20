@@ -2212,21 +2212,19 @@ var image_sen1 = getClosestImage(sentinel1, targetDate)
 var sentinel2List = sentinel2.toList(sentinel2.size()); 
 var sentinel1List = sentinel1.toList(sentinel1.size());
 
-var image_sen2_7_1 = ee.Image(sentinel2List.get(2));
-var image_sen2_7_21a = ee.Image(sentinel2List.get(9));
-var image_sen2_7_21b = ee.Image(sentinel2List.get(10));
-var image_sen2_7_26a = ee.Image(sentinel2List.get(11));
-var image_sen2_7_26b = ee.Image(sentinel2List.get(12));
-var image_sen1_7_1 = ee.Image(sentinel1List.get(4));
-var image_sen1_7_25 = ee.Image(sentinel1List.get(0));
+var image_sen2_7_21a = ee.Image(sentinel2List.get(3));
+var image_sen2_7_21b = ee.Image(sentinel2List.get(4));
+var image_sen2_7_26a = ee.Image(sentinel2List.get(5));
+var image_sen2_7_26b = ee.Image(sentinel2List.get(6));
+var image_sen1_7_17 = ee.Image(sentinel1List.get(3));
+var image_sen1_7_25 = ee.Image(sentinel1List.get(4));
 
-Map.addLayer(image_sen2_7_1.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_01'); 
 Map.addLayer(image_sen2_7_21a.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21a'); 
 Map.addLayer(image_sen2_7_21b.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21b'); 
 Map.addLayer(image_sen2_7_26a.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26a'); 
 Map.addLayer(image_sen2_7_26b.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26b'); 
 Map.addLayer(image_sen1_7_25.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
-Map.addLayer(image_sen1_7_1.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_01')
+Map.addLayer(image_sen1_7_17.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_01')
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
