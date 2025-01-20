@@ -2779,9 +2779,3 @@ Export.image.toAsset({
   region: danau, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
-
-Export.table.toAsset({
-  collection: ee.FeatureCollection([ee.Feature(danau)]),
-  description: 'Danau_Asset',
-  assetId: 'projects/ee-222111840/assets/Danau_Asset'
-});
