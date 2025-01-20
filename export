@@ -2208,19 +2208,11 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate)
 var image_sen1 = getClosestImage(sentinel1, targetDate)
-
 var sentinel2List = sentinel2.toList(sentinel2.size()); 
 var sentinel1List = sentinel1.toList(sentinel1.size());
-
 var image_sen2_7_21 = ee.Image(sentinel2List.get(3));
 var image_sen2_7_26 = ee.Image(sentinel2List.get(5));
-var image_sen1_7_17 = ee.Image(sentinel1List.get(3));
 var image_sen1_7_25 = ee.Image(sentinel1List.get(4));
-
-Map.addLayer(image_sen2_7_21.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21a'); 
-Map.addLayer(image_sen2_7_26.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26a'); 
-Map.addLayer(image_sen1_7_25.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
-Map.addLayer(image_sen1_7_17.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_01')
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
@@ -2497,26 +2489,11 @@ classValues.evaluate(function(values) {
 });
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
-// Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
-Map.addLayer(
-  image_sen2.clip(roi),
-  { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 },
-  'Sentinel-2 (RGB) 16 Ags 2023'
-)
-Map.addLayer(
-  image_sen1.clip(roi),
-  { bands: ['VV'], min: -30, max: 5 },
-  'Sentinel-1 VV 20 Juni 2024'
-)
-Map.addLayer(
-  image_sen1.clip(roi),
-  { bands: ['VH'], min: -30, max: 5 },
-  'Sentinel-1 VH 20 Juni 2024'
-)
 Map.addLayer(danau, {}, 'danau'); 
 Map.addLayer(shapefile, {}, 'shapefile');
-
-
+Map.addLayer(image_sen1_7_25.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
+Map.addLayer(image_sen2_7_21.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
+Map.addLayer(image_sen2_7_26.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: training_sample, // FeatureCollection yang ingin disimpan
