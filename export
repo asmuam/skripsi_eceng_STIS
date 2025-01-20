@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var eceng = /* color: #98ff00 */ee.FeatureCollection(
+var eceng = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.45114010081181, -7.286163561448659]),
             {
@@ -2541,7 +2544,3 @@ Export.image.toAsset({
   region: danau, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
-
-// Get the pixel coordinates of the point 
-var pixelCoordinates = image.projection().transform().multiply(ee.Array.cat([point.coordinates(), ee.Array([1])], 1)).project([0]); // Print the results 
-print('Pixel Coordinates:', pixelCoordinates);
