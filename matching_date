@@ -2323,42 +2323,60 @@ var roi =
         {
           "system:index": "0"
         }),
-    dji0118 = /* color: #ffff99 */ee.Feature(
+    dji0118 = 
+    /* color: #ffff99 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.LineString(
             [[110.42302, -7.30537],
              [110.42302, -7.30536]]),
         {
           "system:index": "0"
         }),
-    dji0116 = /* color: #99ffff */ee.Feature(
+    dji0116 = 
+    /* color: #99ffff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.LineString(
             [[110.44773, -7.26692],
              [110.44733, -7.26775]]),
         {
           "system:index": "0"
         }),
-    dji0115 = /* color: #ff99ff */ee.Feature(
+    dji0115 = 
+    /* color: #ff99ff */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.LineString(
             [[110.44744, -7.2718],
              [110.44723, -7.26878]]),
         {
           "system:index": "0"
         }),
-    dji0111 = /* color: #d63000 */ee.Feature(
+    dji0111 = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.LineString(
             [[110.44416, -7.27244],
              [110.44416, -7.27244]]),
         {
           "system:index": "0"
         }),
-    dji0106 = /* color: #98ff00 */ee.Feature(
+    dji0106 = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.LineString(
             [[110.44461, -7.27209],
              [110.44461, -7.27209]]),
         {
           "system:index": "0"
         }),
-    dji0105 = /* color: #0B4A8B */ee.Feature(
+    dji0105 = 
+    /* color: #0B4A8B */
+    /* shown: false */
+    ee.Feature(
         ee.Geometry.LineString(
             [[110.44778, -7.26694],
              [110.44579, -7.27079]]),
@@ -2423,7 +2441,7 @@ var sentinel2 = ee
   .ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 45)) // Filter untuk awan rendah
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) // Filter untuk awan rendah
   .map(maskS2clouds)
   .sort('system:time_start') // Urutkan berdasarkan waktu citra
 // Koleksi Sentinel-1 pada tanggal 20 Juni 2024
@@ -2438,44 +2456,10 @@ var lakePixels = calculateLakePixels(sentinel2.first(), danau);
 print('Number of lake pixels:', lakePixels);
 print(matchingDates)
 
-// Define the dates
-var dates = [
-  '2024-02-12',
-  '2024-04-12',
-  '2024-05-02',
-  '2024-06-11',
-  '2024-07-01',
-  '2024-08-10',
-  '2024-08-30',
-  '2024-10-29'
-];
-
-// Create variables for each date
-var sentinel2Images = dates.map(function(date) {
-  return ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-    .filterDate(date, ee.Date(date).advance(1, 'day'))
-    .filterBounds(roi)
-    .map(maskS2clouds)
-    .first()
-    .clip(roi);
-});
-
-// Assign each image to a variable
-var sentinel2_20240212 = sentinel2Images[0];
-var sentinel2_20240412 = sentinel2Images[1];
-var sentinel2_20240502 = sentinel2Images[2];
-var sentinel2_20240611 = sentinel2Images[3];
-var sentinel2_20240701 = sentinel2Images[4];
-var sentinel2_20240810 = sentinel2Images[5];
-var sentinel2_20240830 = sentinel2Images[6];
-var sentinel2_20241029 = sentinel2Images[7];
-
+var sentinel2_20241029 = ee
+  .ImageCollection('COPERNICUS/S2_SR_HARMONIZED') 
+  .filterDate("2024-10-29", "2024-10-30") 
+  .filterBounds(roi) 
+  .map(maskS2clouds)
 // Add the images to the map
-Map.addLayer(sentinel2_20240212, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-02-12');
-Map.addLayer(sentinel2_20240412, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-04-12');
-Map.addLayer(sentinel2_20240502, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-05-02');
-Map.addLayer(sentinel2_20240611, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-06-11');
-Map.addLayer(sentinel2_20240701, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-07-01');
-Map.addLayer(sentinel2_20240810, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-08-10');
-Map.addLayer(sentinel2_20240830, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-08-30');
-Map.addLayer(sentinel2_20241029, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-10-29');
+Map.addLayer(sentinel2_20241029, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Sentinel-2 2024-02-12');
