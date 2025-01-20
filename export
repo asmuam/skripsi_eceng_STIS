@@ -2208,6 +2208,17 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Ambil citra pertama dalam koleksi setelah filter
 var image_sen2 = getClosestImage(sentinel2, targetDate)
 var image_sen1 = getClosestImage(sentinel1, targetDate)
+
+var image_sen2_7_21 = ee.Image(sentinel2List.get(4));
+var image_sen2_7_26 = ee.Image(sentinel2List.get(5));
+var image_sen1_7_25 = ee.Image(sentinel1List.get(4));
+
+// Ambil citra dari indeks tertentu var image_sen2_7_21 = ee.Image(sentinel2List.get(4)); 
+var image_sen2_7_26 = ee.Image(sentinel2List.get(5)); 
+var image_sen1_7_25 = ee.Image(sentinel1List.get(4)); 
+Map.addLayer(image_sen2_7_21, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
+Map.addLayer(image_sen2_7_26, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
+Map.addLayer(image_sen1_7_25, {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
