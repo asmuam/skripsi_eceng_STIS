@@ -2256,6 +2256,48 @@ var roi =
         ee.Geometry.Point([110.445178916667, -7.27091152777778]),
         {
           "system:index": "0"
+        }),
+    dji0118 = /* color: #ffff99 */ee.Feature(
+        ee.Geometry.LineString(
+            [[110.42302, -7.30537],
+             [110.42302, -7.30536]]),
+        {
+          "system:index": "0"
+        }),
+    dji0116 = /* color: #99ffff */ee.Feature(
+        ee.Geometry.LineString(
+            [[110.44773, -7.26692],
+             [110.44733, -7.26775]]),
+        {
+          "system:index": "0"
+        }),
+    dji0115 = /* color: #ff99ff */ee.Feature(
+        ee.Geometry.LineString(
+            [[110.44744, -7.2718],
+             [110.44723, -7.26878]]),
+        {
+          "system:index": "0"
+        }),
+    dji0111 = /* color: #d63000 */ee.Feature(
+        ee.Geometry.LineString(
+            [[110.44416, -7.27244],
+             [110.44416, -7.27244]]),
+        {
+          "system:index": "0"
+        }),
+    dji0106 = /* color: #98ff00 */ee.Feature(
+        ee.Geometry.LineString(
+            [[110.44461, -7.27209],
+             [110.44461, -7.27209]]),
+        {
+          "system:index": "0"
+        }),
+    dji0105 = /* color: #0B4A8B */ee.Feature(
+        ee.Geometry.LineString(
+            [[110.44778, -7.26694],
+             [110.44579, -7.27079]]),
+        {
+          "system:index": "0"
         });
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
@@ -2328,7 +2370,3 @@ var matchingDates = findMatchingDates(sentinel1, sentinel2);
 // Example usage with a Sentinel-2 image
 var lakePixels = calculateLakePixels(sentinel2.first(), danau);
 print('Number of lake pixels:', lakePixels);
-
-// Add the marker to the map
-Map.addLayer(dji0111, {color: 'red'}, 'Marker');
-Map.centerObject(dji0111, 15);
