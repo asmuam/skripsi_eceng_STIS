@@ -2709,7 +2709,7 @@ print(sampled)
 print(training_sample)
 print(test_sample)
 // Tampilkan tanggal yang sama
-print('Matching Dates:', matchingDates);
+// print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
 classValues.evaluate(function(values) { 
   values.forEach(function(value) { 
