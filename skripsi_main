@@ -2727,9 +2727,9 @@ classValues.evaluate(function(values) {
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'danau'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(image_sen1_7_25.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
-Map.addLayer(image_sen2_7_21.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
-Map.addLayer(image_sen2_7_26.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
+Map.addLayer(image_sen1_7_25.clip(rawa_pening_shp), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
+Map.addLayer(image_sen2_7_21.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
+Map.addLayer(image_sen2_7_26.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: training_sample, // FeatureCollection yang ingin disimpan
