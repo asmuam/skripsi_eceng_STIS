@@ -2708,6 +2708,7 @@ print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 print(sampled)
 print(training_sample)
 print(test_sample)
+print(combinedImage)
 // Tampilkan tanggal yang sama
 // print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
@@ -2774,3 +2775,9 @@ Export.image.toAsset({
   region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
+
+// [-1,1] ndvi 1 = vegetasi
+// [-1,1] gndvi 1 = vegetasi
+// [-1,1] evi 1 = vegetasi
+// [-1,1] savi 1 = vegetasi
+
