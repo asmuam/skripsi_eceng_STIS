@@ -2764,7 +2764,7 @@ Export.image.toDrive({
   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
   fileNamePrefix: 'rawa_pening_image',
   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  region: danau, // Wilayah (ROI) tempat citra akan dipotong
+  region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
   fileFormat: 'GeoTIFF',
   formatOptions: {
@@ -2776,6 +2776,6 @@ Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
   description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
-  region: danau, // Wilayah (ROI) tempat citra akan dipotong
+  region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
