@@ -2382,7 +2382,7 @@ var eceng =
         {
           "system:index": "0"
         }),
-    shapefile = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
+    rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
@@ -2421,9 +2421,8 @@ function findMatchingDates(s1Collection, s2Collection) {
   commonDates = commonDates.sort();
   return commonDates;
 }
-// daerah danau
-var danau = roi.difference(shapefile.geometry(), ee.ErrorMargin(1));
 // Tentukan tanggal tetap untuk citra ()
+// Drone = 7/23/2024
 var targetDate = ee.Date('2024-7-15')
 var range = 16
 // Koleksi Sentinel-2 pada tanggal 20 Juni 2024
@@ -2725,8 +2724,8 @@ classValues.evaluate(function(values) {
 });
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
-Map.addLayer(danau, {}, 'danau'); 
-Map.addLayer(shapefile, {}, 'shapefile');
+Map.addLayer(rawa_pening_shp, {}, 'danau'); 
+Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(image_sen1_7_25.clip(roi), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
 Map.addLayer(image_sen2_7_21.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
 Map.addLayer(image_sen2_7_26.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
