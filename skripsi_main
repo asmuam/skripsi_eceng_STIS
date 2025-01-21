@@ -2298,10 +2298,7 @@ var eceng =
         {
           "system:index": "0"
         }),
-    dji0098 = 
-    /* color: #ff9999 */
-    /* shown: false */
-    ee.Feature(
+    dji0098 = /* color: #ff9999 */ee.Feature(
         ee.Geometry.Point([110.445179055556, -7.27091097222222]),
         {
           "system:index": "0"
@@ -2440,15 +2437,14 @@ var sentinel1 = ee
   .filterBounds(roi)
   .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day')) // Citra untuk satu hari
 // Contoh penggunaan fungsi dengan koleksi S1 dan S2
-var matchingDates = findMatchingDates(sentinel1, sentinel2);
-// Ambil citra pertama dalam koleksi setelah filter
-var image_sen2 = getClosestImage(sentinel2, targetDate)
-var image_sen1 = getClosestImage(sentinel1, targetDate)
+// var matchingDates = findMatchingDates(sentinel1, sentinel2);
+// // Ambil citra pertama dalam koleksi setelah filter
+// var image_sen2 = getClosestImage(sentinel2, targetDate)
+// var image_sen1 = getClosestImage(sentinel1, targetDate)
 var sentinel2List = sentinel2.toList(sentinel2.size()); 
 var sentinel1List = sentinel1.toList(sentinel1.size());
-var image_sen2_7_21 = ee.Image(sentinel2List.get(3));
-var image_sen2_7_26 = ee.Image(sentinel2List.get(5));
-var image_sen1_7_25 = ee.Image(sentinel1List.get(4));
+var image_sen2 = ee.Image(sentinel2List.get(5)); // 7/26/2024
+var image_sen1 = ee.Image(sentinel1List.get(4)); // 7/25/2024
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
@@ -2727,9 +2723,8 @@ classValues.evaluate(function(values) {
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'danau'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(image_sen1_7_25.clip(rawa_pening_shp), {bands: ['VV', 'VH'], min: -30, max: 0}, 'image_sen1_7_25')
-Map.addLayer(image_sen2_7_21.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_21'); 
-Map.addLayer(image_sen2_7_26.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'image_sen2_7_26'); 
+Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH'], min: -30, max: 0}, 'combinedImage S1')
+Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
 Export.table.toDrive({
   collection: training_sample, // FeatureCollection yang ingin disimpan
