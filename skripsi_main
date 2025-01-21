@@ -2801,8 +2801,8 @@ var fdi_histogram = ui.Chart.image.histogram({
   scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
   maxPixels: 1e9                          // Jumlah maksimum piksel
 }).setOptions({
-  title: 'Histogram FAI',
-  hAxis: {title: 'Nilai FAI'},
+  title: 'Histogram FDI',
+  hAxis: {title: 'Nilai FDI'},
   vAxis: {title: 'Frekuensi'},
   colors: ['green']
 });
