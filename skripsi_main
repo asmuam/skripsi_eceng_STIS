@@ -2760,7 +2760,7 @@ Export.table.toAsset({
 })
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
 Export.image.toDrive({
-  image: combinedImage.clip(danau), // Citra yang akan diekspor
+  image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
   fileNamePrefix: 'rawa_pening_image',
   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
@@ -2773,7 +2773,7 @@ Export.image.toDrive({
 })
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
-  image: combinedImage.clip(danau), // Citra yang akan diekspor
+  image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
   description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
   region: danau, // Wilayah (ROI) tempat citra akan dipotong
