@@ -2419,6 +2419,26 @@ function findMatchingDates(s1Collection, s2Collection) {
   commonDates = commonDates.sort();
   return commonDates;
 }
+// Fungsi untuk normalisasi Min-Max
+function normalizeMinMax(image, bandName) {
+  var min = image.reduceRegion({
+    reducer: ee.Reducer.min(),
+    geometry: image.geometry(),
+    scale: 10, // Resolusi
+    bestEffort: true
+  }).get(bandName);
+
+  var max = image.reduceRegion({
+    reducer: ee.Reducer.max(),
+    geometry: image.geometry(),
+    scale: 10,
+    bestEffort: true
+  }).get(bandName);
+
+  return image.select(bandName)
+    .subtract(ee.Number(min))
+    .divide(ee.Number(max).subtract(ee.Number(min)));
+}
 // Tentukan tanggal tetap untuk citra ()
 // Drone = 7/23/2024
 var targetDate = ee.Date('2024-7-15')
@@ -2546,13 +2566,17 @@ var wavelength_nir = 842 * 1e-9 // NIR
 var wavelength_red = 665 * 1e-9 // Red
 var wavelength_swir1 = 1610 * 1e-9 // SWIR1
 // Calculate the Floating Debris Index (FDI)
+// Normalisasi untuk masing-masing band
+var nirNorm = normalizeMinMax(image_sen2, 'B8'); // NIR
+var re2Norm = normalizeMinMax(image_sen2, 'B6'); // Red Edge 2
+var swir1Norm = normalizeMinMax(image_sen2, 'B11'); // SWIR1
 var fdi = image_sen2
   .expression(
     'NIR - (RE2 + (SWIR1 - RE2) * ((wavelength_nir - wavelength_red) / (wavelength_swir1 - wavelength_red))) * 10',
     {
-      NIR: image_sen2.select('B8'), // NIR band
-      RE2: image_sen2.select('B6'), // Red Edge 2 band
-      SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
+      NIR: nirNorm, // NIR band
+      RE2: re2Norm, // Red Edge 2 band
+      SWIR1: swir1Norm, // SWIR1 band (Band 11 for SWIR)
       wavelength_nir: wavelength_nir, // NIR wavelength
       wavelength_red: wavelength_red, // Red wavelength
       wavelength_swir1: wavelength_swir1, // SWIR1 wavelength
