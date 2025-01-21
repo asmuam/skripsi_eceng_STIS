@@ -2532,6 +2532,7 @@ var ndavi = image_sen2
   })
   .rename('NDAVI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
+// https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
 var fai = image_sen2
   .expression('B8 - (B4 + (B11 - B4) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
     B4: image_sen2.select('B4'), // Red
