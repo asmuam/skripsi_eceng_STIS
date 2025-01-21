@@ -2781,3 +2781,29 @@ Export.image.toAsset({
 // [-1,1] evi 1 = vegetasi
 // [-1,1] savi 1 = vegetasi
 
+// Histogram untuk FAI
+var fai_histogram = ui.Chart.image.histogram({
+  image: combinedImage.select('FAI'), // Pilih band FAI
+  region: rawa_pening_shp,                            // Region of interest
+  scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
+  maxPixels: 1e9                          // Jumlah maksimum piksel
+}).setOptions({
+  title: 'Histogram FAI',
+  hAxis: {title: 'Nilai FAI'},
+  vAxis: {title: 'Frekuensi'},
+  colors: ['green']
+});
+var fdi_histogram = ui.Chart.image.histogram({
+  image: combinedImage.select('FDI'), // Pilih band FAI
+  region: rawa_pening_shp,                            // Region of interest
+  scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
+  maxPixels: 1e9                          // Jumlah maksimum piksel
+}).setOptions({
+  title: 'Histogram FAI',
+  hAxis: {title: 'Nilai FAI'},
+  vAxis: {title: 'Frekuensi'},
+  colors: ['green']
+});
+// Tampilkan histogram di konsol
+print(fai_histogram);
+print(fdi_histogram);
