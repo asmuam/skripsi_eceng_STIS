@@ -2382,7 +2382,8 @@ var eceng =
         {
           "system:index": "0"
         }),
-    rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp");
+    rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
+    rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
@@ -2701,7 +2702,7 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   geometries: true, // Menyertakan geometri
 });
 // Hitung jumlah piksel dalam area
-var pixelCount = rawa_pening_shp.area().divide(10 * 10);
+var pixelCount = rawa_pening_shp.geometry().area().divide(100);
 // Cetak hasil ke konsol
 print('Jumlah Piksel:', pixelCount);
 print(sentinel2.toList(sentinel2.size()));
