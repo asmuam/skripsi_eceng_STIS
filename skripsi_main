@@ -2546,6 +2546,7 @@ var wavelength_nir = 842 * 1e-9 // NIR
 var wavelength_red = 665 * 1e-9 // Red
 var wavelength_swir1 = 1610 * 1e-9 // SWIR1
 // Calculate the Floating Debris Index (FDI)
+// https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
 var fdi = image_sen2
   .expression(
     'NIR - (RE2 + (SWIR1 - RE2) * ((wavelength_nir - wavelength_red) / (wavelength_swir1 - wavelength_red))) * 10',
