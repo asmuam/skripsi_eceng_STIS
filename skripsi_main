@@ -539,7 +539,7 @@ Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'danau'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(roi), {bands: ['VV', 'VH','VV/VH'], min: -30, max: 0}, 'combinedImage S1')
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
+Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
 // Export.table.toDrive({
 //   collection: training_sample, // FeatureCollection yang ingin disimpan
