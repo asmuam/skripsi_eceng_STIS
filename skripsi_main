@@ -491,26 +491,26 @@ var combinedImage = image_sen2.addBands(image_sen1);
 // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
 var combinedBands = sen2_bands.concat(sen1_bands);
 // Menggabungkan Kelas
-var classNames = eceng.merge(bukan_eceng);
+// var classNames = eceng.merge(bukan_eceng);
 // dengan buffer
 // var classNames = eceng.merge(bukan_eceng).map(function(feat) { return feat.buffer(30); });
 // Stratified sampling
-var classValues = classNames.aggregate_array('landcover').distinct();
-var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
-  var features = classNames.filter(ee.Filter.eq('landcover', value)).randomColumn();
-  var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
-  var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
-  return train.merge(test);
-})).flatten();
-var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
-var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
-// Training data dari citra gabungan
-var sampled = combinedImage.select(combinedBands).sampleRegions({
-  collection: stratifiedSample,
-  properties: ['landcover', 'sample'], // Atribut target, seperti tipe tutupan lahan
-  scale: 10, // Skala pengambilan sampel
-  geometries: true, // Menyertakan geometri
-});
+// var classValues = classNames.aggregate_array('landcover').distinct();
+// var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
+//   var features = classNames.filter(ee.Filter.eq('landcover', value)).randomColumn();
+//   var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
+//   var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
+//   return train.merge(test);
+// })).flatten();
+// var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
+// var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
+// // Training data dari citra gabungan
+// var sampled = combinedImage.select(combinedBands).sampleRegions({
+//   collection: stratifiedSample,
+//   properties: ['landcover', 'sample'], // Atribut target, seperti tipe tutupan lahan
+//   scale: 10, // Skala pengambilan sampel
+//   geometries: true, // Menyertakan geometri
+// });
 // Hitung jumlah piksel dalam area
 var pixelCount = rawa_pening_shp.geometry().area().divide(100);
 // Cetak hasil ke konsol
