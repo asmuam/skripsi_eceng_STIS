@@ -541,83 +541,83 @@ Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV/VH'], min: -30, max: 0}, 'combinedImage S1')
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
-Export.table.toDrive({
-  collection: training_sample, // FeatureCollection yang ingin disimpan
-  description: 'csv_train_drive', // Nama deskripsi untuk ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  fileFormat: 'csv',
-  fileNamePrefix: 'data_training',
-})
-// Ekspor data test gabungan ke drive dalam bentuk csv
-Export.table.toDrive({
-  collection: test_sample, // FeatureCollection yang ingin disimpan
-  description: 'csv_test_drive', // Nama deskripsi untuk ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  fileFormat: 'csv',
-  fileNamePrefix: 'data_test',
-})
-// Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
-Export.table.toAsset({
-  collection: training_sample, // FeatureCollection yang ingin disimpan
-  description: 'train_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
-})
-// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
-Export.table.toAsset({
-  collection: test_sample, // FeatureCollection yang ingin disimpan
-  description: 'test_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
-})
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
-Export.image.toDrive({
-  image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
-  description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
-  fileNamePrefix: 'rawa_pening_image',
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
-  scale: 10, // Skala dalam meter
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-})
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
-Export.image.toAsset({
-  image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
-  description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
-  region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
-  scale: 10, // Skala dalam meter
-})
+// Export.table.toDrive({
+//   collection: training_sample, // FeatureCollection yang ingin disimpan
+//   description: 'csv_train_drive', // Nama deskripsi untuk ekspor
+//   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+//   fileFormat: 'csv',
+//   fileNamePrefix: 'data_training',
+// })
+// // Ekspor data test gabungan ke drive dalam bentuk csv
+// Export.table.toDrive({
+//   collection: test_sample, // FeatureCollection yang ingin disimpan
+//   description: 'csv_test_drive', // Nama deskripsi untuk ekspor
+//   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+//   fileFormat: 'csv',
+//   fileNamePrefix: 'data_test',
+// })
+// // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Export.table.toAsset({
+//   collection: training_sample, // FeatureCollection yang ingin disimpan
+//   description: 'train_asset', // Nama deskripsi untuk ekspor
+//   assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
+// })
+// // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Export.table.toAsset({
+//   collection: test_sample, // FeatureCollection yang ingin disimpan
+//   description: 'test_asset', // Nama deskripsi untuk ekspor
+//   assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
+// })
+// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
+// Export.image.toDrive({
+//   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
+//   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
+//   fileNamePrefix: 'rawa_pening_image',
+//   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+//   region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
+//   scale: 10, // Skala dalam meter
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// })
+// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
+// Export.image.toAsset({
+//   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
+//   description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
+//   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
+//   region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
+//   scale: 10, // Skala dalam meter
+// })
 
-// [-1,1] ndvi 1 = vegetasi
-// [-1,1] gndvi 1 = vegetasi
-// [-1,1] evi 1 = vegetasi
-// [-1,1] savi 1 = vegetasi
+// // [-1,1] ndvi 1 = vegetasi
+// // [-1,1] gndvi 1 = vegetasi
+// // [-1,1] evi 1 = vegetasi
+// // [-1,1] savi 1 = vegetasi
 
-// Histogram untuk FAI
-var fai_histogram = ui.Chart.image.histogram({
-  image: combinedImage.select('FAI'), // Pilih band FAI
-  region: rawa_pening_shp,                            // Region of interest
-  scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
-  maxPixels: 1e9                          // Jumlah maksimum piksel
-}).setOptions({
-  title: 'Histogram FAI',
-  hAxis: {title: 'Nilai FAI'},
-  vAxis: {title: 'Frekuensi'},
-  colors: ['green']
-});
-var fdi_histogram = ui.Chart.image.histogram({
-  image: combinedImage.select('FDI'), // Pilih band FAI
-  region: rawa_pening_shp,                            // Region of interest
-  scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
-  maxPixels: 1e9                          // Jumlah maksimum piksel
-}).setOptions({
-  title: 'Histogram FDI',
-  hAxis: {title: 'Nilai FDI'},
-  vAxis: {title: 'Frekuensi'},
-  colors: ['green']
-});
-// Tampilkan histogram di konsol
-print(fai_histogram);
-print(fdi_histogram);
+// // Histogram untuk FAI
+// var fai_histogram = ui.Chart.image.histogram({
+//   image: combinedImage.select('FAI'), // Pilih band FAI
+//   region: rawa_pening_shp,                            // Region of interest
+//   scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
+//   maxPixels: 1e9                          // Jumlah maksimum piksel
+// }).setOptions({
+//   title: 'Histogram FAI',
+//   hAxis: {title: 'Nilai FAI'},
+//   vAxis: {title: 'Frekuensi'},
+//   colors: ['green']
+// });
+// var fdi_histogram = ui.Chart.image.histogram({
+//   image: combinedImage.select('FDI'), // Pilih band FAI
+//   region: rawa_pening_shp,                            // Region of interest
+//   scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
+//   maxPixels: 1e9                          // Jumlah maksimum piksel
+// }).setOptions({
+//   title: 'Histogram FDI',
+//   hAxis: {title: 'Nilai FDI'},
+//   vAxis: {title: 'Frekuensi'},
+//   colors: ['green']
+// });
+// // Tampilkan histogram di konsol
+// print(fai_histogram);
+// print(fdi_histogram);
