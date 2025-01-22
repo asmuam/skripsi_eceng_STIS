@@ -256,6 +256,11 @@ var roi =
             ee.Geometry.Point([110.44953645813294, -7.266672977212641]),
             {
               "system:index": "1"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.4496465713244, -7.267324288879652]),
+            {
+              "system:index": "2"
             })]),
     air = 
     /* color: #3eceff */
@@ -276,7 +281,19 @@ var roi =
     lainnya = 
     /* color: #000000 */
     /* shown: false */
-    ee.FeatureCollection([]);
+    ee.FeatureCollection([]),
+    geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[110.44417399854058, -7.2735424503834665],
+          [110.44417399854058, -7.274941937114994],
+          [110.44676501244896, -7.274941937114994],
+          [110.44676501244896, -7.2735424503834665]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
