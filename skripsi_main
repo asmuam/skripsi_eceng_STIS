@@ -8,236 +8,152 @@ var roi =
           [110.45934359806198, -7.313959002794661],
           [110.45934359806198, -7.261173849220073]]], null, false),
     bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
-    dji0095 = 
-    /* color: #ff00ff */
-    /* shown: false */
-    ee.Feature(
+    dji0095s = /* color: #ff00ff */ee.Feature(
         ee.Geometry.Point([110.447865194444, -7.26668133333333]),
         {
           "system:index": "0"
         }),
-    dji0121 = 
-    /* color: #ff9999 */
-    /* shown: false */
-    ee.Feature(
+    dji0121u = /* color: #ff9999 */ee.Feature(
         ee.Geometry.Point([110.42236875, -7.30435008333333]),
         {
           "system:index": "0"
         }),
-    dji0122 = 
-    /* color: #99ff99 */
-    /* shown: false */
-    ee.Feature(
+    dji0122u = /* color: #99ff99 */ee.Feature(
         ee.Geometry.Point([110.42288325, -7.30369816666667]),
         {
           "system:index": "0"
         }),
-    dji0120 = 
-    /* color: #9999ff */
-    /* shown: false */
-    ee.Feature(
+    dji0120u = /* color: #9999ff */ee.Feature(
         ee.Geometry.Point([110.422376305556, -7.30434944444444]),
         {
           "system:index": "0"
         }),
-    dji0119 = 
-    /* color: #ffff99 */
-    /* shown: false */
-    ee.Feature(
+    dji0119vertical = /* color: #ffff99 */ee.Feature(
         ee.Geometry.Point([110.423018694444, -7.30536213888889]),
         {
           "system:index": "0"
         }),
-    dji0117 = 
-    /* color: #99ffff */
-    /* shown: false */
-    ee.Feature(
+    dji0117u = /* color: #99ffff */ee.Feature(
         ee.Geometry.Point([110.4230205, -7.30536827777778]),
         {
           "system:index": "0"
         }),
-    dji0114 = 
-    /* color: #ff99ff */
-    /* shown: false */
-    ee.Feature(
+    dji0114u = /* color: #ff99ff */ee.Feature(
         ee.Geometry.Point([110.447676388889, -7.27494127777778]),
         {
           "system:index": "0"
         }),
-    dji0113 = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Feature(
+    dji0113u = /* color: #d63000 */ee.Feature(
         ee.Geometry.Point([110.44744425, -7.2780285]),
         {
           "system:index": "0"
         }),
-    dji0112 = 
-    /* color: #98ff00 */
-    /* shown: false */
-    ee.Feature(
+    dji0112b = /* color: #98ff00 */ee.Feature(
         ee.Geometry.Point([110.447443305556, -7.27802783333333]),
         {
           "system:index": "0"
         }),
-    dji0110 = 
-    /* color: #0b4a8b */
-    /* shown: false */
-    ee.Feature(
+    dji0110 = /* color: #0b4a8b */ee.Feature(
         ee.Geometry.Point([110.444154055556, -7.27244091666667]),
         {
           "system:index": "0"
         }),
-    dji0109 = 
-    /* color: #ffc82d */
-    /* shown: false */
-    ee.Feature(
+    dji0109 = /* color: #ffc82d */ee.Feature(
         ee.Geometry.Point([110.444274138889, -7.27224408333333]),
         {
           "system:index": "0"
         }),
-    dji0108 = 
-    /* color: #00ffff */
-    /* shown: false */
-    ee.Feature(
+    dji0108 = /* color: #00ffff */ee.Feature(
         ee.Geometry.Point([110.444194694444, -7.27237541666667]),
         {
           "system:index": "0"
         }),
-    dji0107 = 
-    /* color: #bf04c2 */
-    /* shown: false */
-    ee.Feature(
+    dji0107 = /* color: #bf04c2 */ee.Feature(
         ee.Geometry.Point([110.4443155, -7.27217716666667]),
         {
           "system:index": "0"
         }),
-    dji0104 = 
-    /* color: #ff0000 */
-    /* shown: false */
-    ee.Feature(
+    dji0104b = /* color: #ff0000 */ee.Feature(
         ee.Geometry.Point([110.445214694444, -7.27086080555556]),
         {
           "system:index": "0"
         }),
-    dji0103 = 
-    /* color: #00ff00 */
-    /* shown: false */
-    ee.Feature(
+    dji0103u = /* color: #00ff00 */ee.Feature(
         ee.Geometry.Point([110.445219527778, -7.27086544444444]),
         {
           "system:index": "0"
         }),
-    dji0102 = 
-    /* color: #0000ff */
-    /* shown: false */
-    ee.Feature(
+    dji0102s = /* color: #0000ff */ee.Feature(
         ee.Geometry.Point([110.445221722222, -7.27086591666667]),
         {
           "system:index": "0"
         }),
-    dji0101 = 
-    /* color: #999900 */
-    /* shown: false */
-    ee.Feature(
+    dji0101t = /* color: #999900 */ee.Feature(
         ee.Geometry.Point([110.4452205, -7.27086597222222]),
         {
           "system:index": "0"
         }),
-    dji0100 = 
-    /* color: #009999 */
-    /* shown: false */
-    ee.Feature(
+    dji0100u = /* color: #009999 */ee.Feature(
         ee.Geometry.Point([110.445177305556, -7.27091152777778]),
         {
           "system:index": "0"
         }),
-    dji0099 = 
-    /* color: #ff00ff */
-    /* shown: false */
-    ee.Feature(
+    dji0099b = /* color: #ff00ff */ee.Feature(
         ee.Geometry.Point([110.445177916667, -7.27091080555556]),
         {
           "system:index": "0"
         }),
-    dji0098 = 
-    /* color: #ff9999 */
-    /* shown: false */
-    ee.Feature(
+    dji0098b = /* color: #ff9999 */ee.Feature(
         ee.Geometry.Point([110.445179055556, -7.27091097222222]),
         {
           "system:index": "0"
         }),
-    dji0097 = 
-    /* color: #99ff99 */
-    /* shown: false */
-    ee.Feature(
+    dji0097s = /* color: #99ff99 */ee.Feature(
         ee.Geometry.Point([110.445178666667, -7.27091072222222]),
         {
           "system:index": "0"
         }),
-    dji0096 = 
-    /* color: #9999ff */
-    /* shown: false */
-    ee.Feature(
+    dji0096s = /* color: #9999ff */ee.Feature(
         ee.Geometry.Point([110.445178916667, -7.27091152777778]),
         {
           "system:index": "0"
         }),
-    dji0118 = 
-    /* color: #ffff99 */
-    /* shown: false */
-    ee.Feature(
+    dji0118u = /* color: #ffff99 */ee.Feature(
         ee.Geometry.LineString(
             [[110.42302, -7.30537],
              [110.42302, -7.30536]]),
         {
           "system:index": "0"
         }),
-    dji0116 = 
-    /* color: #99ffff */
-    /* shown: false */
-    ee.Feature(
+    dji0116rotate = /* color: #99ffff */ee.Feature(
         ee.Geometry.LineString(
             [[110.44773, -7.26692],
              [110.44733, -7.26775]]),
         {
           "system:index": "0"
         }),
-    dji0115 = 
-    /* color: #ff99ff */
-    /* shown: false */
-    ee.Feature(
+    dji0115u = /* color: #ff99ff */ee.Feature(
         ee.Geometry.LineString(
             [[110.44744, -7.2718],
              [110.44723, -7.26878]]),
         {
           "system:index": "0"
         }),
-    dji0111 = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Feature(
+    dji0111 = /* color: #d63000 */ee.Feature(
         ee.Geometry.LineString(
             [[110.44416, -7.27244],
              [110.44416, -7.27244]]),
         {
           "system:index": "0"
         }),
-    dji0106 = 
-    /* color: #98ff00 */
-    /* shown: false */
-    ee.Feature(
+    dji0106 = /* color: #98ff00 */ee.Feature(
         ee.Geometry.LineString(
             [[110.44461, -7.27209],
              [110.44461, -7.27209]]),
         {
           "system:index": "0"
         }),
-    dji0105 = 
-    /* color: #0b4a8b */
-    /* shown: false */
-    ee.Feature(
+    dji0105s = /* color: #0b4a8b */ee.Feature(
         ee.Geometry.LineString(
             [[110.44778, -7.26694],
              [110.44579, -7.27079]]),
@@ -261,6 +177,21 @@ var roi =
             ee.Geometry.Point([110.4496465713244, -7.267324288879652]),
             {
               "system:index": "2"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44925401011417, -7.267266292432319]),
+            {
+              "system:index": "3"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44860867319119, -7.268398763768498]),
+            {
+              "system:index": "4"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44800602848225, -7.267853329001362]),
+            {
+              "system:index": "5"
             })]),
     air = 
     /* color: #3eceff */
@@ -282,18 +213,7 @@ var roi =
     /* color: #000000 */
     /* shown: false */
     ee.FeatureCollection([]),
-    geometry = 
-    /* color: #d63000 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[110.44417399854058, -7.2735424503834665],
-          [110.44417399854058, -7.274941937114994],
-          [110.44676501244896, -7.274941937114994],
-          [110.44676501244896, -7.2735424503834665]]], null, false);
+    geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Fungsi untuk mendapatkan citra dengan tanggal paling dekat atau sesuai targetDate
 function getClosestImage(collection, targetDate) {
