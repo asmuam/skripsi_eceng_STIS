@@ -344,6 +344,11 @@ var roi =
             ee.Geometry.Point([110.44464281269315, -7.272446780488853]),
             {
               "system:index": "18"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45521167875299, -7.283187208114811]),
+            {
+              "system:index": "19"
             })]),
     air = 
     /* color: #3eceff */
@@ -1610,9 +1615,159 @@ var roi =
     tanah = 
     /* color: #c76029 */
     /* shown: false */
-    ee.FeatureCollection([]),
+    ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44472689829931, -7.267834762463424]),
+            {
+              "system:index": "0"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44528747998342, -7.267770906639864]),
+            {
+              "system:index": "1"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44537867508993, -7.267770906639864]),
+            {
+              "system:index": "2"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44515807022515, -7.267777482894935]),
+            {
+              "system:index": "3"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44509101499978, -7.267781473884108]),
+            {
+              "system:index": "4"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44502530087891, -7.267782804213825]),
+            {
+              "system:index": "5"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.4396014931042, -7.267685690134005]),
+            {
+              "system:index": "6"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.4398697140057, -7.267185485773948]),
+            {
+              "system:index": "7"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43993408702205, -7.2668662061040195]),
+            {
+              "system:index": "8"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43932254336666, -7.266855563444447]),
+            {
+              "system:index": "9"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43890411876033, -7.267196128425709]),
+            {
+              "system:index": "10"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43877537272762, -7.267706975413572]),
+            {
+              "system:index": "11"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43877537272762, -7.267994326588985]),
+            {
+              "system:index": "12"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45371654724396, -7.2823262148455195]),
+            {
+              "system:index": "13"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45431142214093, -7.281971443823328]),
+            {
+              "system:index": "14"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45655207904875, -7.305326848977695]),
+            {
+              "system:index": "15"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45713143619597, -7.305938748958045]),
+            {
+              "system:index": "16"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45702414783537, -7.305571609070365]),
+            {
+              "system:index": "17"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45645551952421, -7.305890861163702]),
+            {
+              "system:index": "18"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45588152679503, -7.30515126013299]),
+            {
+              "system:index": "19"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.45443313392698, -7.30606112885357]),
+            {
+              "system:index": "20"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44894740038129, -7.303335608430032]),
+            {
+              "system:index": "21"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.42165498242886, -7.269753382504939]),
+            {
+              "system:index": "22"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.42170057998212, -7.269585761664687]),
+            {
+              "system:index": "23"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.42173544869931, -7.269388873613695]),
+            {
+              "system:index": "24"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.4218963812402, -7.269772007038893]),
+            {
+              "system:index": "25"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.4219312499574, -7.269630992691235]),
+            {
+              "system:index": "26"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.42197952971966, -7.269529888037356]),
+            {
+              "system:index": "27"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43663097231563, -7.267676128890631]),
+            {
+              "system:index": "28"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43684018461879, -7.266356635724206]),
+            {
+              "system:index": "29"
+            })]),
     lainnya = 
-    /* color: #000000 */
+    /* color: #909090 */
     /* shown: false */
     ee.FeatureCollection(
         [ee.Feature(
@@ -2342,7 +2497,7 @@ Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'danau'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV/VH'], min: -30, max: 0}, 'combinedImage S1')
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
+Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
 // Export.table.toDrive({
