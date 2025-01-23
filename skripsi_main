@@ -2186,7 +2186,7 @@ var vv_vh_ratio = image_sen1
   .copyProperties(image_sen1, image_sen2.propertyNames())
 var ndbsi = image_sen2.expression(
   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
-    'SWIR1': image_sen2.select('SWIR1'),
+    'SWIR1': image_sen2.select('B11'),
     'Blue': image_sen2.select('B2'),
     'k': image_sen2.expression(
       '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
