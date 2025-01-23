@@ -2183,17 +2183,17 @@ var vv_vh_ratio = image_sen1
     VH: image_sen1.select('VH'),
   })
   .rename('VV/VH')
-  .copyProperties(image_sen1, image_sen1.propertyNames())
-var ndbsi = image_sen1.expression(
+  .copyProperties(image_sen1, image_sen2.propertyNames())
+var ndbsi = image_sen2.expression(
   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
-    'SWIR1': image_sen1.select('SWIR1'),
-    'Blue': image_sen1.select('Blue'),
-    'k': image_sen1.expression(
+    'SWIR1': image_sen2.select('SWIR1'),
+    'Blue': image_sen2.select('Blue'),
+    'k': image_sen2.expression(
       '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
-        'SWIR1': image_sen1.select('SWIR1'),
-        'NIR': image_sen1.select('NIR'),
-        'Red': image_sen1.select('Red'),
-        'Green': image_sen1.select('Green')
+        'SWIR1': image_sen2.select('SWIR1'),
+        'NIR': image_sen2.select('NIR'),
+        'Red': image_sen2.select('Red'),
+        'Green': image_sen2.select('Green')
       })
   }
 ).rename('NDBSI')
