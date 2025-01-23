@@ -1,12 +1,9 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #ff9797 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[110.40784518497604, -7.261173849220073],
-          [110.40784518497604, -7.313959002794661],
-          [110.45934359806198, -7.313959002794661],
-          [110.45934359806198, -7.261173849220073]]], null, false),
+var roi = /* color: #ff9797 */ee.Geometry.Polygon(
+        [[[110.40698687809127, -7.261003564480281],
+          [110.40647189396041, -7.314810325216172],
+          [110.46028773563522, -7.316172437713157],
+          [110.45985858219284, -7.260492709874034]]], null, false),
     bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
     dji0095s = 
     /* color: #ff00ff */
@@ -1612,10 +1609,7 @@ var roi =
             {
               "system:index": "49"
             })]),
-    tanah = 
-    /* color: #c76029 */
-    /* shown: false */
-    ee.FeatureCollection(
+    tanah = /* color: #c76029 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44472689829931, -7.267834762463424]),
             {
@@ -1765,6 +1759,41 @@ var roi =
             ee.Geometry.Point([110.43684018461879, -7.266356635724206]),
             {
               "system:index": "29"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43788292964298, -7.267619242016681]),
+            {
+              "system:index": "30"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43757179339725, -7.267885307978111]),
+            {
+              "system:index": "31"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43732503016788, -7.269886118959781]),
+            {
+              "system:index": "32"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.43709972461063, -7.269651981964911]),
+            {
+              "system:index": "33"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44231393893558, -7.266959397752438]),
+            {
+              "system:index": "34"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44140198787052, -7.266672045915125]),
+            {
+              "system:index": "35"
+            }),
+        ee.Feature(
+            ee.Geometry.Point([110.44065096934635, -7.266331480536651]),
+            {
+              "system:index": "36"
             })]),
     lainnya = 
     /* color: #909090 */
@@ -2497,7 +2526,7 @@ Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'danau'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV/VH'], min: -30, max: 0}, 'combinedImage S1')
-Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
+Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
 // Export.table.toDrive({
