@@ -2408,3 +2408,12 @@ Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['BSI','FAI','NDWI'], 
 // // Tampilkan histogram di konsol
 // print(fai_histogram);
 // print(fdi_histogram);
+
+// Mengalikan nilai BSI dengan 2.5
+var modifiedBSI = combinedImage.select('BSI').multiply(2.5).rename('BSI_modified');
+
+// Menggabungkan kembali dengan pita lainnya
+var combinedModifiedImage = combinedImage.addBands(modifiedBSI, null, true);
+
+// Menambahkan layer ke peta
+Map.addLayer(combinedModifiedImage.clip(rawa_pening_shp), {bands: ['BSI_modified','B8','B11'], min: -2.5, max: 2.5}, 'helperModified');
