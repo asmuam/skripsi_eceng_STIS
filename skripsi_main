@@ -2222,7 +2222,7 @@ var sentinel1 = ee
 var sentinel2List = sentinel2.toList(sentinel2.size()); 
 var sentinel1List = sentinel1.toList(sentinel1.size());
 var image_sen2 = ee.Image(sentinel2List.get(5)); // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(4)); // 7/25/2024
+var image_sen1 = ee.Image(sentinel1List.get(4)); // 7/25/2024 need to use fixed image not index
 // Indeks Vegetasi
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
