@@ -2191,7 +2191,7 @@ var ndbsi = image_sen2.expression(
     'k': image_sen2.expression(
       '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
         'SWIR1': image_sen2.select('B11'),
-        'NIR': image_sen2.select('NIR'),
+        'NIR': image_sen2.select('B8'),
         'Red': image_sen2.select('B4'),
         'Green': image_sen2.select('B3')
       })
