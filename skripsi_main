@@ -3559,7 +3559,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp), 
   description: 'rawa_pening_image_asset', 
-  assetId: 'users/222111840/rawa_pening_image', 
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image', 
   region: rawa_pening_shp, 
   scale: 10, 
 })
