@@ -3446,14 +3446,14 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   geometries: true, // Menyertakan geometri
 });
 // Hitung jumlah piksel dalam area
-var pixelCount = rawa_pening_shp.geometry().area().divide(100);
+var pixelCountArea = rawa_pening_shp.geometry().area().divide(100);
 
 // Hitung jumlah piksel dalam sampel
 var pixelCount = sampled.size();
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 
 // Cetak hasil ke konsol
-print('Jumlah Piksel:', pixelCount);
+print('Jumlah Piksel area:', pixelCountArea);
 print(sentinel2.toList(sentinel2.size()));
 print(sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 16 Ags 2023:', image_sen2)
