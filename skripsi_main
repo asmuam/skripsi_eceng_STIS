@@ -3563,3 +3563,12 @@ Export.image.toAsset({
   region: rawa_pening_shp, 
   scale: 10, 
 })
+
+// Ekspor FeatureCollection ke Google Drive sebagai shapefile
+Export.table.toDrive({
+  collection: rawa_pening_shp,
+  description: 'export_shapefile',
+  fileFormat: 'SHP',
+  folder: 'GEE_Exports',
+  fileNamePrefix: 'rawa_pening_shp'
+});
