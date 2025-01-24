@@ -3570,5 +3570,5 @@ Export.table.toDrive({
   description: 'export_shapefile',
   fileFormat: 'SHP',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'rawa_pening_shp'
+  fileNamePrefix: 'rawa_pening'
 });
