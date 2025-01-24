@@ -10,7 +10,8 @@ var roi =
           [110.4075018622231, -7.316750824882465]]]),
     cnn = ee.Image("projects/ee-222111840/assets/cnn"),
     rf = ee.Image("users/222111840/rf"),
-    rawa_pening_image = ee.Image("users/222111840/rawa_pening_image");
+    rawa_pening_image = ee.Image("users/222111840/rawa_pening_image"),
+    image = ee.Image("projects/ee-222111840/assets/rf");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14);
