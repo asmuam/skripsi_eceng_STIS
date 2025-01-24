@@ -3428,14 +3428,12 @@ var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).m
 // var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya).map(function(feat) { return feat.buffer(30); });
 // Stratified sampling
 var classValues = classNames.aggregate_array('landcover').distinct();
-print(classValues)
 var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
   var features = classNames.filter(ee.Filter.eq('landcover', value)).randomColumn();
   var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
   var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
   return train.merge(test);
 })).flatten();
-print(stratifiedSample)
 var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
 var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
 // Training data dari citra gabungan
@@ -3480,15 +3478,8 @@ Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV/VH'], min: -30, max: 0}, 'combinedImage S1')
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
-// Ekspor data training gabungan ke drive dalam bentuk csv
-Export.table.toDrive({
-  collection: training_sample, // FeatureCollection yang ingin disimpan
-  description: 'csv_train_drive', // Nama deskripsi untuk ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  fileFormat: 'csv',
-  fileNamePrefix: 'data_training',
-})
-// ekspor
+
+// ekspor all sample
 Export.table.toDrive({
   collection: sampled, // FeatureCollection yang ingin disimpan
   description: 'csv_sample_drive', // Nama deskripsi untuk ekspor
