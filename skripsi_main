@@ -2857,7 +2857,7 @@ var vv_vh_ratio = image_sen1
     VH: image_sen1.select('VH'),
   })
   .rename('VV/VH')
-  .copyProperties(image_sen1, image_sen2.propertyNames())
+  .copyProperties(image_sen1, image_sen1.propertyNames())
 // Membuat komposit dari semua indeks yang telah dihitung
 image_sen2 = image_sen2.addBands([
   ndvi,
@@ -2892,7 +2892,7 @@ image_sen2 = image_sen2
     'B8A',
     'B9',
     'B11',
-    'B12', // Band-band Sentinel-2
+    'B12', 
     'NDVI',
     'GNDVI',
     'EVI',
@@ -2901,12 +2901,12 @@ image_sen2 = image_sen2
     'RENDVI',
     'GARI',
     'NDII',
-    'NDAVI',
+    'NDAVI', 
     'NDWI',
     'MNDWI',
     'LSWI',
     'FAI',
-    'FDI',
+    'FDI', 
     'NDBI',
     'BSI',
     'NDBSI',
@@ -2916,7 +2916,6 @@ image_sen1 = image_sen1.addBands([
   vv_vh_ratio
 ])
 image_sen1 = image_sen1.select(['VV', 'VH','VV/VH']).toFloat()
-// Membuat dataframe untuk training dengan variabel X dan Y
 var sen2_bands = [
   'B1',
   'B2',
@@ -2954,9 +2953,9 @@ var combinedImage = image_sen2.addBands(image_sen1);
 // Gabungkan band-band dari Sentinel-2 dan Sentinel-1
 var combinedBands = sen2_bands.concat(sen1_bands);
 // Menggabungkan Kelas
-// var classNames = eceng.merge(bukan_eceng);
+var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya)
 // dengan buffer
-var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya).map(function(feat) { return feat.buffer(30); });
+// var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya).map(function(feat) { return feat.buffer(30); });
 // Stratified sampling
 var classValues = classNames.aggregate_array('landcover').distinct();
 var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
@@ -2988,7 +2987,7 @@ print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 print(combinedImage)
 // Tampilkan tanggal yang sama
 print('Matching Dates:', matchingDates);
-Print the sizes of the training and testing samples per class 
+// Print the sizes of the training and testing samples per class 
 classValues.evaluate(function(values) { 
   values.forEach(function(value) { 
     var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size(); 
@@ -3053,4 +3052,3 @@ Export.image.toAsset({
   region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
   scale: 10, // Skala dalam meter
 })
-
