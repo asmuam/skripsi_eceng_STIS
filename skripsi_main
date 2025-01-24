@@ -249,7 +249,10 @@ var roi =
         }),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    eceng = /* color: #61e57d */ee.FeatureCollection(
+    eceng = 
+    /* color: #61e57d */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44935077438517, -7.265844294519221]),
             {
@@ -1758,7 +1761,10 @@ var roi =
             {
               "system:index": "99"
             })]),
-    vegetasi_lain = /* color: #0a7400 */ee.FeatureCollection(
+    vegetasi_lain = 
+    /* color: #0a7400 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44646227440764, -7.267200644578212]),
             {
