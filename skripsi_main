@@ -2749,6 +2749,22 @@ var gari = image_sen2
   )
   .rename('GARI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
+
+// 819/1600
+var ndii = image_sen2
+  .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
+    SWIR1: image_sen2.select('B11'),
+    NIR: image_sen2.select('B8'),
+  })
+  .rename('NDII')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var ndavi = image_sen2
+  .expression('(NIR - BLUE) / (NIR + BLUE)', {
+    NIR: image_sen2.select('B8'),
+    BLUE: image_sen2.select('B2'),
+  })
+  .rename('NDAVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
 // Indeks Air
 var ndwi = image_sen2
   .expression('(GREEN - NIR) / (GREEN + NIR)', {
@@ -2771,14 +2787,7 @@ var lswi = image_sen2
   })
   .rename('LSWI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-var ndavi = image_sen2
-  .expression('(NIR - BLUE) / (NIR + BLUE)', {
-    NIR: image_sen2.select('B8'),
-    BLUE: image_sen2.select('B2'),
-  })
-  .rename('NDAVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-// https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
+// fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
 var fai = image_sen2
   .expression('B8 - (B4 + (B11 - B4) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
     B4: image_sen2.select('B4'), // Red
@@ -2828,20 +2837,6 @@ var bsi = image_sen2
   )
   .rename('BSI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-var ndii = image_sen2
-  .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
-    SWIR1: image_sen2.select('B11'),
-    NIR: image_sen2.select('B8'),
-  })
-  .rename('NDII')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var vv_vh_ratio = image_sen1
-  .expression('VV / VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('VV/VH')
-  .copyProperties(image_sen1, image_sen2.propertyNames())
 var ndbsi = image_sen2.expression(
   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
     'SWIR1': image_sen2.select('B11'),
@@ -2855,7 +2850,14 @@ var ndbsi = image_sen2.expression(
       })
   }
 ).rename('NDBSI')
-.copyProperties(image_sen1, image_sen1.propertyNames());
+.copyProperties(image_sen2, image_sen2.propertyNames());
+var vv_vh_ratio = image_sen1
+  .expression('VV / VH', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('VV/VH')
+  .copyProperties(image_sen1, image_sen2.propertyNames())
 // Membuat komposit dari semua indeks yang telah dihitung
 image_sen2 = image_sen2.addBands([
   ndvi,
@@ -2865,15 +2867,15 @@ image_sen2 = image_sen2.addBands([
   wavi,
   rendvi,
   gari,
+  ndii,
+  ndavi,
   ndwi,
   mndwi,
   lswi,
-  ndavi,
   fai,
   fdi,
   ndbi,
   bsi,
-  ndii,
   ndbsi,
 ])
 // Memilih band yang dibutuhkan dari citra Sentinel-2, termasuk band indeks komposit
@@ -2898,15 +2900,15 @@ image_sen2 = image_sen2
     'WAVI',
     'RENDVI',
     'GARI',
+    'NDII',
+    'NDAVI',
     'NDWI',
     'MNDWI',
     'LSWI',
-    'NDAVI',
     'FAI',
     'FDI',
     'NDBI',
     'BSI',
-    'NDII',
     'NDBSI',
   ])
   .toFloat() // Mengubah tipe data menjadi float untuk pemrosesan lebih lanjut
@@ -2954,24 +2956,24 @@ var combinedBands = sen2_bands.concat(sen1_bands);
 // Menggabungkan Kelas
 // var classNames = eceng.merge(bukan_eceng);
 // dengan buffer
-// var classNames = eceng.merge(bukan_eceng).map(function(feat) { return feat.buffer(30); });
+var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya).map(function(feat) { return feat.buffer(30); });
 // Stratified sampling
-// var classValues = classNames.aggregate_array('landcover').distinct();
-// var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
-//   var features = classNames.filter(ee.Filter.eq('landcover', value)).randomColumn();
-//   var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
-//   var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
-//   return train.merge(test);
-// })).flatten();
-// var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
-// var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
-// // Training data dari citra gabungan
-// var sampled = combinedImage.select(combinedBands).sampleRegions({
-//   collection: stratifiedSample,
-//   properties: ['landcover', 'sample'], // Atribut target, seperti tipe tutupan lahan
-//   scale: 10, // Skala pengambilan sampel
-//   geometries: true, // Menyertakan geometri
-// });
+var classValues = classNames.aggregate_array('landcover').distinct();
+var stratifiedSample = ee.FeatureCollection(classValues.map(function(value) {
+  var features = classNames.filter(ee.Filter.eq('landcover', value)).randomColumn();
+  var train = features.filter(ee.Filter.lte('random', 0.8)).map(function(feat) { return feat.set('sample', 'train'); });
+  var test = features.filter(ee.Filter.gt('random', 0.8)).map(function(feat) { return feat.set('sample', 'test'); });
+  return train.merge(test);
+})).flatten();
+var training_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'train')); // 80%
+var test_sample = stratifiedSample.filter(ee.Filter.eq('sample', 'test')); // 20%
+// Training data dari citra gabungan
+var sampled = combinedImage.select(combinedBands).sampleRegions({
+  collection: stratifiedSample,
+  properties: ['landcover', 'sample'], // Atribut target, seperti tipe tutupan lahan
+  scale: 10, // Skala pengambilan sampel
+  geometries: true, // Menyertakan geometri
+});
 // Hitung jumlah piksel dalam area
 var pixelCount = rawa_pening_shp.geometry().area().divide(100);
 // Cetak hasil ke konsol
@@ -2985,16 +2987,16 @@ print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 // print(test_sample)
 print(combinedImage)
 // Tampilkan tanggal yang sama
-// print('Matching Dates:', matchingDates);
-// Print the sizes of the training and testing samples per class 
-// classValues.evaluate(function(values) { 
-//   values.forEach(function(value) { 
-//     var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size(); 
-//     var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size(); 
-//     print('Class:', value, 'Train sample size:', trainSize); 
-//     print('Class:', value, 'Test sample size:', testSize); }); 
+print('Matching Dates:', matchingDates);
+Print the sizes of the training and testing samples per class 
+classValues.evaluate(function(values) { 
+  values.forEach(function(value) { 
+    var trainSize = training_sample.filter(ee.Filter.eq('landcover', value)).size(); 
+    var testSize = test_sample.filter(ee.Filter.eq('landcover', value)).size(); 
+    print('Class:', value, 'Train sample size:', trainSize); 
+    print('Class:', value, 'Test sample size:', testSize); }); 
   
-// });
+});
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'danau'); 
@@ -3003,83 +3005,52 @@ Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV/VH'], 
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 // Ekspor data training gabungan ke drive dalam bentuk csv
-// Export.table.toDrive({
-//   collection: training_sample, // FeatureCollection yang ingin disimpan
-//   description: 'csv_train_drive', // Nama deskripsi untuk ekspor
-//   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-//   fileFormat: 'csv',
-//   fileNamePrefix: 'data_training',
-// })
-// // Ekspor data test gabungan ke drive dalam bentuk csv
-// Export.table.toDrive({
-//   collection: test_sample, // FeatureCollection yang ingin disimpan
-//   description: 'csv_test_drive', // Nama deskripsi untuk ekspor
-//   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-//   fileFormat: 'csv',
-//   fileNamePrefix: 'data_test',
-// })
-// // Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
-// Export.table.toAsset({
-//   collection: training_sample, // FeatureCollection yang ingin disimpan
-//   description: 'train_asset', // Nama deskripsi untuk ekspor
-//   assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
-// })
-// // Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
-// Export.table.toAsset({
-//   collection: test_sample, // FeatureCollection yang ingin disimpan
-//   description: 'test_asset', // Nama deskripsi untuk ekspor
-//   assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
-// })
-// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
-// Export.image.toDrive({
-//   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
-//   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
-//   fileNamePrefix: 'rawa_pening_image',
-//   folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-//   region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
-//   scale: 10, // Skala dalam meter
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// })
-// // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
-// Export.image.toAsset({
-//   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
-//   description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
-//   assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
-//   region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
-//   scale: 10, // Skala dalam meter
-// })
+Export.table.toDrive({
+  collection: training_sample, // FeatureCollection yang ingin disimpan
+  description: 'csv_train_drive', // Nama deskripsi untuk ekspor
+  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+  fileFormat: 'csv',
+  fileNamePrefix: 'data_training',
+})
+// Ekspor data test gabungan ke drive dalam bentuk csv
+Export.table.toDrive({
+  collection: test_sample, // FeatureCollection yang ingin disimpan
+  description: 'csv_test_drive', // Nama deskripsi untuk ekspor
+  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+  fileFormat: 'csv',
+  fileNamePrefix: 'data_test',
+})
+// Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
+Export.table.toAsset({
+  collection: training_sample, // FeatureCollection yang ingin disimpan
+  description: 'train_asset', // Nama deskripsi untuk ekspor
+  assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
+})
+// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
+Export.table.toAsset({
+  collection: test_sample, // FeatureCollection yang ingin disimpan
+  description: 'test_asset', // Nama deskripsi untuk ekspor
+  assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
+})
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
+Export.image.toDrive({
+  image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
+  description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
+  fileNamePrefix: 'rawa_pening_image',
+  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
+  region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
+  scale: 10, // Skala dalam meter
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+})
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
+Export.image.toAsset({
+  image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
+  description: 'rawa_pening_image_asset', // Nama deskripsi untuk ekspor
+  assetId: 'users/222111840/rawa_pening_image', // ID asset untuk tabel di GEE
+  region: rawa_pening_shp, // Wilayah (ROI) tempat citra akan dipotong
+  scale: 10, // Skala dalam meter
+})
 
-// // [-1,1] ndvi 1 = vegetasi
-// // [-1,1] gndvi 1 = vegetasi
-// // [-1,1] evi 1 = vegetasi
-// // [-1,1] savi 1 = vegetasi
-
-// // Histogram untuk FAI
-// var fai_histogram = ui.Chart.image.histogram({
-//   image: combinedImage.select('FAI'), // Pilih band FAI
-//   region: rawa_pening_shp,                            // Region of interest
-//   scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
-//   maxPixels: 1e9                          // Jumlah maksimum piksel
-// }).setOptions({
-//   title: 'Histogram FAI',
-//   hAxis: {title: 'Nilai FAI'},
-//   vAxis: {title: 'Frekuensi'},
-//   colors: ['green']
-// });
-// var fdi_histogram = ui.Chart.image.histogram({
-//   image: combinedImage.select('FDI'), // Pilih band FAI
-//   region: rawa_pening_shp,                            // Region of interest
-//   scale: 10,                              // Resolusi analisis (30 m untuk Landsat/Sentinel)
-//   maxPixels: 1e9                          // Jumlah maksimum piksel
-// }).setOptions({
-//   title: 'Histogram FDI',
-//   hAxis: {title: 'Nilai FDI'},
-//   vAxis: {title: 'Frekuensi'},
-//   colors: ['green']
-// });
-// // Tampilkan histogram di konsol
-// print(fai_histogram);
-// print(fdi_histogram);
