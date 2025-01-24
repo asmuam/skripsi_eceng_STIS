@@ -3407,7 +3407,7 @@ image_sen2 = image_sen2
   vv_vh_ratio
 ])
 
-image_sen1 = image_sen1.select(['VV', 'VH','VV/VH']).toFloat()
+image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio']).toFloat()
 
 var sen2_bands = [
   'B1',
@@ -3441,7 +3441,7 @@ var sen2_bands = [
   'NDBSI',
 ]
 
-var sen1_bands = ['VV', 'VH','VV/VH']
+var sen1_bands = ['VV', 'VH','VV_VH_ratio']
 
 // Gabungkan citra Sentinel-1 dan Sentinel-2
 var combinedImage = image_sen2.addBands(image_sen1);
