@@ -2986,7 +2986,7 @@ print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
 // print(test_sample)
 print(combinedImage)
 // Tampilkan tanggal yang sama
-print('Matching Dates:', matchingDates);
+// print('Matching Dates:', matchingDates);
 // Print the sizes of the training and testing samples per class 
 classValues.evaluate(function(values) { 
   values.forEach(function(value) { 
