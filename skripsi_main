@@ -3479,7 +3479,7 @@ Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV/VH'], 
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
-// ekspor all sample
+// Ekspor sampel ke drive
 Export.table.toDrive({
   collection: sampled, // FeatureCollection yang ingin disimpan
   description: 'csv_sample_drive', // Nama deskripsi untuk ekspor
@@ -3488,27 +3488,14 @@ Export.table.toDrive({
   fileNamePrefix: 'data_sample',
 })
 
-// Ekspor data test gabungan ke drive dalam bentuk csv
-Export.table.toDrive({
-  collection: test_sample, // FeatureCollection yang ingin disimpan
-  description: 'csv_test_drive', // Nama deskripsi untuk ekspor
-  folder: 'GEE_Exports', // Folder di Google Drive  fileFormat: 'TFRecord'
-  fileFormat: 'csv',
-  fileNamePrefix: 'data_test',
-})
-// Ekspor data training gabungan ke GEE Asset dalam bentuk FeatureCollection
+// Ekspor data sampel ke aset gee
 Export.table.toAsset({
-  collection: training_sample, // FeatureCollection yang ingin disimpan
-  description: 'train_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/data_training', // ID asset untuk tabel di GEE
+  collection: sampled, // FeatureCollection yang ingin disimpan
+  description: 'sampel_asset', // Nama deskripsi untuk ekspor
+  assetId: 'projects/ee-222111840/assets/sampel', // ID asset untuk tabel di GEE
 })
-// Ekspor data test gabungan ke GEE Asset dalam bentuk FeatureCollection
-Export.table.toAsset({
-  collection: test_sample, // FeatureCollection yang ingin disimpan
-  description: 'test_asset', // Nama deskripsi untuk ekspor
-  assetId: 'users/222111840/data_test', // ID asset untuk tabel di GEE
-})
-// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 (tfr) ke drive
+
+// Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke drive
 Export.image.toDrive({
   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
   description: 'rawa_pening_image_drive', // Nama deskripsi untuk ekspor
@@ -3521,6 +3508,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 })
+
 // Ekspor Citra Gabungan Sentinel-1 dan Sentinel-2 ke GEE Asset
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp), // Citra yang akan diekspor
