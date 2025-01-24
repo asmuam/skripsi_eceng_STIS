@@ -22,7 +22,7 @@ Map.addLayer(
 );
 Map.addLayer(
   rf.clip(roi),
- {min: 0, max: 5, palette: ['lime green', 'yellow','light blue','dark green','brown','grey'], opacity: 1},
+ {min: 0, max: 5, palette: ['lime', 'yellow','lightblue','darkgreen','brown','grey'], opacity: 1},
   "rf"
 );
 Map.addLayer(
