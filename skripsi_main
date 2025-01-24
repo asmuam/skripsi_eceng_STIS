@@ -3452,6 +3452,8 @@ var combinedBands = sen2_bands.concat(sen1_bands);
 // Menggabungkan Kelas
 var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya)
 
+var classValues = classNames.aggregate_array('landcover').distinct();
+
 // dengan buffer
 // var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya).map(function(feat) { return feat.buffer(30); });
 
