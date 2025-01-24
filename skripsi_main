@@ -3344,7 +3344,7 @@ var vv_vh_ratio = image_sen1
     VV: image_sen1.select('VV'),
     VH: image_sen1.select('VH'),
   })
-  .rename('VV/VH')
+  .rename('VV_VH_ratio')
   .copyProperties(image_sen1, image_sen1.propertyNames())
 
 // Gabungkan semua indeks ke dalam citra Sentinel-2
