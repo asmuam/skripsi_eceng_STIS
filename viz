@@ -9,9 +9,8 @@ var roi =
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
     cnn = ee.Image("projects/ee-222111840/assets/cnn"),
-    rf = ee.Image("users/222111840/rf"),
-    rawa_pening_image = ee.Image("users/222111840/rawa_pening_image"),
-    image = ee.Image("projects/ee-222111840/assets/rf");
+    rf = ee.Image("projects/ee-222111840/assets/rf"),
+    rawa_pening_image = ee.Image("projects/ee-222111840/assets/rawa_pening_image");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(roi, 14);
@@ -23,7 +22,7 @@ Map.addLayer(
 );
 Map.addLayer(
   rf.clip(roi),
- {min: 0, max: 1, palette: ['red', 'white'], opacity: 0.3},
+ {min: 0, max: 5, palette: ['lime green', 'yellow','light blue','dark green','brown','grey'], opacity: 1},
   "rf"
 );
 Map.addLayer(
