@@ -3143,12 +3143,16 @@ function findMatchingDates(s1Collection, s2Collection) {
 
 // Fixed date for image
 var targetDate = ee.Date('2024-7-15');
-var range = 16;
+// Tanggal tetap untuk citra
+var targetDateS1 = ee.Date('2024-07-25');
+var targetDateS2 = ee.Date('2024-07-26');
+var range = 1;
 
 // Sentinel-2
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day'))
+  // .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day'))
+  .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -3156,14 +3160,15 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
 // Sentinel-1
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day'));
+  // .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day'))
+  .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'));
 
 // Image selection
 // TODO : set s1 = 7/25/2024, s2 = 7/26/2024 
 var sentinel2List = sentinel2.toList(sentinel2.size());
 var sentinel1List = sentinel1.toList(sentinel1.size());
-var image_sen2 = ee.Image(sentinel2List.get(5)); // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(4)); // 7/25/2024
+var image_sen2 = ee.Image(sentinel2List.get(1)); // 7/26/2024
+var image_sen1 = ee.Image(sentinel1List.get(0)); // 7/25/2024
 
 // VIs
 var ndvi = image_sen2
@@ -3257,10 +3262,10 @@ var lswi = image_sen2
 
   // fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
 var fai = image_sen2
-  .expression('B8 - (B4 + (B11 - B4) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
-    B4: image_sen2.select('B4'), // Red
-    B8: image_sen2.select('B8'), // NIR
-    B11: image_sen2.select('B11'), // SWIR
+  .expression('NIR - (RED + (SWIR1 - RED) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
+    RED: image_sen2.select('B4'), // Red
+    NIR: image_sen2.select('B8'), // NIR
+    SWIR1: image_sen2.select('B11'), // SWIR
   })
   .rename('FAI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
@@ -3522,7 +3527,8 @@ Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1')
-Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
+Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
+Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
 // Export sample to drive
