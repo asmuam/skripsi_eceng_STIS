@@ -250,7 +250,7 @@ var roi = /* color: #ff9797 */ee.Geometry.Polygon(
         {
           "system:index": "0"
         }),
-    rawa_pening_shp_asset = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
+    rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
     eceng = 
     /* color: #61e57d */
@@ -3143,9 +3143,6 @@ function findMatchingDates(s1Collection, s2Collection) {
 
   return commonDates;
 }
-
-var rawa_pening_shp = roi.difference(rawa_pening_sbwp.geometry(), ee.ErrorMargin(0.1));
-
 
 // Fixed date for image
 var targetDate = ee.Date('2024-7-15');
