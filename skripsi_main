@@ -3497,6 +3497,35 @@ var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 var pixelCountImageS2 = (image_sen2.clip(rawa_pening_shp)).geometry().area().divide(10000);
 var pixelCountImageS1 = (image_sen1.clip(rawa_pening_shp)).geometry().area().divide(10000);
 
+
+// Clip images to the shapefile boundary
+var clipped_sen2 = image_sen2.clip(rawa_pening_shp);
+var clipped_sen1 = image_sen1.clip(rawa_pening_shp);
+
+// Calculate the total number of pixels in the clipped images
+var pixelCountImageS2 = clipped_sen2.select(0).reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp.geometry(),
+  scale: 10,
+  maxPixels: 1e10
+}).get('B2'); // Replace 'B2' with the appropriate band if needed
+
+var pixelCountImageS1 = clipped_sen1.select(0).reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp.geometry(),
+  scale: 10,
+  maxPixels: 1e10
+}).get('VV'); // Replace 'VV' with the appropriate band if needed
+
+// Calculate the area in hectares
+var areaImageS2 = ee.Number(pixelCountImageS2).multiply(100).divide(10000); // 1 pixel = 100 sqm
+var areaImageS1 = ee.Number(pixelCountImageS1).multiply(100).divide(10000); // 1 pixel = 100 sqm
+
+print('Area Sentinel-2 in hectares:', areaImageS2);
+print('Area Sentinel-1 in hectares:', areaImageS1);
+
+
+
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
