@@ -3506,14 +3506,14 @@ var clipped_sen2 = image_sen2.clip(rawa_pening_shp);
 var clipped_sen1 = image_sen1.clip(rawa_pening_shp);
 
 // Calculate the total number of valid pixels in the clipped images
-var pixelCountImageS2 = clipped_sen2.select(0).reduceRegion({
+var pixelCountImageS2 = clipped_sen2.reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp.geometry(),
   scale: 10,
   maxPixels: 1e10
 });
 
-var pixelCountImageS1 = clipped_sen1.select(0).reduceRegion({
+var pixelCountImageS1 = clipped_sen1.reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp.geometry(),
   scale: 10,
