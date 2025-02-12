@@ -3580,36 +3580,3 @@ Export.table.toDrive({
   fileNamePrefix: 'rawa_pening'
 });
 
-// Fungsi untuk menghitung persentase piksel yang valid
-function calculateValidPixelPercentage(image, originalArea) {
-  var validPixelMask = image.mask().reduce(ee.Reducer.min()); // Mask valid pixels
-  var validPixelArea = validPixelMask.multiply(ee.Image.pixelArea()).reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: roi,
-    scale: 10, // Sesuaikan dengan resolusi citra
-    maxPixels: 1e10
-  }).get('mask');
-
-  return ee.Number(validPixelArea).divide(originalArea).multiply(100);
-}
-
-// Menghitung luas area total
-var totalArea = ee.Image.pixelArea().reduceRegion({
-  reducer: ee.Reducer.sum(),
-  geometry: roi,
-  scale: 10, // Sesuaikan dengan resolusi citra
-  maxPixels: 1e10
-}).get('area');
-
-// Mendapatkan citra pertama dari koleksi Sentinel-2
-var firstImage = image_sen2
-var originalValidPixelPercentage = calculateValidPixelPercentage(firstImage, totalArea);
-print('Persentase piksel yang valid sebelum masking:', originalValidPixelPercentage);
-
-// Menghitung persentase piksel yang valid setelah masking
-var maskedValidPixelPercentage = calculateValidPixelPercentage(firstImage.updateMask(maskS2clouds(firstImage).mask()), totalArea);
-print('Persentase piksel yang valid setelah masking:', maskedValidPixelPercentage);
-
-// Menghitung persentase piksel yang hilang
-var lostPixelPercentage = originalValidPixelPercentage.subtract(maskedValidPixelPercentage);
-print('Persentase piksel yang hilang:', lostPixelPercentage);
