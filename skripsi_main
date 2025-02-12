@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = /* color: #ff9797 */ee.Geometry.Polygon(
+var roi = 
+    /* color: #ff9797 */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[110.40683667438644, -7.258598285643539],
           [110.40707270877975, -7.26397289538782],
           [110.40531317966598, -7.270645836274717],
