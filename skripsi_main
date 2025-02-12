@@ -1,14 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #ff9797 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[110.40329615848678, -7.258534428508002],
-          [110.40329615848678, -7.320429012466368],
-          [110.41915337818283, -7.320131053555693],
+var roi = /* color: #ff9797 */ee.Geometry.Polygon(
+        [[[110.40475528019088, -7.2594709989206985],
+          [110.40492694156784, -7.2717952323528054],
+          [110.39900462406295, -7.2850556445784695],
+          [110.409819290811, -7.306126760363736],
+          [110.42001168506759, -7.316725794727544],
+          [110.42536537426132, -7.320790819447455],
           [110.43260733860153, -7.320088487980769],
           [110.44769208210128, -7.319918225640466],
           [110.46097438114303, -7.320003356818734],
+          [110.46724002140182, -7.303168350459327],
+          [110.45822779911178, -7.2699859964562785],
           [110.46011607425827, -7.258108714039418]]], null, false),
     bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
     dji0095s = 
@@ -3141,7 +3143,7 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 
-var rawa_pening_shp = roi.difference(rawa_pening_sbwp.geometry(), ee.ErrorMargin(0));
+var rawa_pening_shp = roi.difference(rawa_pening_sbwp.geometry(), ee.ErrorMargin(0.1));
 
 
 // Fixed date for image
@@ -3557,6 +3559,7 @@ classValues.evaluate(function(values) {
 // Viz
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp_asset, {}, 'lake'); 
+Map.addLayer(rawa_pening_shp, {}, 'lake 0'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp_asset), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1 clip')
 Map.addLayer(combinedImage.clip(rawa_pening_shp_asset), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
