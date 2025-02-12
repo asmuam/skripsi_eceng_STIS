@@ -3493,12 +3493,16 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 });
 
 // count the number of pixels in the area
-var pixelCountArea = rawa_pening_shp.geometry().area().divide(10000);
+var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
+var pixelCountImageS2 = image_sen2.geometry().area().divide(10000);
+var pixelCountImageS1 = image_sen1.geometry().area().divide(10000);
 
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
-print('Jumlah Piksel Area SHP (hektar):', pixelCountArea);
+print('Jumlah Piksel Area SHP (hektar):', pixelCountSHP);
+print('Jumlah Piksel Area Citra S1 clipped SHP (hektar):', pixelCountImageS1);
+print('Jumlah Piksel Area Citra S2 clipped SHP (hektar):', pixelCountImageS2);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
