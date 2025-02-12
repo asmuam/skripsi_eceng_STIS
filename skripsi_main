@@ -3502,8 +3502,8 @@ print('Jumlah Piksel Area:', pixelCountArea);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print(sentinel2.toList(sentinel2.size()));
 print(sentinel1.toList(sentinel1.size()));
-print('Sentinel-2 (RGB) 16 Ags 2023:', image_sen2)
-print('Sentinel-1 VV 16 Ags 2023:', image_sen1)
+print('Sentinel-2 (RGB) 25 Juli 2024:', image_sen2)
+print('Sentinel-1 VV 26 Juli 2024:', image_sen1)
 print(sampled)
 print(training_sample)
 print(test_sample)
