@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = /* color: #ff9797 */ee.Geometry.Polygon(
+var roi = 
+    /* color: #ff9797 */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[110.40329615848678, -7.258534428508002],
           [110.40329615848678, -7.320429012466368],
           [110.41915337818283, -7.320131053555693],
@@ -244,7 +247,7 @@ var roi = /* color: #ff9797 */ee.Geometry.Polygon(
         {
           "system:index": "0"
         }),
-    rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
+    rawa_pening_shp_asset = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
     eceng = 
     /* color: #61e57d */
@@ -3138,6 +3141,9 @@ function findMatchingDates(s1Collection, s2Collection) {
   return commonDates;
 }
 
+var rawa_pening_shp = roi.difference(rawa_pening_sbwp.geometry(), ee.ErrorMargin(0));
+
+
 // Fixed date for image
 var targetDate = ee.Date('2024-7-15');
 // Tanggal tetap untuk citra
@@ -3490,26 +3496,26 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 });
 
 // count the number of pixels in the area
-var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
-var pixelCountImageS2 = (image_sen2.clip(rawa_pening_shp)).geometry().area().divide(10000);
-var pixelCountImageS1 = (image_sen1.clip(rawa_pening_shp)).geometry().area().divide(10000);
+var pixelCountSHP = rawa_pening_shp_asset.geometry().area().divide(10000);
+var pixelCountImageS2 = (image_sen2.clip(rawa_pening_shp_asset)).geometry().area().divide(10000);
+var pixelCountImageS1 = (image_sen1.clip(rawa_pening_shp_asset)).geometry().area().divide(10000);
 
 
 // Clip images to the shapefile boundary
-var clipped_sen2 = image_sen2.clip(rawa_pening_shp);
-var clipped_sen1 = image_sen1.clip(rawa_pening_shp);
+var clipped_sen2 = image_sen2.clip(rawa_pening_shp_asset);
+var clipped_sen1 = image_sen1.clip(rawa_pening_shp_asset);
 
 // Calculate the total number of valid pixels in the clipped images
 var pixelCountImageS2 = clipped_sen2.select(0).reduceRegion({
   reducer: ee.Reducer.count(),
-  geometry: rawa_pening_shp.geometry(),
+  geometry: rawa_pening_shp_asset.geometry(),
   scale: 10,
   maxPixels: 1e10
 }).values().get(0);
 
 var pixelCountImageS1 = clipped_sen1.select(0).reduceRegion({
   reducer: ee.Reducer.count(),
-  geometry: rawa_pening_shp.geometry(),
+  geometry: rawa_pening_shp_asset.geometry(),
   scale: 10,
   maxPixels: 1e10
 }).values().get(0);
@@ -3550,13 +3556,13 @@ classValues.evaluate(function(values) {
 
 // Viz
 Map.centerObject(roi, 14)
-Map.addLayer(rawa_pening_shp, {}, 'lake'); 
+Map.addLayer(rawa_pening_shp_asset, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1 clip')
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
+Map.addLayer(combinedImage.clip(rawa_pening_shp_asset), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1 clip')
+Map.addLayer(combinedImage.clip(rawa_pening_shp_asset), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
 Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
+Map.addLayer(combinedImage.clip(rawa_pening_shp_asset), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
 // Export sample to drive
 Export.table.toDrive({
@@ -3576,11 +3582,11 @@ Export.table.toAsset({
 
 // Export combined image to drive
 Export.image.toDrive({
-  image: combinedImage.clip(rawa_pening_shp), 
+  image: combinedImage.clip(rawa_pening_shp_asset), 
   description: 'rawa_pening_image_drive',
   fileNamePrefix: 'rawa_pening_image',
   folder: 'GEE_Exports',
-  region: rawa_pening_shp, 
+  region: rawa_pening_shp_asset, 
   scale: 10,
   fileFormat: 'GeoTIFF',
   formatOptions: {
@@ -3590,16 +3596,16 @@ Export.image.toDrive({
 
 // Export combined image to asset
 Export.image.toAsset({
-  image: combinedImage.clip(rawa_pening_shp), 
+  image: combinedImage.clip(rawa_pening_shp_asset), 
   description: 'rawa_pening_image_asset', 
   assetId: 'projects/ee-222111840/assets/rawa_pening_image', 
-  region: rawa_pening_shp, 
+  region: rawa_pening_shp_asset, 
   scale: 10, 
 })
 
 // Ekspor FeatureCollection ke Google Drive sebagai shapefile
 Export.table.toDrive({
-  collection: rawa_pening_shp,
+  collection: rawa_pening_shp_asset,
   description: 'export_shapefile',
   fileFormat: 'SHP',
   folder: 'GEE_Exports',
