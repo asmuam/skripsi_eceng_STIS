@@ -3504,11 +3504,20 @@ var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 // Memotong citra Sentinel-2 dan Sentinel-1 dengan shapefile rawa_pening_shp
 var clippedImageS2 = image_sen2.clip(rawa_pening_shp);
 var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
-
+var areaImageS2 = image_sen2.reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp
+  });
+var areaImageS1 = image_sen1.reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp
+  });
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
 print('Area SHP hektar:', pixelCountSHP);
+print('Area untuk semua band Sentinel-2:', areaImageS2);
+print('Area untuk semua band Sentinel-1:', areaImageS1);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
