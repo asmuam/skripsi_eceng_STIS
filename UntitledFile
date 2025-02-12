@@ -1,0 +1,21 @@
+// Define a Geometry object.
+var geometry = ee.Geometry({
+  'type': 'Polygon',
+  'coordinates':
+    [[[-122.081, 37.417],
+      [-122.086, 37.421],
+      [-122.084, 37.418],
+      [-122.089, 37.416]]]
+});
+
+// Apply the area method to the Geometry object.
+var geometryArea = geometry.area({'maxError': 1});
+
+// Print the result to the console.
+print('geometry.area(...) =', geometryArea);
+
+// Display relevant geometries on the map.
+Map.setCenter(-122.085, 37.422, 15);
+Map.addLayer(geometry,
+             {'color': 'black'},
+             'Geometry [black]: geometry');
