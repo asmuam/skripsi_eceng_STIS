@@ -3501,38 +3501,46 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 // count the number of pixels in the area
 var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 
-// Clip images to the shapefile boundary
-var clipped_sen2 = image_sen2.clip(rawa_pening_shp);
-var clipped_sen1 = image_sen1.clip(rawa_pening_shp);
+// Memotong citra Sentinel-2 dan Sentinel-1 dengan shapefile rawa_pening_shp
+var clippedImageS2 = image_sen2.clip(rawa_pening_shp);
+var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 
-// Calculate the total number of valid pixels in the clipped images
-var pixelCountImageS2 = clipped_sen2.reduceRegion({
-  reducer: ee.Reducer.count(),
-  geometry: rawa_pening_shp.geometry(),
-  scale: 10,
-  maxPixels: 1e10
-});
+// Fungsi untuk menghitung area untuk semua band
+var calculateAreaForBands = function(image, geometry) {
+  var bandNames = image.bandNames(); // Mengambil nama semua band
+  var areaResults = {};
+  
+  // Iterasi setiap band dan hitung area
+  bandNames.evaluate(function(bands) {
+    bands.forEach(function(band) {
+      var areaBand = image.select(band).reduceRegion({
+        reducer: ee.Reducer.sum(), 
+        geometry: geometry, 
+        scale: 10,  // Resolusi citra Sentinel-2
+        maxPixels: 1e8
+      });
+      // Menyimpan hasil perhitungan untuk setiap band
+      areaResults[band] = areaBand.get(band);
+    });
+  });
+  
+  return areaResults;
+};
 
-var pixelCountImageS1 = clipped_sen1.reduceRegion({
-  reducer: ee.Reducer.count(),
-  geometry: rawa_pening_shp.geometry(),
-  scale: 10,
-  maxPixels: 1e10
-});
+// Menghitung area untuk semua band pada Sentinel-2
+var areaImageS2AllBands = calculateAreaForBands(clippedImageS2, rawa_pening_shp);
 
-print(pixelCountImageS1)
-print(pixelCountImageS2)
-// Calculate the area in hectares
-var areaImageS2 = ee.Number(pixelCountImageS2.values().get(0)).multiply(100).divide(10000); // 1 pixel = 100 sqm
-var areaImageS1 = ee.Number(pixelCountImageS1.values().get(0)).multiply(100).divide(10000); // 1 pixel = 100 sqm
+// Menghitung area untuk semua band pada Sentinel-1
+var areaImageS1AllBands = calculateAreaForBands(clippedImageS1, rawa_pening_shp);
 
+// Menampilkan hasil untuk semua band (Area per band dalam satuan m²)
+print('Area untuk semua band Sentinel-2:', areaImageS2AllBands);
+print('Area untuk semua band Sentinel-1:', areaImageS1AllBands);
 
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
-print('Jumlah Piksel Area SHP (hektar):', pixelCountSHP);
-print('Area Sentinel-2 in hectares:', areaImageS2);
-print('Area Sentinel-1 in hectares:', areaImageS1);
+print('Area SHP hektar:', pixelCountSHP);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
