@@ -3578,3 +3578,39 @@ Export.table.toDrive({
   folder: 'GEE_Exports',
   fileNamePrefix: 'rawa_pening'
 });
+
+// Clip images to the shapefile boundary
+var clipped_sen2 = image_sen2.clip(rawa_pening_shp);
+var clipped_sen1 = image_sen1.clip(rawa_pening_shp);
+
+// Define a function to calculate the percentage of no-data pixels
+function calculateNoDataPercentage(image, maskValue) {
+  var mask = image.mask().reduce(ee.Reducer.min());  // Combine mask for all bands
+  var noDataPixels = mask.not().rename('noDataPixels'); // Identify no-data pixels
+  var totalPixels = ee.Image.pixelArea(); // Total pixel area
+  
+  // Calculate area of no-data pixels
+  var noDataArea = noDataPixels.multiply(ee.Image.pixelArea()).reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: rawa_pening_shp.geometry(),
+    scale: 10,
+    maxPixels: 1e10
+  });
+  
+  // Calculate total area
+  var totalArea = totalPixels.reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: rawa_pening_shp.geometry(),
+    scale: 10,
+    maxPixels: 1e10
+  });
+
+  return ee.Number(noDataArea.get('noDataPixels')).divide(totalArea.get('area')).multiply(100);
+}
+
+// Calculate and print the no-data percentage for both Sentinel-2 and Sentinel-1 images
+var noDataPercentageS2 = calculateNoDataPercentage(clipped_sen2, -9999); // Adjust mask value as needed
+var noDataPercentageS1 = calculateNoDataPercentage(clipped_sen1, -9999); // Adjust mask value as needed
+
+print('No-data percentage Sentinel-2:', noDataPercentageS2);
+print('No-data percentage Sentinel-1:', noDataPercentageS1);
