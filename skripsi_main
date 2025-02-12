@@ -3504,12 +3504,12 @@ var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 // Memotong citra Sentinel-2 dan Sentinel-1 dengan shapefile rawa_pening_shp
 var clippedImageS2 = image_sen2.clip(rawa_pening_shp);
 var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
-var areaImageS2 = image_sen2.reduceRegion({
+var areaImageS2 = image_sen2.unmask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp,
   scale:10
   });
-var areaImageS1 = image_sen1.reduceRegion({
+var areaImageS1 = image_sen1.unmask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp
   });
