@@ -3167,7 +3167,7 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
 // TODO : set s1 = 7/25/2024, s2 = 7/26/2024 
 var sentinel2List = sentinel2.toList(sentinel2.size());
 var sentinel1List = sentinel1.toList(sentinel1.size());
-var image_sen2 = ee.Image(sentinel2List.get(1)); // 7/26/2024
+var image_sen2 = ee.Image(sentinel2List.get(0)); // 7/26/2024
 var image_sen1 = ee.Image(sentinel1List.get(0)); // 7/25/2024
 
 // VIs
