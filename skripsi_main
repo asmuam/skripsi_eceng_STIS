@@ -3498,7 +3498,7 @@ var pixelCountArea = rawa_pening_shp.geometry().area().divide(10000);
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
-print('Jumlah Piksel Area SHP:', pixelCountArea);
+print('Jumlah Piksel Area SHP (hektar):', pixelCountArea);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
