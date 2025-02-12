@@ -3521,17 +3521,13 @@ var pixelCountImageS1 = clipped_sen1.select(0).reduceRegion({
 var areaImageS2 = ee.Number(pixelCountImageS2).multiply(100).divide(10000); // 1 pixel = 100 sqm
 var areaImageS1 = ee.Number(pixelCountImageS1).multiply(100).divide(10000); // 1 pixel = 100 sqm
 
-print('Area Sentinel-2 in hectares:', areaImageS2);
-print('Area Sentinel-1 in hectares:', areaImageS1);
-
-
 
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
 print('Jumlah Piksel Area SHP (hektar):', pixelCountSHP);
-print('Jumlah Piksel Area Citra S1 clipped SHP (hektar):', pixelCountImageS1);
-print('Jumlah Piksel Area Citra S2 clipped SHP (hektar):', pixelCountImageS2);
+print('Area Sentinel-2 in hectares:', areaImageS2);
+print('Area Sentinel-1 in hectares:', areaImageS1);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
