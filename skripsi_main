@@ -3526,8 +3526,9 @@ classValues.evaluate(function(values) {
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1')
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
+Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1 clip')
+Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
+Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
