@@ -3580,38 +3580,36 @@ Export.table.toDrive({
   fileNamePrefix: 'rawa_pening'
 });
 
-// Clip images to the shapefile boundary
-var clipped_sen2 = image_sen2;
-var clipped_sen1 = image_sen1;
-
-// Define a function to calculate the percentage of no-data pixels
-function calculateNoDataPercentage(image, maskValue) {
-  var mask = image.mask().reduce(ee.Reducer.min());  // Combine mask for all bands
-  var noDataPixels = mask.not().rename('noDataPixels'); // Identify no-data pixels
-  var totalPixels = ee.Image.pixelArea(); // Total pixel area
-  
-  // Calculate area of no-data pixels
-  var noDataArea = noDataPixels.multiply(ee.Image.pixelArea()).reduceRegion({
+// Fungsi untuk menghitung persentase piksel yang valid
+function calculateValidPixelPercentage(image, originalArea) {
+  var validPixelMask = image.mask().reduce(ee.Reducer.min()); // Mask valid pixels
+  var validPixelArea = validPixelMask.multiply(ee.Image.pixelArea()).reduceRegion({
     reducer: ee.Reducer.sum(),
-    geometry: rawa_pening_shp.geometry(),
-    scale: 10,
+    geometry: roi,
+    scale: 10, // Sesuaikan dengan resolusi citra
     maxPixels: 1e10
-  });
-  
-  // Calculate total area
-  var totalArea = totalPixels.reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: rawa_pening_shp.geometry(),
-    scale: 10,
-    maxPixels: 1e10
-  });
+  }).get('mask');
 
-  return ee.Number(noDataArea.get('noDataPixels')).divide(totalArea.get('area')).multiply(100);
+  return ee.Number(validPixelArea).divide(originalArea).multiply(100);
 }
 
-// Calculate and print the no-data percentage for both Sentinel-2 and Sentinel-1 images
-var noDataPercentageS2 = calculateNoDataPercentage(clipped_sen2, -9999); // Adjust mask value as needed
-var noDataPercentageS1 = calculateNoDataPercentage(clipped_sen1, -9999); // Adjust mask value as needed
+// Menghitung luas area total
+var totalArea = ee.Image.pixelArea().reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: roi,
+  scale: 10, // Sesuaikan dengan resolusi citra
+  maxPixels: 1e10
+}).get('area');
 
-print('No-data percentage Sentinel-2:', noDataPercentageS2);
-print('No-data percentage Sentinel-1:', noDataPercentageS1);
+// Mendapatkan citra pertama dari koleksi Sentinel-2
+var firstImage = image_sen2
+var originalValidPixelPercentage = calculateValidPixelPercentage(firstImage, totalArea);
+print('Persentase piksel yang valid sebelum masking:', originalValidPixelPercentage);
+
+// Menghitung persentase piksel yang valid setelah masking
+var maskedValidPixelPercentage = calculateValidPixelPercentage(firstImage.updateMask(maskS2clouds(firstImage).mask()), totalArea);
+print('Persentase piksel yang valid setelah masking:', maskedValidPixelPercentage);
+
+// Menghitung persentase piksel yang hilang
+var lostPixelPercentage = originalValidPixelPercentage.subtract(maskedValidPixelPercentage);
+print('Persentase piksel yang hilang:', lostPixelPercentage);
