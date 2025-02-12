@@ -3493,7 +3493,7 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
 });
 
 // count the number of pixels in the area
-var pixelCountArea = rawa_pening_shp.geometry().area().divide(100);
+var pixelCountArea = rawa_pening_shp.geometry().area().divide(10000);
 
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
