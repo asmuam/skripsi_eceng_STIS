@@ -3580,8 +3580,8 @@ Export.table.toDrive({
 });
 
 // Clip images to the shapefile boundary
-var clipped_sen2 = image_sen2.clip(rawa_pening_shp);
-var clipped_sen1 = image_sen1.clip(rawa_pening_shp);
+var clipped_sen2 = image_sen2;
+var clipped_sen1 = image_sen1;
 
 // Define a function to calculate the percentage of no-data pixels
 function calculateNoDataPercentage(image, maskValue) {
