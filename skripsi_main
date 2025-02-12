@@ -3500,14 +3500,14 @@ var pixelCount = sampled.size();
 
 print('Jumlah Piksel Area SHP:', pixelCountArea);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
-print(sentinel2.toList(sentinel2.size()));
-print(sentinel1.toList(sentinel1.size()));
+print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
+print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 25 Juli 2024:', image_sen2)
 print('Sentinel-1 VV 26 Juli 2024:', image_sen1)
-print(sampled)
-print(training_sample)
-print(test_sample)
-print(combinedImage)
+print('Full Sample',sampled)
+print('Train Sample',training_sample)
+print('Test Sample',test_sample)
+print('Combined Image',combinedImage)
 
 // Show the same date
 // print('Matching Dates:', matchingDates);
