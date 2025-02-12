@@ -3508,20 +3508,19 @@ var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 // Fungsi untuk menghitung area untuk semua band
 var calculateAreaForBands = function(image, geometry) {
   var bandNames = image.bandNames(); // Mengambil nama semua band
-  var areaResults = {};
+  var areaResults = {};  // Object untuk menyimpan hasil area tiap band
   
   // Iterasi setiap band dan hitung area
-  bandNames.evaluate(function(bands) {
-    bands.forEach(function(band) {
-      var areaBand = image.select(band).reduceRegion({
-        reducer: ee.Reducer.sum(), 
-        geometry: geometry, 
-        scale: 10,  // Resolusi citra Sentinel-2
-        maxPixels: 1e8
-      });
-      // Menyimpan hasil perhitungan untuk setiap band
-      areaResults[band] = areaBand.get(band);
+  bandNames.getInfo().forEach(function(band) {  // Ganti .evaluate() dengan .getInfo() untuk mendapatkan nama band
+    var areaBand = image.select(band).reduceRegion({
+      reducer: ee.Reducer.sum(), 
+      geometry: geometry, 
+      scale: 10,  // Resolusi citra Sentinel-2
+      maxPixels: 1e8
     });
+    
+    // Menyimpan hasil perhitungan untuk setiap band
+    areaResults[band] = areaBand.get(band);
   });
   
   return areaResults;
