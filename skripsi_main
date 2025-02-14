@@ -3513,6 +3513,28 @@ var areaImageS1 = image_sen1.unmask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp
   });
+// Calculate the number of valid pixels
+var validPixelCount = clippedImageS2.mask().reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp.geometry(),
+  scale: 10,
+  maxPixels: 1e10
+}).values().get(0);
+
+// Calculate the total number of pixels in the clipped image
+var totalPixelCount = clippedImageS2.select(0).reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp.geometry(),
+  scale: 10,
+  maxPixels: 1e10
+}).values().get(0);
+
+// Calculate the number of no-data pixels
+var noDataPixelCount = ee.Number(totalPixelCount).subtract(validPixelCount);
+
+// Calculate the percentage of no-data pixels
+var noDataPixelPercentage = noDataPixelCount.divide(totalPixelCount).multiply(100);
+
 // Count the number of pixels in the sample
 var pixelCount = sampled.size();
 
@@ -3520,6 +3542,7 @@ print('Area SHP hektar:', pixelCountSHP);
 print('Area untuk semua band Sentinel-2:', areaImageS2);
 print('Area untuk semua band Sentinel-1:', areaImageS1);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
+print('Persentase piksel no-data:', noDataPixelPercentage);
 print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 25 Juli 2024:', image_sen2)
@@ -3599,4 +3622,3 @@ Export.table.toDrive({
   folder: 'GEE_Exports',
   fileNamePrefix: 'rawa_pening'
 });
-
