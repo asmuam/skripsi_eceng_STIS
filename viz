@@ -8,7 +8,6 @@ var roi =
           [110.4620901800923, -7.2614117383033845],
           [110.40750186222311, -7.26141173830338],
           [110.4075018622231, -7.316750824882465]]]),
-    rf = ee.Image("projects/ee-222111840/assets/rf"),
     rawa_pening_image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
     cnn1 = ee.Image("projects/ee-222111840/assets/cnn1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
@@ -20,11 +19,11 @@ Map.addLayer(
  {bands:['B4','B3','B2'],min: 0, max: 0.3},
  "s2"
 );
-Map.addLayer(
-  rf.clip(roi),
- {min: 0, max: 5, palette: ['lime', 'yellow','lightblue','darkgreen','brown','grey'], opacity: 1},
-  "rf"
-);
+// Map.addLayer(
+//   rf.clip(roi),
+// {min: 0, max: 5, palette: ['lime', 'yellow','lightblue','darkgreen','brown','grey'], opacity: 1},
+//   "rf"
+// );
 Map.addLayer(
   cnn1.clip(roi),
  {min: 0, max: 5, palette: ['lime', 'yellow','lightblue','darkgreen','brown','grey'], opacity: 1},
