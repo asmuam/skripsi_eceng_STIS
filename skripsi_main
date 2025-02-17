@@ -3545,4 +3545,4 @@ Export.table.toDrive({
   fileNamePrefix: 'rawa_pening'
 });
 
-// Map.setCenter(110.44527762851794, -7.267746642717425, 24)
+Map.setCenter(110.41770939127575,-7.291049219363841, 24)
