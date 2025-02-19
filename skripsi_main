@@ -3322,6 +3322,7 @@ image_sen2 = image_sen2.addBands([
   wavi,
   rendvi,
   gari,
+  gari2,
   ndii,
   ndavi,
   ndwi,
