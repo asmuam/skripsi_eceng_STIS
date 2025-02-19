@@ -3181,6 +3181,19 @@ var gari = image_sen2
   .rename('GARI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
 
+var gari2 = image_sen2
+  .expression(
+    '(NIR - (GREEN - (BLUE - RED))) / (NIR + (GREEN - (BLUE - RED)))',
+    {
+      GREEN: image_sen2.select('B3'),
+      BLUE: image_sen2.select('B2'),
+      NIR: image_sen2.select('B8'),
+      RED: image_sen2.select('B4'),
+    }
+  )
+  .rename('GARIv2')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+
 // 819/1600
 var ndii = image_sen2
   .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
@@ -3343,6 +3356,7 @@ image_sen2 = image_sen2
     'WAVI',
     'RENDVI',
     'GARI',
+    'GARIv2',
     'NDII',
     'NDAVI', 
     'NDWI',
@@ -3382,6 +3396,7 @@ var sen2_bands = [
   'WAVI',
   'RENDVI',
   'GARI',
+  'GARIv2',
   'NDWI',
   'MNDWI',
   'LSWI',
