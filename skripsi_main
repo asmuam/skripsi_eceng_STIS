@@ -3183,7 +3183,7 @@ var gari = image_sen2
 
 var gari2 = image_sen2
   .expression(
-    '(NIR - (GREEN - (BLUE - RED))) / (NIR + (GREEN - (BLUE - RED)))',
+    '(NIR - (GREEN - 1.7 * (BLUE - RED))) / (NIR + (GREEN - 1.7 * (BLUE - RED)))',
     {
       GREEN: image_sen2.select('B3'),
       BLUE: image_sen2.select('B2'),
