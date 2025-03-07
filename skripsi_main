@@ -4483,8 +4483,6 @@ print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 25 Juli 2024:', image_sen2)
 print('Sentinel-1 VV 26 Juli 2024:', image_sen1)
 print('Full Sample',sampled)
-print('Train Sample',training_sample)
-print('Test Sample',test_sample)
 print('Combined Image',combinedImage)
 
 // Show the same date
