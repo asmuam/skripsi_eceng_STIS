@@ -4593,7 +4593,7 @@ var stratifiedSample2 = ee.FeatureCollection(
 ).flatten().merge(kjaTrain).merge(kjaTest); // Gabungkan dengan hasil reduce dari kja
 
 var sampled2 = combinedImage.select(combinedBands).sampleRegions({
-  collection: stratifiedSample,
+  collection: stratifiedSample2,
   properties: ['landcover', 'sample'], 
   scale: 10, 
   geometries: true, 
