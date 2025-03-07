@@ -4554,27 +4554,34 @@ Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53'))
 ////////////////////////////////////////////////////
 
 // Handle kja polygons separately
-var kjaReduced = kja_p.randomColumn().map(function (feature) {
+var kjaReduced = kja_p.map(function (feature) {
   var reduced = combinedImage.reduceRegion({
     reducer: ee.Reducer.mean(),
+    geometry: feature.geometry(),
     scale: 10,
-    bestEffort: true
+    bestEffort: true,
+    maxPixels: 1e13
   });
   return feature.set(reduced);
 });
 
-var kjaTrain = kjaReduced.filter(ee.Filter.lte('random', 0.8)).map(function (feat) {
+// Random split untuk train-test
+var kjaWithRandom = kjaReduced.randomColumn(); // Tambahkan kolom acak
+var kjaTrain = kjaWithRandom.filter(ee.Filter.lte('random', 0.8)).map(function (feat) {
   return feat.set('sample', 'train');
 });
-var kjaTest = kjaReduced.filter(ee.Filter.gt('random', 0.8)).map(function (feat) {
+var kjaTest = kjaWithRandom.filter(ee.Filter.gt('random', 0.8)).map(function (feat) {
   return feat.set('sample', 'test');
 });
+
+// Gabungkan data KJA Train dan Test
+var kjaFinal = kjaTrain.merge(kjaTest);
 
 // Keep other feature collections as points
 var otherFCs = eceng.merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya);
 var classValues2 = otherFCs.aggregate_array('landcover').distinct();
 
-// Stratified sampling
+// Stratified sampling untuk data points
 var stratifiedSample2 = ee.FeatureCollection(
   classValues2.map(function (value) {
     var features = otherFCs.filter(ee.Filter.eq('landcover', value)).randomColumn();
@@ -4586,18 +4593,22 @@ var stratifiedSample2 = ee.FeatureCollection(
     });
     return train.merge(test);
   })
-).flatten().merge(kjaTrain).merge(kjaTest); // Gabungkan dengan hasil reduce dari kja
+).flatten();
 
-var sampled2 = combinedImage.select(combinedBands).sampleRegions({
+// Sample untuk data point (selain KJA)
+var sampledPoints = combinedImage.select(combinedBands).sampleRegions({
   collection: stratifiedSample2,
   properties: ['landcover', 'sample'], 
   scale: 10, 
   geometries: true, 
 });
 
+// Gabungkan data points dan poligon yang sudah dihitung mean-nya
+var finalSample = sampledPoints.merge(kjaFinal);
+
 // Export to CSV
 Export.table.toDrive({
-  collection: sampled2,
+  collection: finalSample,
   description: 'Sampled_Data_poligon',
   folder: 'GEE_Exports',
   fileFormat: 'CSV',
