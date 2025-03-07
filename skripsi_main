@@ -4553,14 +4553,10 @@ Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53'))
 
 ////////////////////////////////////////////////////
 
-// Merge Classes
-var classNames2 = eceng.merge(kja_p).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya);
-
 // Handle kja polygons separately
 var kjaReduced = kja_p.randomColumn().map(function (feature) {
   var reduced = combinedImage.reduceRegion({
     reducer: ee.Reducer.mean(),
-    geometry: feature.geometry(),
     scale: 10,
     bestEffort: true
   });
