@@ -4557,14 +4557,14 @@ Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53'))
 var classNames2 = eceng.merge(kja_p).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya);
 
 // Handle kja polygons separately
-var kjaReduced = kja_p.map(function (feature) {
+var kjaReduced = kja_p.randomColumn().map(function (feature) {
   var reduced = combinedImage.reduceRegion({
     reducer: ee.Reducer.mean(),
     geometry: feature.geometry(),
     scale: 10,
     bestEffort: true
   });
-  return feature.set(reduced).set('random', ee.Number.random());
+  return feature.set(reduced);
 });
 
 var kjaTrain = kjaReduced.filter(ee.Filter.lte('random', 0.8)).map(function (feat) {
