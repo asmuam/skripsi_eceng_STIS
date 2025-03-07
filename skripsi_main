@@ -4614,3 +4614,10 @@ Export.table.toDrive({
   fileFormat: 'CSV',
   fileNamePrefix: 'data_sample_p',
 });
+
+// Export sample to asset
+Export.table.toAsset({
+  collection: finalSample, 
+  description: 'sampel_asset_poligon', 
+  assetId: 'projects/ee-222111840/assets/sampel_poligon',
+})
