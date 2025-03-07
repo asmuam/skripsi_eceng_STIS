@@ -4565,8 +4565,15 @@ Export.table.toDrive({
   fileNamePrefix: 'rawa_pening'
 });
 
-Export.table.toDrive({
+var sampled_kja_p = combinedImage.select(combinedBands).sampleRegions({
   collection: kja_p,
+  properties: ['landcover'], 
+  scale: 10, 
+  geometries: true, 
+});
+
+Export.table.toDrive({
+  collection: sampled_kja_p,
   description: 'export_kja_p_to_csv',
   fileFormat: 'CSV',
   folder: 'GEE_Exports',
