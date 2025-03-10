@@ -3394,7 +3394,27 @@ var sen1_bands = ['VV', 'VH','VV_VH_ratio']
 var combinedBands = sen2_bands.concat(sen1_bands);
 
 // Merge Classess
-var classNames = eceng.merge(kja).merge(air).merge(tanah).merge(vegetasi_lain).merge(lainnya)
+// Set the seed
+var seed = 222111840;
+
+// Add a random column to each feature collection
+var ecengRandom = eceng.randomColumn('random', seed);
+var kjaRandom = kja.randomColumn('random', seed);
+var airRandom = air.randomColumn('random', seed);
+var tanahRandom = tanah.randomColumn('random', seed);
+var vegetasiLainRandom = vegetasi_lain.randomColumn('random', seed);
+var lainnyaRandom = lainnya.randomColumn('random', seed);
+
+// Limit each feature collection to 50 random items
+var ecengSampled = ecengRandom.limit(50, 'random');
+var kjaSampled = kjaRandom.limit(50, 'random');
+var airSampled = airRandom.limit(50, 'random');
+var tanahSampled = tanahRandom.limit(50, 'random');
+var vegetasiLainSampled = vegetasiLainRandom.limit(50, 'random');
+var lainnyaSampled = lainnyaRandom.limit(50, 'random');
+
+// Merge the sampled feature collections
+var classNames = ecengSampled.merge(kjaSampled).merge(airSampled).merge(tanahSampled).merge(vegetasiLainSampled).merge(lainnyaSampled);
 var classValues = classNames.aggregate_array('landcover').distinct();
 
 // Merge Sentinel-1 and Sentinel-2 imagery
@@ -3402,7 +3422,7 @@ var combinedImage = image_sen2.addBands(image_sen1);
 
 var sampled = combinedImage.select(combinedBands).sampleRegions({
   collection: classNames,
-  properties: ['landcover', 'sample'], 
+  properties: ['landcover'], 
   scale: 10, 
   geometries: true, 
 });
