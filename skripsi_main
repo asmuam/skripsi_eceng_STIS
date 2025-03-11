@@ -3543,5 +3543,5 @@ Export.table.toDrive({
 
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
-Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
+// Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
 
