@@ -255,7 +255,10 @@ var roi =
         }),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    eceng = /* color: #61e57d */ee.FeatureCollection(
+    eceng = 
+    /* color: #61e57d */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44841736564798, -7.271096428200712]),
             {
@@ -856,7 +859,10 @@ var roi =
               "landcover": 0,
               "system:index": "99"
             })]),
-    air = /* color: #3eceff */ee.FeatureCollection(
+    air = 
+    /* color: #3eceff */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43180357414641, -7.270210837470081]),
             {
@@ -1457,7 +1463,10 @@ var roi =
               "landcover": 2,
               "system:index": "99"
             })]),
-    kja = /* color: #fffd02 */ee.FeatureCollection(
+    kja = 
+    /* color: #fffd02 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43916225249428, -7.271351431082463]),
             {
@@ -2058,7 +2067,10 @@ var roi =
               "landcover": 1,
               "system:index": "99"
             })]),
-    vegetasi_lain = /* color: #0a7400 */ee.FeatureCollection(
+    vegetasi_lain = 
+    /* color: #0a7400 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44646227440764, -7.267200644578212]),
             {
@@ -2359,7 +2371,10 @@ var roi =
               "landcover": 3,
               "system:index": "49"
             })]),
-    tanah = /* color: #c76029 */ee.FeatureCollection(
+    tanah = 
+    /* color: #c76029 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44472689829931, -7.267834762463424]),
             {
@@ -2660,7 +2675,10 @@ var roi =
               "landcover": 4,
               "system:index": "49"
             })]),
-    lainnya = /* color: #909090 */ee.FeatureCollection(
+    lainnya = 
+    /* color: #909090 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44824641847644, -7.267512076516082]),
             {
@@ -3020,7 +3038,13 @@ var roi =
             {
               "landcover": 5,
               "system:index": "59"
-            })]);
+            })]),
+    geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
+        [[110.4282239982091, -7.306864265713673],
+         [110.43143918124096, -7.270461352047681],
+         [110.44192381767198, -7.2732645175501744],
+         [110.44937980001855, -7.269627416561605],
+         [110.44530629237855, -7.267886130514792]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Function to get the image with the closest date or according to targetDate
 function getClosestImage(collection, targetDate) {
