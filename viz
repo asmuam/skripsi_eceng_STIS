@@ -21,6 +21,11 @@ Map.addLayer(
  "s2"
 );
 Map.addLayer(
+  rawa_pening_image.clip(roi),
+ {bands:['VV'],min: -40, max: 0},
+ "s1"
+);
+Map.addLayer(
   rf.clip(roi),
 {min: 0, max: 5, palette: ['lime', 'yellow','blue','darkgreen','brown','grey'], opacity: 1},
   "rf"
