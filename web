@@ -2,6 +2,9 @@
 var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     image = ee.Image("projects/ee-222111840/assets/rawa_pening_image");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Set the center and zoom level of the new map.
+map.centerObject(roi, 12);
+
 // Define base map style.
 var basemapStyle = [{
         featureType: 'all',
@@ -808,6 +811,3 @@ map.setControlVisibility({
 
 // Set the default map's cursor to a 'crosshair'.
 map.style().set('cursor', 'crosshair');
-
-// Set the center and zoom level of the new map.
-map.centerObject(roi, 12);
