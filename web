@@ -576,6 +576,19 @@ function redraw(layer) {
     if (layer === 'none' || layer === 'citra') {
         if (layer !== 'none') {
             // Add the layer for "citra" without a legend.
+            // Construct the legend for "cnn1d" or "rf".
+            legend
+                .add(
+                    ui.Label({
+                        value: info.desc, // Add the description of the selected layer.
+                        style: {
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            textAlign: 'left',
+                            margin: '4px 0px'
+                        },
+                    })
+                );
             var visImg = info.img.visualize(info.vis);
             map.addLayer(visImg, {}, layer);
         }
@@ -595,7 +608,7 @@ function redraw(layer) {
                 },
             })
         );
-    
+        
     // Add the labels corresponding to the classes.
     var classLabels = [
         'Eceng Gondok',
