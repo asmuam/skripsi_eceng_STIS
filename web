@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
+var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
+    image = ee.Image("projects/ee-222111840/assets/rawa_pening_image");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Define base map style.
 var basemapStyle = [{
@@ -377,3 +378,71 @@ map.style().set('cursor', 'crosshair');
 
 // Set the center and zoom level of the new map.
 map.centerObject(roi, 12);
+
+// Load in all relevant datasets.
+// PM2.5 data for the year 2020 regridded to the same grids as the
+// population estimates.
+var PM = ee.Image('users/tirthankar25/PM_2020_regrid');
+
+// Image collection of the original annual mean PM2.5 data.
+var pmTime = ee.ImageCollection('projects/gee-datastore/assets/PM25_v5GL03');
+
+// Population data.
+var Pop = ee.Image(
+  'CIESIN/GPWv411/GPW_Population_Count/gpw_v4_population_count_rev11_2020_30_sec');
+
+// Exceedance factor of PM2.5 concentration.
+var exceedanceFactor = ee.Image('users/tirthankar25/PMtimes_2020');
+
+// Define color palette:
+var thePalette = [
+    '#40004b',
+    '#762a83',
+    '#9970ab',
+    '#c2a5cf',
+    '#e7d4e8',
+    '#f7f7f7',
+    '#d9f0d3',
+    '#a6dba0',
+    '#5aae61',
+    '#1b7837',
+    '#00441b'
+].reverse();
+
+// Define information about each layer that will be used to visualize it and
+// describe it in a selector widget and legend.
+var dataInfo = {
+    'ex': {
+        name: 'Exceedance factor',
+        desc: 'Actual concentration of PM₂.₅ divided by the WHO standard',
+        img: exceedanceFactor,
+        vis: {
+            min: 1,
+            max: 20,
+            palette: thePalette,
+            opacity: 0.65
+        }
+    },
+    'pm': {
+        name: 'PM₂.₅ concentration',
+        desc: 'Annual average PM₂.₅ concentration (µg/m3)',
+        img: PM,
+        vis: {
+            min: 10,
+            max: 100,
+            palette: thePalette,
+            opacity: 0.65
+        }
+    },
+    'pop': {
+        name: 'Population count',
+        desc: 'Number of people',
+        img: Pop,
+        vis: {
+            min: 2000,
+            max: 18000,
+            palette: thePalette,
+            opacity: 0.65
+        }
+    },
+};
