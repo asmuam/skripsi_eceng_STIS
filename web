@@ -228,11 +228,21 @@ function panelcreate() {
     // Create an intro panel with labels.
     var intro = ui.Panel([
         ui.Label({
-            value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
+            value: 'Sebaran Eceng Gondok',
             style: {
                 fontSize: '1.4vw',
                 fontWeight: 'bold',
-                textAlign: 'center'
+                textAlign: 'center',
+                stretch: 'horizontal'
+            },
+        }),
+        ui.Label({
+            value: 'Danau Rawa Pening 2024',
+            style: {
+                fontSize: '1.4vw',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                stretch: 'horizontal'
             },
         }),
         ui.Label({
