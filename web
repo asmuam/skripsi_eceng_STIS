@@ -327,7 +327,7 @@ function referencecreate() {
         style: {
             color: 'black',
             fontWeight: 'bold',
-            textAlign: 'center'
+            textAlign: 'left'
         },
         targetUrl: 'drive.google.com'
     });
@@ -336,7 +336,7 @@ function referencecreate() {
         style: {
             color: 'black',
             fontWeight: 'bold',
-            textAlign: 'center',
+            textAlign: 'left',
             padding: '0px 0px 4px 0px'
         },
         targetUrl: 'https://sites.wustl.edu/acag/datasets/surface-pm2-5/'
