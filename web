@@ -248,7 +248,7 @@ function panelcreate() {
         ui.Label({
             value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya. ' +
            'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
-           'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+           'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
            'Hasil klasifikasi mencakup enam kelas:',
             style: {
                 fontSize: '0.9vw',
