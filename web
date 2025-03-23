@@ -315,21 +315,21 @@ function panelcreate() {
 // Function to create reference panel.
 function referencecreate() {
     var referenceZero = ui.Label({
-        value: 'Data Source:',
+        value: 'Data Tambahan:',
         style: {
             color: 'black',
             fontWeight: 'bold',
-            textAlign: 'center'
+            textAlign: 'left'
         },
     });
     var referenceOne = ui.Label({
-        value: 'Gridded Population of the World',
+        value: 'Aset Balai Besar Wilayah Sungai Pemali Juana',
         style: {
             color: 'black',
             fontWeight: 'bold',
             textAlign: 'center'
         },
-        targetUrl: 'https://doi.org/10.7927/H4JW8BX5'
+        targetUrl: 'drive.google.com'
     });
     var referenceTwo = ui.Label({
         value: 'Surface PM₂.₅',
@@ -349,14 +349,13 @@ function referencecreate() {
             textAlign: 'center'
         },
     });
-    var referenceFour = ui.Label({
-        value: 'TC',
+    var author = ui.Label({
+        value: '222111840@stis.ac.id',
         style: {
             color: 'black',
             fontWeight: 'bold',
             textAlign: 'center'
         },
-        targetUrl: 'https://tc25.github.io/'
     });
 
     // Add reference to the panel.
@@ -364,7 +363,7 @@ function referencecreate() {
     panel.add(referenceOne);
     panel.add(referenceTwo);
     panel.add(referenceThree);
-    panel.add(referenceFour);
+    panel.add(author);
 }
 
 // Create an inspector panel with a horizontal layout.
