@@ -586,24 +586,6 @@ function redraw(layer) {
             })
         );
 
-    // Add the color bar to the legend.
-    var colorBar = ui.Thumbnail({
-        image: ee.Image.pixelLonLat().select(0),
-        params: {
-            bbox: [0, 0, 1, 0.1],
-            dimensions: '100x10',
-            format: 'png',
-            min: 0,
-            max: 1,
-            palette: info.vis.palette
-        },
-        style: {
-            stretch: 'horizontal',
-            margin: '8px 0px',
-            maxHeight: '24px'
-        }
-    });
-
     // If the selected layer is "none" or "citra", reset and skip legend creation.
     if (layer === 'none' || layer === 'citra') {
         if (layer !== 'none') {
@@ -614,8 +596,6 @@ function redraw(layer) {
         return;
     }
     
-    legend.add(colorBar);
-
     // Add the labels corresponding to the classes.
     var classLabels = [
         'Eceng Gondok',
@@ -626,14 +606,40 @@ function redraw(layer) {
         'Lain-lain'
     ];
 
-    var labelPanel = ui.Panel(
-        classLabels.map(function (label, index) {
-            return ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px' });
-        }),
-        ui.Panel.Layout.flow('vertical')
-    );
+    var classColors = info.vis.palette; // Use the palette from dataInfo.
 
-    legend.add(labelPanel);
+    // Add each label with its corresponding color box.
+    classLabels.forEach(function (label, index) {
+        var colorBox = ui.Label({
+            style: {
+                backgroundColor: classColors[index],
+                padding: '8px',
+                margin: '4px',
+                border: '1px solid black',
+                width: '20px',
+                height: '20px',
+                float: 'left'
+            }
+        });
+
+        var textLabel = ui.Label({
+            value: index + ': ' + label,
+            style: {
+                margin: '4px 0px',
+                fontSize: '12px',
+                lineHeight: '20px',
+                padding: '0 4px'
+            }
+        });
+
+        var legendItem = ui.Panel({
+            widgets: [colorBox, textLabel],
+            layout: ui.Panel.Layout.flow('horizontal'),
+            style: { margin: '4px 0px' }
+        });
+
+        legend.add(legendItem);
+    });
 
     // Add the layer to the map.
     var visImg = info.img.visualize(info.vis);
