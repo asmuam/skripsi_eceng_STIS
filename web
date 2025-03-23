@@ -618,7 +618,6 @@ function redraw(layer) {
                 border: '1px solid black',
                 width: '20px',
                 height: '20px',
-                float: 'left'
             }
         });
 
@@ -627,7 +626,6 @@ function redraw(layer) {
             style: {
                 margin: '4px 0px',
                 fontSize: '12px',
-                lineHeight: '20px',
                 padding: '0 4px'
             }
         });
