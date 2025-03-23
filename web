@@ -699,6 +699,15 @@ function redraw(layer) {
 // Register the `redraw` function to the layer selector.
 select.onChange(redraw);
 
+// Create opacity slider panel
+var opacitySlider = ui.Slider({
+    min: 0,
+    max: 1,
+    value: 0.7,  // Set default opacity value
+    step: 0.05,
+    style: {width: '200px', margin: '10px'}
+});
+
 // Invoke the redraw function at start up to initialize the exceedance map.
 redraw('citra');
 map.addLayer(sbwp);
@@ -724,15 +733,6 @@ map.setControlVisibility({
 
 // Set the default map's cursor to a 'crosshair'.
 map.style().set('cursor', 'crosshair');
-
-// Create opacity slider panel
-var opacitySlider = ui.Slider({
-    min: 0,
-    max: 1,
-    value: 0.7,  // Set default opacity value
-    step: 0.05,
-    style: {width: '200px', margin: '10px'}
-});
 
 // Add the opacity slider to the legend panel
 legend.add(
