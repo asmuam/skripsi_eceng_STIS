@@ -801,12 +801,12 @@ map.setOptions('Base', {
 // Set visibility options to remove geometry creator, map type controller,
 // and layer list.
 map.setControlVisibility({
-    all: false,
-    layerList: false,
+    all: true,
+    layerList: true,
     zoomControl: true,
     scaleControl: true,
-    mapTypeControl: false,
-    fullscreenControl: false
+    mapTypeControl: true,
+    fullscreenControl: true
 });
 
 // Set the default map's cursor to a 'crosshair'.
