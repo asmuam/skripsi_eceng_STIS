@@ -733,6 +733,14 @@ function redraw(layer, opacity) {
     // Add the layer to the map, for layers other than "none" or "citra"
     if (layer !== 'none') {
         map.addLayer(visImg, {}, layer);
+            // Add the updated dot layer to the map
+    // If a dot already exists, update its position, else add it as a new point
+    if (dotLayer) {
+        // Remove the previous dot if exists
+        map.layers().remove(dotLayer);
+    }
+    // Add the updated dot layer to the map
+    map.layers().add(dotLayer);
     }
 }
 
