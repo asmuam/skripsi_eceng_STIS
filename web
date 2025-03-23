@@ -696,18 +696,8 @@ function redraw(layer) {
         map.addLayer(visImg, {}, layer);
     }
 }
-
 // Register the `redraw` function to the layer selector.
 select.onChange(redraw);
-
-// Create opacity slider panel
-var opacitySlider = ui.Slider({
-    min: 0,
-    max: 1,
-    value: 0.7,  // Set default opacity value
-    step: 0.05,
-    style: {width: '200px', margin: '10px'}
-});
 
 // Invoke the redraw function at start up to initialize the exceedance map.
 redraw('citra');
@@ -715,20 +705,6 @@ map.addLayer(sbwp);
 
 // Add legend to map.
 map.add(legend);
-
-// Add the opacity slider to the legend panel
-legend.add(
-    ui.Label({
-        value: 'Opacity Control',
-        style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textAlign: 'left',
-            margin: '4px 0px'
-        },
-    })
-);
-legend.add(opacitySlider);
 
 // Add the inspector panel to the default map.
 map.add(inspector);
@@ -749,3 +725,37 @@ map.setControlVisibility({
 // Set the default map's cursor to a 'crosshair'.
 map.style().set('cursor', 'crosshair');
 
+// Create opacity slider panel
+var opacitySlider = ui.Slider({
+    min: 0,
+    max: 1,
+    value: 0.7,  // Set default opacity value
+    step: 0.05,
+    style: {width: '200px', margin: '10px'}
+});
+
+// Add the opacity slider to the legend panel
+legend.add(
+    ui.Label({
+        value: 'Opacity Control',
+        style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            margin: '4px 0px'
+        },
+    })
+);
+legend.add(opacitySlider);
+
+// Register the opacity slider to update the opacity of the displayed layer
+opacitySlider.onChange(function() {
+    // Reapply opacity when the slider is changed
+    var selectedLayer = select.getValue();
+    var info = dataInfo[selectedLayer];
+    if (info) {
+        var visImg = info.img.visualize(info.vis);
+        visImg = visImg.set('opacity', opacitySlider.getValue());
+        map.layers().get(1).setEeObject(visImg); // Update the displayed layer with new opacity
+    }
+});
