@@ -251,6 +251,61 @@ function panelcreate() {
     panel.add(intro);
 }
 
+// Function to create reference panel.
+function referencecreate() {
+    var referenceZero = ui.Label({
+        value: 'Data Source:',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+    });
+    var referenceOne = ui.Label({
+        value: 'Gridded Population of the World',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+        targetUrl: 'https://doi.org/10.7927/H4JW8BX5'
+    });
+    var referenceTwo = ui.Label({
+        value: 'Surface PM₂.₅',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            padding: '0px 0px 4px 0px'
+        },
+        targetUrl: 'https://sites.wustl.edu/acag/datasets/surface-pm2-5/'
+    });
+    var referenceThree = ui.Label({
+        value: 'Created by:',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+    });
+    var referenceFour = ui.Label({
+        value: 'TC',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+        targetUrl: 'https://tc25.github.io/'
+    });
+
+    // Add reference to the panel.
+    panel.add(referenceZero);
+    panel.add(referenceOne);
+    panel.add(referenceTwo);
+    panel.add(referenceThree);
+    panel.add(referenceFour);
+}
+
 // Create main panel.
 var panel = ui.Panel();
 
@@ -272,6 +327,9 @@ ui.root.add(map);
 
 // Add the main panel to the UI root.
 ui.root.insert(1, panel);
+
+// Call the reference panel creation function.
+referencecreate();
 
 // Call the panelcreate function to create the intro panel.
 panelcreate();
