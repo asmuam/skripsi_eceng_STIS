@@ -3,7 +3,7 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
     rf = ee.Image("projects/ee-222111840/assets/rf"),
     cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
-    table = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
+    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Define base map style.
 var basemapStyle = [{
@@ -696,6 +696,8 @@ function redraw(layer) {
     if (layer !== 'none') {
         map.addLayer(visImg, {}, layer);
     }
+    
+    map.addLayer(sbwp);
 }
 
 // Register the `redraw` function to the layer selector.
