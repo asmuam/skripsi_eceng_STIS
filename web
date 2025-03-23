@@ -6,793 +6,816 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Define base map style.
-var basemapStyle = [{
-        featureType: 'all',
-        elementType: 'labels.text.fill',
-        stylers: [{
-                saturation: 36
-            },
-            {
-                color: '#000000'
-            },
-            {
-                lightness: 40
-            },
-        ],
-    },
-    {
-        featureType: 'all',
-        elementType: 'labels.text.stroke',
-        stylers: [{
-                visibility: 'on'
-            },
-            {
-                color: '#000000'
-            },
-            {
-                lightness: 16
-            },
-        ],
-    },
-    {
-        featureType: 'all',
-        elementType: 'labels.icon',
-        stylers: [{
-            visibility: 'off'
-        },
-        ],
-    },
-    {
-        featureType: 'administrative',
-        elementType: 'geometry.fill',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 20
-            },
-        ],
-    },
-    {
-        featureType: 'administrative',
-        elementType: 'geometry.stroke',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 17
-            },
-            {
-                weight: 1.2
-            },
-        ],
-    },
-    {
-        featureType: 'administrative',
-        elementType: 'labels.text.fill',
-        stylers: [{
-            lightness: '38'
-        },
-        ],
-    },
-    {
-        featureType: 'landscape',
-        elementType: 'geometry',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 20
-            },
-        ],
-    },
-    {
-        featureType: 'landscape',
-        elementType: 'geometry.fill',
-        stylers: [{
-            lightness: '-32'
-        },
-        ],
-    },
-    {
-        featureType: 'poi',
-        elementType: 'geometry',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 21
-            },
-        ],
-    },
-    {
-        featureType: 'poi',
-        elementType: 'labels.text.fill',
-        stylers: [{
-            lightness: '36'
-        },
-        ],
-    },
-    {
-        featureType: 'road.highway',
-        elementType: 'geometry.fill',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 17
-            },
-        ],
-    },
-    {
-        featureType: 'road.highway',
-        elementType: 'geometry.stroke',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 29
-            },
-            {
-                weight: 0.2
-            },
-        ],
-    },
-    {
-        featureType: 'road.highway',
-        elementType: 'labels.text.fill',
-        stylers: [{
-            color: '#bdbdbd'
-        },
-        ],
-    },
-    {
-        featureType: 'road.arterial',
-        elementType: 'geometry',
-        stylers: [{
-            lightness: 18
-        },
-        ],
-    },
-    {
-        featureType: 'road.arterial',
-        elementType: 'geometry.fill',
-        stylers: [{
-            lightness: '-62'
-        },
-        ],
-    },
-    {
-        featureType: 'road.arterial',
-        elementType: 'labels.text.fill',
-        stylers: [{
-                color: '#e5e5e5'
-            },
-            {
-                visibility: 'off'
-            },
-        ],
-    },
-    {
-        featureType: 'road.local',
-        elementType: 'geometry',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 16
-            },
-        ],
-    },
-    {
-        featureType: 'road.local',
-        elementType: 'geometry.fill',
-        stylers: [{
-            lightness: '21'
-        },
-        ],
-    },
-    {
-        featureType: 'road.local',
-        elementType: 'labels.text.fill',
-        stylers: [{
-            color: '#a0a0a0'
-        },
-        ],
-    },
-    {
-        featureType: 'transit',
-        elementType: 'geometry',
-        stylers: [{
-                color: '#000000'
-            },
-            {
-                lightness: 19
-            },
-        ],
-    },
-    {
-        featureType: 'water',
-        elementType: 'geometry',
-        stylers: [{
-                color: '#232222'
-            },
-            {
-                lightness: 17
-            },
-        ],
-    },
-];
+var basemapStyle = [
+  {
+    featureType: 'all',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        saturation: 36,
+      },
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 40,
+      },
+    ],
+  },
+  {
+    featureType: 'all',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      {
+        visibility: 'on',
+      },
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 16,
+      },
+    ],
+  },
+  {
+    featureType: 'all',
+    elementType: 'labels.icon',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'administrative',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 20,
+      },
+    ],
+  },
+  {
+    featureType: 'administrative',
+    elementType: 'geometry.stroke',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 17,
+      },
+      {
+        weight: 1.2,
+      },
+    ],
+  },
+  {
+    featureType: 'administrative',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        lightness: '38',
+      },
+    ],
+  },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 20,
+      },
+    ],
+  },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        lightness: '-32',
+      },
+    ],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 21,
+      },
+    ],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        lightness: '36',
+      },
+    ],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 17,
+      },
+    ],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry.stroke',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 29,
+      },
+      {
+        weight: 0.2,
+      },
+    ],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        color: '#bdbdbd',
+      },
+    ],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'geometry',
+    stylers: [
+      {
+        lightness: 18,
+      },
+    ],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        lightness: '-62',
+      },
+    ],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        color: '#e5e5e5',
+      },
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 16,
+      },
+    ],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        lightness: '21',
+      },
+    ],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        color: '#a0a0a0',
+      },
+    ],
+  },
+  {
+    featureType: 'transit',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#000000',
+      },
+      {
+        lightness: 19,
+      },
+    ],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#232222',
+      },
+      {
+        lightness: 17,
+      },
+    ],
+  },
+]
 
 // Function to create the intro panel with labels.
 function panelcreate() {
-    // Create an intro panel with labels.
-    var intro = ui.Panel([
-        ui.Label({
-            value: 'Sebaran Eceng Gondok',
-            style: {
-                fontSize: '1.4vw',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                stretch: 'horizontal'
-            },
-        }),
-        ui.Label({
-            value: 'Danau Rawa Pening 2024',
-            style: {
-                fontSize: '1.4vw',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                stretch: 'horizontal'
-            },
-        }),
-        ui.Label({
-            value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
-           'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
-           'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
-           'Hasil klasifikasi mencakup enam kelas:',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-        ui.Label({
-            value: '0. Eceng Gondok',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                padding: '0',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '1. Keramba Jaring Apung',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '2. Air',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '3. Vegetasi lain',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '4. Tanah',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '5. Lain-lain',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: 'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-        ui.Label({
-            value: 'Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah '+
-            'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai '+
-            'Pemali Juana.',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-        ui.Label({
-            value: 'Lapisan data (layer) dapat diganti melalui panel legenda.',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-    ]);
+  // Create an intro panel with labels.
+  var intro = ui.Panel([
+    ui.Label({
+      value: 'Sebaran Eceng Gondok',
+      style: {
+        fontSize: '1.4vw',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        stretch: 'horizontal',
+      },
+    }),
+    ui.Label({
+      value: 'Danau Rawa Pening 2024',
+      style: {
+        fontSize: '1.4vw',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        stretch: 'horizontal',
+      },
+    }),
+    ui.Label({
+      value:
+        'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
+        'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+        'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+        'Hasil klasifikasi mencakup enam kelas:',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+      },
+    }),
+    ui.Label({
+      value: '0. Eceng Gondok',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+        padding: '0',
+        margin: '0px 0px 0px 8px',
+      },
+    }),
+    ui.Label({
+      value: '1. Keramba Jaring Apung',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+        margin: '0px 0px 0px 8px',
+      },
+    }),
+    ui.Label({
+      value: '2. Air',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+        margin: '0px 0px 0px 8px',
+      },
+    }),
+    ui.Label({
+      value: '3. Vegetasi lain',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+        margin: '0px 0px 0px 8px',
+      },
+    }),
+    ui.Label({
+      value: '4. Tanah',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+        margin: '0px 0px 0px 8px',
+      },
+    }),
+    ui.Label({
+      value: '5. Lain-lain',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+        margin: '0px 0px 0px 8px',
+      },
+    }),
+    ui.Label({
+      value:
+        'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+      },
+    }),
+    ui.Label({
+      value:
+        'Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah ' +
+        'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai ' +
+        'Pemali Juana.',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+      },
+    }),
+    ui.Label({
+      value: 'Lapisan data (layer) dapat diganti melalui panel legenda.',
+      style: {
+        fontSize: '0.9vw',
+        fontWeight: 'normal',
+      },
+    }),
+  ])
 
-    // Add intro panel to the main panel.
-    introPanel.add(intro);
+  // Add intro panel to the main panel.
+  introPanel.add(intro)
 }
 
 // Function to create reference panel.
 function referencecreate() {
-    var referenceZero = ui.Label({
-        value: 'Data Tambahan:',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'left'
-        },
-    });
-    var referenceOne = ui.Label({
-        value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'left'
-        },
-        targetUrl: 'drive.google.com'
-    });
-    var referenceTwo = ui.Label({
-        value: '💻 Kode Python untuk Pengolahan',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'left',
-            padding: '0px 0px 4px 0px'
-        },
-        targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2'
-    });
-    var referenceThree = ui.Label({
-        value: 'Created by:',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'center'
-        },
-    });
-    var author = ui.Label({
-        value: '222111840@stis.ac.id',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'center'
-        },
-        targetUrl: 'mailto:222111840@stis.ac.id'
-    });
+  var referenceZero = ui.Label({
+    value: 'Data Tambahan:',
+    style: {
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'left',
+    },
+  })
+  var referenceOne = ui.Label({
+    value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana',
+    style: {
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'left',
+    },
+    targetUrl: 'drive.google.com',
+  })
+  var referenceTwo = ui.Label({
+    value: '💻 Kode Python untuk Pengolahan',
+    style: {
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'left',
+      padding: '0px 0px 4px 0px',
+    },
+    targetUrl:
+      'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2',
+  })
+  var referenceThree = ui.Label({
+    value: 'Created by:',
+    style: {
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+  })
+  var author = ui.Label({
+    value: '222111840@stis.ac.id',
+    style: {
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    targetUrl: 'mailto:222111840@stis.ac.id',
+  })
 
-    // Add reference to the panel.
-    introPanel.add(referenceZero);
-    introPanel.add(referenceOne);
-    introPanel.add(referenceTwo);
-    introPanel.add(referenceThree);
-    introPanel.add(author);
+  // Add reference to the panel.
+  introPanel.add(referenceZero)
+  introPanel.add(referenceOne)
+  introPanel.add(referenceTwo)
+  introPanel.add(referenceThree)
+  introPanel.add(author)
 }
 
 // Create an inspector panel with a horizontal layout.
 var inspector = ui.Panel({
-    layout: ui.Panel.Layout.flow('vertical'),
-});
+  layout: ui.Panel.Layout.flow('vertical'),
+})
 // Add a label to the panel.
 inspector.add(
-    ui.Label({
-        value: 'Click on a location to extract variables',
-        style: {
-            fontSize: '1.7vmin',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            margin: '0px 0px 0px 0px'
-        },
-    })
-);
+  ui.Label({
+    value: 'Click on a location to extract variables',
+    style: {
+      fontSize: '1.7vmin',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      margin: '0px 0px 0px 0px',
+    },
+  })
+)
 
 // Create intro panel.
-var introPanel = ui.Panel();
+var introPanel = ui.Panel()
 // Set the width and font style for the main panel.
 introPanel.style().set({
-    width: '30%',
-    fontSize: '1vw',
-    fontWeight: 'bold',
-    border: '5px solid darkgray'
-});
+  width: '30%',
+  fontSize: '1vw',
+  fontWeight: 'bold',
+  border: '5px solid darkgray',
+})
 
 // Clear existing map.
-ui.root.clear();
+ui.root.clear()
 
 // Initiate new map object.
-var map = ui.Map();
+var map = ui.Map()
 // Set the center and zoom level of the new map.
-map.centerObject(roi, 14);
+map.centerObject(roi, 14)
 
 // Add custom map.
-ui.root.add(map);
+ui.root.add(map)
 // Add the main panel to the UI root.
-ui.root.insert(1, introPanel);
+ui.root.insert(1, introPanel)
 
 // Call the panelcreate function to create the intro panel.
-panelcreate();
+panelcreate()
 // Call the reference panel creation function.
-referencecreate();
+referencecreate()
 
 // Define color palette:
 var thePalette = [
-    "#32CD32",
-    "#BECD32",
-    "#1E90FF",
-    "#228B22",
-    "#D2B48C",
-    "#808080"
-];
+  '#32CD32',
+  '#BECD32',
+  '#1E90FF',
+  '#228B22',
+  '#D2B48C',
+  '#808080',
+]
 
 // Define information about each layer that will be used to visualize it and
 // describe it in a selector widget and legend.
 var dataInfo = {
-    'citra': {
-        name: 'Citra RGB satelit Sentinel-2',
-        desc: 'Citra dasar RGB satelit Sentinel-2',
-        img: image,
-        vis: {
-            bands:['B4','B3','B2'],
-            min: 0,
-            max: 0.3,
-            opacity: 1.0
-        }
+  citra: {
+    name: 'Citra RGB satelit Sentinel-2',
+    desc: 'Citra dasar RGB satelit Sentinel-2',
+    img: image,
+    vis: {
+      bands: ['B4', 'B3', 'B2'],
+      min: 0,
+      max: 0.3,
+      opacity: 1.0,
     },
-    'radar': {
-        name: 'Citra radar satelit Sentinel-1',
-        desc: 'Citra radar satelit Sentinel-1 dalam bentuk RGB (VV, VH, VV/VH)',
-        img: image,
-        vis: {
-            bands:['VV','VH','VV_VH_ratio'],
-            min: -40,
-            max: 0,
-            opacity: 1.0
-        }
+  },
+  radar: {
+    name: 'Citra radar satelit Sentinel-1',
+    desc: 'Citra radar satelit Sentinel-1 dalam bentuk RGB (VV, VH, VV/VH)',
+    img: image,
+    vis: {
+      bands: ['VV', 'VH', 'VV_VH_ratio'],
+      min: -40,
+      max: 0,
+      opacity: 1.0,
     },
-    'rf': {
-        name: 'Klasifikasi Random Forest',
-        desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
-        img: rf,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 1.0
-        }
+  },
+  rf: {
+    name: 'Klasifikasi Random Forest',
+    desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
+    img: rf,
+    vis: {
+      min: 0,
+      max: 5,
+      palette: thePalette,
+      opacity: 1.0,
     },
-    'cnn1d': {
-        name: 'Klasifikasi CNN1D',
-        desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
-        img: cnn1d,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 1.0
-        }
+  },
+  cnn1d: {
+    name: 'Klasifikasi CNN1D',
+    desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
+    img: cnn1d,
+    vis: {
+      min: 0,
+      max: 5,
+      palette: thePalette,
+      opacity: 1.0,
     },
-};
+  },
+}
 
 // Create a new legend panel for the top-right corner.
 var dataPanel = ui.Panel({
-    style: {
-        position: 'bottom-right',
-        width: '25%',
-    }
-});
+  style: {
+    position: 'bottom-right',
+    width: '25%',
+  },
+})
 
 // Add the legend panel to the map.
-map.add(dataPanel);
+map.add(dataPanel)
 
-var dotLayer = null;
+var dotLayer = null
 
 // Register a callback on the default map to be invoked when the map is clicked.
-map.onClick(function(coords) {
-    // Clear the main panel and call the panel creation functions.
-    dataPanel.clear();
+map.onClick(function (coords) {
+  // Clear the main panel and call the panel creation functions.
+  dataPanel.clear()
 
-    // Create labels for latitude and longitude.
-    var latLabel = ui.Label({
-        value: 'Lat: ' + coords.lat.toFixed(2),
-        style: {
-            fontSize: '12px',
-            margin: '0px 0px 0px 8px'
-        }
-    });
-    var lonLabel = ui.Label({
-        value: 'Lon: ' + coords.lon.toFixed(2),
-        style: {
-            fontSize: '12px',
-            margin: '0px 0px 0px 8px'
-        }
-    });
+  // Create labels for latitude and longitude.
+  var latLabel = ui.Label({
+    value: 'Lat: ' + coords.lat.toFixed(2),
+    style: {
+      fontSize: '12px',
+      margin: '0px 0px 0px 8px',
+    },
+  })
+  var lonLabel = ui.Label({
+    value: 'Lon: ' + coords.lon.toFixed(2),
+    style: {
+      fontSize: '12px',
+      margin: '0px 0px 0px 8px',
+    },
+  })
 
-    // Add the labels to the legend panel.
-    dataPanel
-    .add(
-        ui.Label({
-            value: 'Selected Pixel Data',
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        })
-    )
-    dataPanel.add(latLabel);
-    dataPanel.add(lonLabel);
+  // Add the labels to the legend panel.
+  dataPanel.add(
+    ui.Label({
+      value: 'Selected Pixel Data',
+      style: {
+        fontSize: '14px',
+        fontWeight: 'bold',
+        textAlign: 'left',
+        margin: '4px 0px',
+      },
+    })
+  )
+  dataPanel.add(latLabel)
+  dataPanel.add(lonLabel)
 
-    // Add a red dot showing the point clicked on.
-    var point = ee.Geometry.Point(coords.lon, coords.lat);
-    var dot = ui.Map.Layer(point, { color: 'red' });
-    // If a dot already exists, update its position, else add it as a new point
-    if (dotLayer) {
-        // Remove the previous dot if exists
-        map.layers().remove(dotLayer);
-    }
+  // Add a red dot showing the point clicked on.
+  var point = ee.Geometry.Point(coords.lon, coords.lat)
+  var dot = ui.Map.Layer(point, { color: 'red' })
+  // If a dot already exists, update its position, else add it as a new point
+  if (dotLayer) {
+    // Remove the previous dot if exists
+    map.layers().remove(dotLayer)
+  }
 
-    // Set the new dot layer
-    dotLayer = dot;
+  // Set the new dot layer
+  dotLayer = dot
 
-    // Add the updated dot layer to the map
-    map.layers().add(dotLayer);
-    
-    // Update the inspector with a message.
-    inspector.clear();
-    inspector.style().set('shown', true);
-    inspector.add(
-        ui.Label({
-            value: 'Click on another location...',
-            style: {
-                fontSize: '1.7vmin',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                margin: '0px 0px 0px 0px'
-            },
-        })
-    );
-});
+  // Add the updated dot layer to the map
+  map.layers().add(dotLayer)
+
+  // Update the inspector with a message.
+  inspector.clear()
+  inspector.style().set('shown', true)
+  inspector.add(
+    ui.Label({
+      value: 'Click on another location...',
+      style: {
+        fontSize: '1.7vmin',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        margin: '0px 0px 0px 0px',
+      },
+    })
+  )
+})
 
 var legend = ui.Panel({
-    style: {
-        position: 'bottom-left',
-        width: '30%',
-        padding: '8px', // Adds spacing around content
-        whiteSpace: 'normal', // Ensures text wraps within the panel
-    }
-});
-
-
+  style: {
+    position: 'bottom-left',
+    width: '30%',
+    padding: '8px', // Adds spacing around content
+    whiteSpace: 'normal', // Ensures text wraps within the panel
+  },
+})
 
 // Create a layer selector that dictates which layer is visible on the map.
 // The list of possible layers are generated from the data info provided above.
-var items = [];
-Object.keys(dataInfo).forEach(function(key) {
-    items.push({value: key, label: dataInfo[key].name});
-});
-items.push({value: 'none', label: 'Select Layer'});
+var items = []
+Object.keys(dataInfo).forEach(function (key) {
+  items.push({ value: key, label: dataInfo[key].name })
+})
+items.push({ value: 'none', label: 'Select Layer' })
 
 var select = ui.Select({
-    items: items,
-    value: items[0].value,
-    style: {margin: '8px 0px'}
-});
+  items: items,
+  value: items[0].value,
+  style: { margin: '8px 0px' },
+})
 
 // Redraw function is called when the user changes the selected layer.
 function redraw(layer, opacity) {
-    // Fetch the info that corresponds to the selected layer
-    var info = dataInfo[layer];
-    info.vis.opacity = opacity;
-    // Reset the layers and the legend
-    map.layers().reset();
-    legend.clear();
-    map.addLayer(sbwp);
+  // Fetch the info that corresponds to the selected layer
+  var info = dataInfo[layer]
+  info.vis.opacity = opacity
+  // Reset the layers and the legend
+  map.layers().reset()
+  legend.clear()
+  map.addLayer(sbwp)
 
-    // Construct the layer selection widgets
-    legend.add(
-        ui.Label({
-            value: 'Choose display layer:',
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        })
+  // Construct the layer selection widgets
+  legend
+    .add(
+      ui.Label({
+        value: 'Choose display layer:',
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          textAlign: 'left',
+          margin: '4px 0px',
+        },
+      })
     )
-    .add(select);
+    .add(select)
 
-    // Add opacity slider to the legend
-    legend.add(
-        ui.Label({
-            value: 'Adjust Opacity:',
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        })
+  // Add opacity slider to the legend
+  legend
+    .add(
+      ui.Label({
+        value: 'Adjust Opacity:',
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          textAlign: 'left',
+          margin: '4px 0px',
+        },
+      })
     )
-    .add(opacitySlider);
+    .add(opacitySlider)
 
-    // If the selected layer is "none", just reset and return
-    if (layer === 'none') {
-        return;
-    }
+  // If the selected layer is "none", just reset and return
+  if (layer === 'none') {
+    return
+  }
 
-    // Construct the visualization image only for layers other than "none"
-    var visImg = info.img.visualize(info.vis);
+  // Construct the visualization image only for layers other than "none"
+  var visImg = info.img.visualize(info.vis)
 
-    // If the selected layer is "citra" or "radar", reset and skip legend creation
-    if (layer === 'citra' || layer === 'radar') {
-        if (layer !== 'none') {
-            // Add the layer for "citra" without a legend
-            legend.add(
-                ui.Label({
-                    value: info.desc,
-                    style: {
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        textAlign: 'left',
-                        margin: '4px 0px'
-                    },
-                })
-            );
-            map.addLayer(visImg, {}, layer);
-                // Add the updated dot layer to the map
-    // If a dot already exists, update its position, else add it as a new point
-    if (dotLayer) {
-        // Remove the previous dot if exists
-        map.layers().remove(dotLayer);
-    }
-    // Add the updated dot layer to the map
-    map.layers().add(dotLayer);
-        }
-        return;
-    }
-
-    // Construct the legend for "cnn1d" or "rf"
-    legend
-        .add(
-            ui.Label({
-                value: info.desc, // Add the description of the selected layer
-                style: {
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    textAlign: 'left',
-                    margin: '4px 0px'
-                },
-            })
-        );
-
-    // Add the labels corresponding to the classes
-    var classLabels = [
-        'Eceng Gondok',
-        'Keramba Jaring Apung',
-        'Air',
-        'Vegetasi Lain',
-        'Tanah',
-        'Lain-lain'
-    ];
-
-    var classColors = info.vis.palette; // Use the palette from dataInfo
-
-    // Add each label with its corresponding color box
-    classLabels.forEach(function (label, index) {
-        var colorBox = ui.Label({
-            style: {
-                backgroundColor: classColors[index],
-                padding: '8px',
-                margin: '4px',
-                border: '1px solid black',
-                width: '20px',
-                height: '20px',
-            }
-        });
-
-        var textLabel = ui.Label({
-            value: index + ': ' + label,
-            style: {
-                margin: '4px 0px',
-                fontSize: '12px',
-                padding: '0 4px'
-            }
-        });
-
-        var legendItem = ui.Panel({
-            widgets: [colorBox, textLabel],
-            layout: ui.Panel.Layout.flow('horizontal'),
-            style: { margin: '4px 0px' }
-        });
-
-        legend.add(legendItem);
-    });
-
-    // Add the layer to the map, for layers other than "none" or "citra"
+  // If the selected layer is "citra" or "radar", reset and skip legend creation
+  if (layer === 'citra' || layer === 'radar') {
     if (layer !== 'none') {
-        map.addLayer(visImg, {}, layer);
-            // Add the updated dot layer to the map
+      // Add the layer for "citra" without a legend
+      legend.add(
+        ui.Label({
+          value: info.desc,
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            margin: '4px 0px',
+          },
+        })
+      )
+      map.addLayer(visImg, {}, layer)
+      // Add the updated dot layer to the map
+      // If a dot already exists, update its position, else add it as a new point
+      if (dotLayer) {
+        // Remove the previous dot if exists
+        map.layers().remove(dotLayer)
+      }
+      // Add the updated dot layer to the map
+      map.layers().add(dotLayer)
+    }
+    return
+  }
+
+  // Construct the legend for "cnn1d" or "rf"
+  legend.add(
+    ui.Label({
+      value: info.desc, // Add the description of the selected layer
+      style: {
+        fontSize: '14px',
+        fontWeight: 'bold',
+        textAlign: 'left',
+        margin: '4px 0px',
+      },
+    })
+  )
+
+  // Add the labels corresponding to the classes
+  var classLabels = [
+    'Eceng Gondok',
+    'Keramba Jaring Apung',
+    'Air',
+    'Vegetasi Lain',
+    'Tanah',
+    'Lain-lain',
+  ]
+
+  var classColors = info.vis.palette // Use the palette from dataInfo
+
+  // Add each label with its corresponding color box
+  classLabels.forEach(function (label, index) {
+    var colorBox = ui.Label({
+      style: {
+        backgroundColor: classColors[index],
+        padding: '8px',
+        margin: '4px',
+        border: '1px solid black',
+        width: '20px',
+        height: '20px',
+      },
+    })
+
+    var textLabel = ui.Label({
+      value: index + ': ' + label,
+      style: {
+        margin: '4px 0px',
+        fontSize: '12px',
+        padding: '0 4px',
+      },
+    })
+
+    var legendItem = ui.Panel({
+      widgets: [colorBox, textLabel],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { margin: '4px 0px' },
+    })
+
+    legend.add(legendItem)
+  })
+
+  // Add the layer to the map, for layers other than "none" or "citra"
+  if (layer !== 'none') {
+    map.addLayer(visImg, {}, layer)
+    // Add the updated dot layer to the map
     // If a dot already exists, update its position, else add it as a new point
     if (dotLayer) {
-        // Remove the previous dot if exists
-        map.layers().remove(dotLayer);
+      // Remove the previous dot if exists
+      map.layers().remove(dotLayer)
     }
     // Add the updated dot layer to the map
-    map.layers().add(dotLayer);
-    }
+    map.layers().add(dotLayer)
+  }
 }
 
 // Create opacity slider panel
 var opacitySlider = ui.Slider({
-    min: 0,
-    max: 1,
-    value: 0.75,  // Set default opacity value
-    step: 0.05,
-    style: {width: '200px', margin: '10px'}
-});
+  min: 0,
+  max: 1,
+  value: 0.75, // Set default opacity value
+  step: 0.05,
+  style: { width: '200px', margin: '10px' },
+})
 
 // Function to handle opacity changes and trigger redraw with updated opacity
-opacitySlider.onChange(function(value) {
-    // Get the current layer from the select widget
-    var selectedLayer = select.getValue();
-    redraw(selectedLayer, value);
-});
+opacitySlider.onChange(function (value) {
+  // Get the current layer from the select widget
+  var selectedLayer = select.getValue()
+  redraw(selectedLayer, value)
+})
 
 // Register the `redraw` function to the layer selector.
 // Register the `redraw` function to the layer selector.
-select.onChange(function(selectedLayer) {
-    // Get the current opacity value from the slider
-    var currentOpacity = opacitySlider.getValue();
+select.onChange(function (selectedLayer) {
+  // Get the current opacity value from the slider
+  var currentOpacity = opacitySlider.getValue()
 
-    // Call the redraw function with the selected layer and current opacity
-    redraw(selectedLayer, currentOpacity);
-});
+  // Call the redraw function with the selected layer and current opacity
+  redraw(selectedLayer, currentOpacity)
+})
 
 // Invoke the redraw function at start up to initialize the exceedance map.
-redraw('citra', opacitySlider.getValue());
-map.addLayer(sbwp);
+redraw('citra', opacitySlider.getValue())
+map.addLayer(sbwp)
 
 // Add legend to map.
-map.add(legend);
+map.add(legend)
 
 // Add the inspector panel to the default map.
-map.add(inspector);
+map.add(inspector)
 
-map.setOptions('SATELLITE');
+map.setOptions('SATELLITE')
 
 // Set visibility options to remove geometry creator, map type controller,
 // and layer list.
 map.setControlVisibility({
-    all: false,
-    layerList: false,
-    zoomControl: true,
-    scaleControl: true,
-    mapTypeControl: false,
-    fullscreenControl: false
-});
+  all: false,
+  layerList: false,
+  zoomControl: true,
+  scaleControl: true,
+  mapTypeControl: false,
+  fullscreenControl: false,
+})
 
 // Set the default map's cursor to a 'crosshair'.
-map.style().set('cursor', 'crosshair');
-
+map.style().set('cursor', 'crosshair')
