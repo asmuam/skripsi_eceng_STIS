@@ -729,7 +729,14 @@ opacitySlider.onChange(function(value) {
 });
 
 // Register the `redraw` function to the layer selector.
-select.onChange(redraw);
+// Register the `redraw` function to the layer selector.
+select.onChange(function(selectedLayer) {
+    // Get the current opacity value from the slider
+    var currentOpacity = opacitySlider.getValue();
+
+    // Call the redraw function with the selected layer and current opacity
+    redraw(selectedLayer, currentOpacity);
+});
 print(opacitySlider.getValue())
 // Invoke the redraw function at start up to initialize the exceedance map.
 redraw('citra', opacitySlider.getValue());
