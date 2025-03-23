@@ -443,6 +443,16 @@ var dataInfo = {
             opacity: 0.8
         }
     },
+    'citra': {
+        name: 'Citra RGB satelit Sentinel-2',
+        desc: 'Citra dasar RGB satelit Sentinel-2',
+        img: image,
+        vis: {
+            min: 0,
+            max: 0.3,
+            opacity: 0.8
+        }
+    },
 };
 
 // Register a callback on the default map to be invoked when the map is clicked.
@@ -651,7 +661,7 @@ function redraw(layer) {
 select.onChange(redraw);
 
 // Invoke the redraw function at start up to initialize the exceedance map.
-redraw('ex');
+redraw('citra');
 
 // Add legend to map.
 map.add(legend);
@@ -667,12 +677,12 @@ map.setOptions('Base', {
 // Set visibility options to remove geometry creator, map type controller,
 // and layer list.
 map.setControlVisibility({
-    all: true,
-    layerList: true,
+    all: false,
+    layerList: false,
     zoomControl: true,
     scaleControl: true,
-    mapTypeControl: true,
-    fullscreenControl: true
+    mapTypeControl: false,
+    fullscreenControl: false
 });
 
 // Set the default map's cursor to a 'crosshair'.
