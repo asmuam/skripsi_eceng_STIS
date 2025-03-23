@@ -494,9 +494,7 @@ var dataInfo = {
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
     // Clear the main panel and call the panel creation functions.
-    introPanel.clear();
-    panelcreate();
-    referencecreate();
+    legendPanel.clear();
 
     // Create a new legend panel for the top-right corner.
     var legendPanel = ui.Panel({
