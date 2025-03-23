@@ -226,21 +226,19 @@ function panelcreate() {
     // Create an intro panel with labels.
     var intro = ui.Panel([
         ui.Label({
-            value: 'Global Air Pollution Explorer',
+            value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
             style: {
                 fontSize: '1.4vw',
                 fontWeight: 'bold'
             },
         }),
         ui.Label({
-            value: 'This app visualizes global population and its annual exposure to ' +
-            'ground-level PM₂.₅ pollution for the year 2020. Click on any point to retrieve ' +
-            'the annual average PM₂.₅ concentration, the population, and the ' +
-            'exceedance factor, defined here as the actual concentration divided by the ' +
-            'WHO standard (5 µg/m3 for annual average PM₂.₅), of the corresponding pixel. ' +
-            'The data layers can be switched from the legend panel. ' +
-            'The long-term changes in annual average PM₂.₅ from 1998 to 2021 ' +
-            'are also shown for the corresponding pixel.',
+            value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya. ' +
+           'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+           'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+           'Hasil klasifikasi mencakup enam kelas: eceng gondok, keramba jaring apung, air, vegetasi lain, tanah, dan lain-lain. ' +
+           'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lainnya sesuai dengan peta SHP dari ' +
+           'Balai Besar Wilayah Sungai Pemali Juana. Lapisan data dapat diganti melalui panel legenda.',
             style: {
                 fontSize: '.9vw',
                 fontWeight: 'normal'
