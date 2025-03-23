@@ -450,7 +450,6 @@ var dataInfo = {
         vis: {
             min: 0,
             max: 0.3,
-            opacity: 0.8
         }
     },
 };
