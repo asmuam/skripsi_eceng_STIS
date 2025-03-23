@@ -577,9 +577,13 @@ map.onClick(function(coords) {
 var legend = ui.Panel({
     style: {
         position: 'bottom-left',
-        width: '25%'
+        width: '30%',
+        padding: '8px', // Adds spacing around content
+        whiteSpace: 'normal', // Ensures text wraps within the panel
     }
 });
+
+
 
 // Create a layer selector that dictates which layer is visible on the map.
 // The list of possible layers are generated from the data info provided above.
