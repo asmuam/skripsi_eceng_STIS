@@ -512,12 +512,14 @@ map.onClick(function(coords) {
         value: 'Lat: ' + coords.lat.toFixed(2),
         style: {
             fontSize: '12px',
+            margin: '0px 0px 0px 8px'
         }
     });
     var lonLabel = ui.Label({
         value: 'Lon: ' + coords.lon.toFixed(2),
         style: {
             fontSize: '12px',
+            margin: '0px 0px 0px 8px'
         }
     });
 
