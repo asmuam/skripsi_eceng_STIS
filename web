@@ -231,7 +231,8 @@ function panelcreate() {
             value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
             style: {
                 fontSize: '1.4vw',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                textAlign: 'center'
             },
         }),
         ui.Label({
@@ -391,6 +392,7 @@ var panel = ui.Panel();
 // Set the width and font style for the main panel.
 panel.style().set({
     width: '30%',
+    height: '50%',
     fontSize: '1vw',
     fontWeight: 'bold'
 });
