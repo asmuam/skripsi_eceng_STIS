@@ -415,7 +415,12 @@ referencecreate();
 
 // Define color palette:
 var thePalette = [
-    'lime', 'yellow','aqua','darkgreen','brown','grey'
+    "#32CD32",
+    "#BECD32",
+    "#1E90FF",
+    "#228B22",
+    "#D2B48C",
+    "#808080"
 ];
 
 // Define information about each layer that will be used to visualize it and
