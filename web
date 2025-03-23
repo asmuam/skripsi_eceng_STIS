@@ -446,3 +446,165 @@ var dataInfo = {
         }
     },
 };
+
+// Register a callback on the default map to be invoked when the map is clicked.
+map.onClick(function(coords) {
+    // Clear the main panel.
+    panel.clear();
+
+    // Call the panel creation function again.
+    panelcreate();
+
+    // Call the reference panel creation function again.
+    referencecreate();
+
+    // Create panels to hold lon/lat and UHI values.
+    var lat = ui.Label();
+    var lon = ui.Label();
+    var Value = ui.Label();
+    var pmPix = ui.Label();
+    pmPix.style().set('padding', '0px 0px 4px 0px');
+    var popPix = ui.Label();
+    var efPix = ui.Label();
+
+    // Add panels to show longitude, latitude, and pixel values to the main panel.
+    panel.add(ui.Panel([lat, lon], ui.Panel.Layout.flow('horizontal')));
+    panel.add(ui.Panel([popPix], ui.Panel.Layout.flow('horizontal')));
+    panel.add(ui.Panel([pmPix], ui.Panel.Layout.flow('horizontal')));
+    panel.add(ui.Panel([efPix], ui.Panel.Layout.flow('horizontal')));
+
+    // Add a red dot showing the point clicked on.
+    var point = ee.Geometry.Point(coords.lon, coords.lat);
+    var dot = ui.Map.Layer(point, {
+        color: 'red'
+    });
+    map.layers().set(1, dot);
+
+    // Clear the inspector panel.
+    inspector.clear();
+
+    // Show the inspector panel and add a loading label.
+    inspector.style().set('shown', true);
+    inspector.add(
+        ui.Label({
+            value: 'Loading...',
+            style: {
+                color: 'gray',
+                fontSize: '1.7vmin',
+                fontWeight: 'normal',
+                textAlign: 'center',
+                margin: '0px 0px 0px 0px'
+            },
+        })
+    );
+
+    // Sample data at the clicked point from the images.
+    function getVal(img, point, scale, key, places) {
+        var info = ee.Image(img).sample(point, scale).first().getInfo();
+        var formattedValue;
+        if (info) {
+            formattedValue = info.properties[key].toFixed(places);
+        } else {
+            formattedValue = 'NoData';
+        }
+        return formattedValue;
+    }
+    var samplePop = getVal(Pop, point, 300, 'population_count', 0);
+    var samplePM = getVal(PM, point, 300, 'b1', 2);
+    var sampleEF = getVal(exceedanceFactor, point, 300, 'b1', 2);
+
+    // Update the lon/lat panel with values from the click event.
+    lat.setValue('Lat: ' + coords.lat.toFixed(2));
+    lon.setValue('Lon: ' + coords.lon.toFixed(2));
+
+    // Update the pmPix, popPix, and efPix panels with their respective values.
+    pmPix.setValue('PM₂.₅ concentration (µg/m3): ' + samplePM);
+    popPix.setValue('Population count: ' + samplePop);
+    efPix.setValue('Exceedance factor: ' + sampleEF);
+
+    // Create a pmChart line chart.
+    // Create a line chart from the pmTime image and point data.
+    if (samplePM != 'NoData') {
+        var pmChart = ui.Chart.image
+            .series(pmTime, point)
+            // Set the chart type to be a line chart.
+            .setChartType('LineChart');
+        pmChart.setOptions({
+            // Set the title of the chart.
+            title: 'Long-term change in annual PM₂.₅ concentration',
+            vAxes: {
+                0: {
+                    // Set the title of the vertical axis.
+                    title: 'PM₂.₅ concentration (µg/m3)',
+                    // Set the format of the numbers on the axis.
+                    format: '#.##',
+                    // Set the style of the text.
+                    titleTextStyle: {
+                        bold: true,
+                        color: '#bd0026',
+                        italic: false
+                    },
+                },
+            },
+            hAxis: {
+                // Set the title of the horizontal axis.
+                title: 'Year',
+                // Set the format of the numbers on the axis.
+                format: 'yyyy',
+                // Set the number of gridlines on the axis.
+                gridlines: {
+                    count: 22
+                },
+                // Set the style of the text.
+                titleTextStyle: {
+                    bold: true,
+                    italic: false
+                },
+            },
+            // Set the type of curve for the line chart.
+            curveType: 'function',
+            // Set the color of the line.
+            colors: ['#bd0026'],
+            // Set the width of the line.
+            lineWidth: 3,
+            // Set the size of the points on the line chart.
+            pointSize: 5,
+            // Set the height of the chart area.
+            chartArea: {
+                height: '53%'
+            },
+            tooltip: {
+                trigger: 'none'
+            },
+            series: {
+                0: {
+                    targetAxisIndex: 0,
+                    visibleInLegend: false
+                },
+            },
+        });
+
+        // Add the chart to the panel.
+        panel.widgets().set(10, pmChart);
+    } else {
+        // Add a blank label widget if there is no data.
+        panel.widgets().set(10, ui.Label());
+    }
+
+    // Clear inspector again and display a new label.
+    inspector.clear();
+
+    inspector.style().set('shown', true);
+    inspector.add(
+        // Set the label text.
+        ui.Label({
+            value: 'Click on another location...',
+            style: {
+                fontSize: '1.7vmin',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                margin: '0px 0px 0px 0px'
+            },
+        })
+    );
+});
