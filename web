@@ -322,7 +322,7 @@ function panelcreate() {
     ]);
 
     // Add intro panel to the main panel.
-    panel.add(intro);
+    introPanel.add(intro);
 }
 
 // Function to create reference panel.
@@ -373,11 +373,11 @@ function referencecreate() {
     });
 
     // Add reference to the panel.
-    panel.add(referenceZero);
-    panel.add(referenceOne);
-    panel.add(referenceTwo);
-    panel.add(referenceThree);
-    panel.add(author);
+    introPanel.add(referenceZero);
+    introPanel.add(referenceOne);
+    introPanel.add(referenceTwo);
+    introPanel.add(referenceThree);
+    introPanel.add(author);
 }
 
 // Create an inspector panel with a horizontal layout.
@@ -398,13 +398,14 @@ inspector.add(
 );
 
 // Create main panel.
-var panel = ui.Panel();
+var introPanel = ui.Panel();
 // Set the width and font style for the main panel.
-panel.style().set({
+introPanel.style().set({
     width: '30%',
     height: '50%',
     fontSize: '1vw',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    border: '5px solid darkgray'
 });
 
 // Clear existing map.
@@ -418,7 +419,7 @@ map.centerObject(roi, 14);
 // Add custom map.
 ui.root.add(map);
 // Add the main panel to the UI root.
-ui.root.insert(1, panel);
+ui.root.insert(1, introPanel);
 
 // Call the panelcreate function to create the intro panel.
 panelcreate();
@@ -475,7 +476,7 @@ var dataInfo = {
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
     // Clear the main panel.
-    panel.clear();
+    introPanel.clear();
 
     // Call the panel creation function again.
     panelcreate();
@@ -490,7 +491,7 @@ map.onClick(function(coords) {
 
 
     // Add panels to show longitude, latitude, and pixel values to the main panel.
-    panel.add(ui.Panel([lat, lon], ui.Panel.Layout.flow('horizontal')));
+    introPanel.add(ui.Panel([lat, lon], ui.Panel.Layout.flow('horizontal')));
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
