@@ -306,6 +306,24 @@ function referencecreate() {
     panel.add(referenceFour);
 }
 
+// Create an inspector panel with a horizontal layout.
+var inspector = ui.Panel({
+    layout: ui.Panel.Layout.flow('vertical'),
+});
+
+// Add a label to the panel.
+inspector.add(
+    ui.Label({
+        value: 'Click on a location to extract variables',
+        style: {
+            fontSize: '1.7vmin',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            margin: '0px 0px 0px 0px'
+        },
+    })
+);
+
 // Create main panel.
 var panel = ui.Panel();
 
@@ -333,6 +351,10 @@ panelcreate();
 
 // Call the reference panel creation function.
 referencecreate();
+
+
+// Add the inspector panel to the default map.
+map.add(inspector);
 
 // Set basemap options.
 map.setOptions('Base', {
