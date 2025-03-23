@@ -356,6 +356,7 @@ function referencecreate() {
             fontWeight: 'bold',
             textAlign: 'center'
         },
+        targetUrl: 'mailto:222111840@stis.ac.id'
     });
 
     // Add reference to the panel.
