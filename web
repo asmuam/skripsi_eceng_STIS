@@ -373,7 +373,6 @@ function referencecreate() {
 var inspector = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
 });
-
 // Add a label to the panel.
 inspector.add(
     ui.Label({
@@ -389,7 +388,6 @@ inspector.add(
 
 // Create main panel.
 var panel = ui.Panel();
-
 // Set the width and font style for the main panel.
 panel.style().set({
     width: '30%',
@@ -402,41 +400,28 @@ ui.root.clear();
 
 // Initiate new map object.
 var map = ui.Map();
-
 // Set the center and zoom level of the new map.
 map.centerObject(roi, 12);
 
 // Add custom map.
 ui.root.add(map);
-
 // Add the main panel to the UI root.
 ui.root.insert(1, panel);
 
 // Call the panelcreate function to create the intro panel.
 panelcreate();
-
 // Call the reference panel creation function.
 referencecreate();
 
 // Define color palette:
 var thePalette = [
-    '#40004b',
-    '#762a83',
-    '#9970ab',
-    '#c2a5cf',
-    '#e7d4e8',
-    '#f7f7f7',
-    '#d9f0d3',
-    '#a6dba0',
-    '#5aae61',
-    '#1b7837',
-    '#00441b'
-].reverse();
+    'lime', 'yellow','aqua','darkgreen','brown','grey'
+];
 
 // Define information about each layer that will be used to visualize it and
 // describe it in a selector widget and legend.
 var dataInfo = {
-    'ex': {
+    'rf': {
         name: 'Klasifikasi Random Forest',
         desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
         img: rf,
@@ -444,29 +429,18 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
-            opacity: 0.65
+            opacity: 0.8
         }
     },
-    'pm': {
-        name: 'PM₂.₅ concentration',
-        desc: 'Annual average PM₂.₅ concentration (µg/m3)',
-        img: PM,
+    'cnn1d': {
+        name: 'Klasifikasi CNN1D',
+        desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
+        img: cnn1d,
         vis: {
-            min: 10,
-            max: 100,
+            min: 0,
+            max: 5,
             palette: thePalette,
-            opacity: 0.65
-        }
-    },
-    'pop': {
-        name: 'Population count',
-        desc: 'Number of people',
-        img: Pop,
-        vis: {
-            min: 2000,
-            max: 18000,
-            palette: thePalette,
-            opacity: 0.65
+            opacity: 0.8
         }
     },
 };
@@ -486,16 +460,10 @@ map.onClick(function(coords) {
     var lat = ui.Label();
     var lon = ui.Label();
     var Value = ui.Label();
-    var pmPix = ui.Label();
-    pmPix.style().set('padding', '0px 0px 4px 0px');
-    var popPix = ui.Label();
-    var efPix = ui.Label();
+
 
     // Add panels to show longitude, latitude, and pixel values to the main panel.
     panel.add(ui.Panel([lat, lon], ui.Panel.Layout.flow('horizontal')));
-    panel.add(ui.Panel([popPix], ui.Panel.Layout.flow('horizontal')));
-    panel.add(ui.Panel([pmPix], ui.Panel.Layout.flow('horizontal')));
-    panel.add(ui.Panel([efPix], ui.Panel.Layout.flow('horizontal')));
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
@@ -522,98 +490,9 @@ map.onClick(function(coords) {
         })
     );
 
-    // Sample data at the clicked point from the images.
-    function getVal(img, point, scale, key, places) {
-        var info = ee.Image(img).sample(point, scale).first().getInfo();
-        var formattedValue;
-        if (info) {
-            formattedValue = info.properties[key].toFixed(places);
-        } else {
-            formattedValue = 'NoData';
-        }
-        return formattedValue;
-    }
-    var samplePop = getVal(Pop, point, 300, 'population_count', 0);
-    var samplePM = getVal(PM, point, 300, 'b1', 2);
-    var sampleEF = getVal(exceedanceFactor, point, 300, 'b1', 2);
-
     // Update the lon/lat panel with values from the click event.
     lat.setValue('Lat: ' + coords.lat.toFixed(2));
     lon.setValue('Lon: ' + coords.lon.toFixed(2));
-
-    // Update the pmPix, popPix, and efPix panels with their respective values.
-    pmPix.setValue('PM₂.₅ concentration (µg/m3): ' + samplePM);
-    popPix.setValue('Population count: ' + samplePop);
-    efPix.setValue('Exceedance factor: ' + sampleEF);
-
-    // Create a pmChart line chart.
-    // Create a line chart from the pmTime image and point data.
-    if (samplePM != 'NoData') {
-        var pmChart = ui.Chart.image
-            .series(pmTime, point)
-            // Set the chart type to be a line chart.
-            .setChartType('LineChart');
-        pmChart.setOptions({
-            // Set the title of the chart.
-            title: 'Long-term change in annual PM₂.₅ concentration',
-            vAxes: {
-                0: {
-                    // Set the title of the vertical axis.
-                    title: 'PM₂.₅ concentration (µg/m3)',
-                    // Set the format of the numbers on the axis.
-                    format: '#.##',
-                    // Set the style of the text.
-                    titleTextStyle: {
-                        bold: true,
-                        color: '#bd0026',
-                        italic: false
-                    },
-                },
-            },
-            hAxis: {
-                // Set the title of the horizontal axis.
-                title: 'Year',
-                // Set the format of the numbers on the axis.
-                format: 'yyyy',
-                // Set the number of gridlines on the axis.
-                gridlines: {
-                    count: 22
-                },
-                // Set the style of the text.
-                titleTextStyle: {
-                    bold: true,
-                    italic: false
-                },
-            },
-            // Set the type of curve for the line chart.
-            curveType: 'function',
-            // Set the color of the line.
-            colors: ['#bd0026'],
-            // Set the width of the line.
-            lineWidth: 3,
-            // Set the size of the points on the line chart.
-            pointSize: 5,
-            // Set the height of the chart area.
-            chartArea: {
-                height: '53%'
-            },
-            tooltip: {
-                trigger: 'none'
-            },
-            series: {
-                0: {
-                    targetAxisIndex: 0,
-                    visibleInLegend: false
-                },
-            },
-        });
-
-        // Add the chart to the panel.
-        panel.widgets().set(10, pmChart);
-    } else {
-        // Add a blank label widget if there is no data.
-        panel.widgets().set(10, ui.Label());
-    }
 
     // Clear inspector again and display a new label.
     inspector.clear();
