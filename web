@@ -1,0 +1,299 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Define base map style.
+var basemapStyle = [{
+        featureType: 'all',
+        elementType: 'labels.text.fill',
+        stylers: [{
+                saturation: 36
+            },
+            {
+                color: '#000000'
+            },
+            {
+                lightness: 40
+            },
+        ],
+    },
+    {
+        featureType: 'all',
+        elementType: 'labels.text.stroke',
+        stylers: [{
+                visibility: 'on'
+            },
+            {
+                color: '#000000'
+            },
+            {
+                lightness: 16
+            },
+        ],
+    },
+    {
+        featureType: 'all',
+        elementType: 'labels.icon',
+        stylers: [{
+            visibility: 'off'
+        },
+        ],
+    },
+    {
+        featureType: 'administrative',
+        elementType: 'geometry.fill',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 20
+            },
+        ],
+    },
+    {
+        featureType: 'administrative',
+        elementType: 'geometry.stroke',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 17
+            },
+            {
+                weight: 1.2
+            },
+        ],
+    },
+    {
+        featureType: 'administrative',
+        elementType: 'labels.text.fill',
+        stylers: [{
+            lightness: '38'
+        },
+        ],
+    },
+    {
+        featureType: 'landscape',
+        elementType: 'geometry',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 20
+            },
+        ],
+    },
+    {
+        featureType: 'landscape',
+        elementType: 'geometry.fill',
+        stylers: [{
+            lightness: '-32'
+        },
+        ],
+    },
+    {
+        featureType: 'poi',
+        elementType: 'geometry',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 21
+            },
+        ],
+    },
+    {
+        featureType: 'poi',
+        elementType: 'labels.text.fill',
+        stylers: [{
+            lightness: '36'
+        },
+        ],
+    },
+    {
+        featureType: 'road.highway',
+        elementType: 'geometry.fill',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 17
+            },
+        ],
+    },
+    {
+        featureType: 'road.highway',
+        elementType: 'geometry.stroke',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 29
+            },
+            {
+                weight: 0.2
+            },
+        ],
+    },
+    {
+        featureType: 'road.highway',
+        elementType: 'labels.text.fill',
+        stylers: [{
+            color: '#bdbdbd'
+        },
+        ],
+    },
+    {
+        featureType: 'road.arterial',
+        elementType: 'geometry',
+        stylers: [{
+            lightness: 18
+        },
+        ],
+    },
+    {
+        featureType: 'road.arterial',
+        elementType: 'geometry.fill',
+        stylers: [{
+            lightness: '-62'
+        },
+        ],
+    },
+    {
+        featureType: 'road.arterial',
+        elementType: 'labels.text.fill',
+        stylers: [{
+                color: '#e5e5e5'
+            },
+            {
+                visibility: 'off'
+            },
+        ],
+    },
+    {
+        featureType: 'road.local',
+        elementType: 'geometry',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 16
+            },
+        ],
+    },
+    {
+        featureType: 'road.local',
+        elementType: 'geometry.fill',
+        stylers: [{
+            lightness: '21'
+        },
+        ],
+    },
+    {
+        featureType: 'road.local',
+        elementType: 'labels.text.fill',
+        stylers: [{
+            color: '#a0a0a0'
+        },
+        ],
+    },
+    {
+        featureType: 'transit',
+        elementType: 'geometry',
+        stylers: [{
+                color: '#000000'
+            },
+            {
+                lightness: 19
+            },
+        ],
+    },
+    {
+        featureType: 'water',
+        elementType: 'geometry',
+        stylers: [{
+                color: '#232222'
+            },
+            {
+                lightness: 17
+            },
+        ],
+    },
+];
+
+// Function to create the intro panel with labels.
+function panelcreate() {
+    // Create an intro panel with labels.
+    var intro = ui.Panel([
+        ui.Label({
+            value: 'Global Air Pollution Explorer',
+            style: {
+                fontSize: '1.4vw',
+                fontWeight: 'bold'
+            },
+        }),
+        ui.Label({
+            value: 'This app visualizes global population and its annual exposure to ' +
+            'ground-level PM₂.₅ pollution for the year 2020. Click on any point to retrieve ' +
+            'the annual average PM₂.₅ concentration, the population, and the ' +
+            'exceedance factor, defined here as the actual concentration divided by the ' +
+            'WHO standard (5 µg/m3 for annual average PM₂.₅), of the corresponding pixel. ' +
+            'The data layers can be switched from the legend panel. ' +
+            'The long-term changes in annual average PM₂.₅ from 1998 to 2021 ' +
+            'are also shown for the corresponding pixel.',
+            style: {
+                fontSize: '.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+    ]);
+
+    // Add intro panel to the main panel.
+    panel.add(intro);
+}
+
+// Create main panel.
+var panel = ui.Panel();
+
+// Set the width and font style for the main panel.
+panel.style().set({
+    width: '20%',
+    fontSize: '1vw',
+    fontWeight: 'bold'
+});
+
+// Add the main panel to the UI root.
+ui.root.insert(1, panel);
+
+// Call the panelcreate function to create the intro panel.
+panelcreate();
+
+// Clear existing map.
+ui.root.clear();
+
+// Initiate new map object.
+var map = ui.Map();
+
+// Add custom map.
+ui.root.add(map);
+
+// Set basemap options.
+map.setOptions('Base', {
+    Base: basemapStyle
+});
+
+// Set visibility options to remove geometry creator, map type controller,
+// and layer list.
+map.setControlVisibility({
+    all: false,
+    layerList: false,
+    zoomControl: true,
+    scaleControl: true,
+    mapTypeControl: false,
+    fullscreenControl: false
+});
+
+// Set the default map's cursor to a 'crosshair'.
+map.style().set('cursor', 'crosshair');
+
+// Set the center and zoom level of the new map.
+map.centerObject(roi, 12);
