@@ -223,39 +223,51 @@ var basemapStyle = [{
 
 // Function to create the intro panel with labels.
 function panelcreate() {
-    // Create an intro panel with labels.
-    var intro = ui.Panel([
-        ui.Label({
-            value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
-            style: {
-                fontSize: '1.4vw',
-                fontWeight: 'bold'
-            },
-        }),
-        ui.Label({
-    value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya.\n' +
-           'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D.\n' +
-           'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral.\n' +
-           'Hasil klasifikasi mencakup enam kelas:\n' +
-           '0. Eceng gondok\n' +
-           '1. Keramba jaring apung\n' +
-           '2. Air\n' +
-           '3. Vegetasi lain\n' +
-           '4. Tanah\n' +
-           '5. Lain-lain\n' +
-           'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lainnya sesuai dengan peta SHP dari\n' +
-           'Balai Besar Wilayah Sungai Pemali Juana. Lapisan data dapat diganti melalui panel legenda.',
-    style: {
-        fontSize: '1vw',
-        fontWeight: 'normal'
-    },
-}),
-    ]);
+    // Create a panel with draggable and resizable properties
+    var intro = ui.Panel({
+        widgets: [
+            ui.Label({
+                value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
+                style: {
+                    fontSize: '1.4vw',
+                    fontWeight: 'bold'
+                },
+            }),
+            ui.Label({
+                value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya.\n' +
+                       'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D.\n' +
+                       'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral.\n' +
+                       'Hasil klasifikasi mencakup enam kelas:',
+                style: {
+                    fontSize: '0.9vw',
+                    fontWeight: 'normal'
+                },
+            }),
+            ui.Label({
+                value: '0. Eceng Gondok\n1. Keramba Jaring Apung\n2. Air\n3. Vegetasi Lain\n4. Tanah\n5. Lain-Lain',
+                style: {
+                    fontSize: '0.9vw',
+                    fontWeight: 'normal',
+                    whiteSpace: 'pre' // Ensures formatting of numbered list
+                },
+            })
+        ],
+        style: {
+            width: '400px',
+            position: 'absolute', // Allows dragging
+            resize: 'both',       // Enables resizing
+            overflow: 'auto',     // Ensures scroll if content overflows
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
+            border: '1px solid black',
+            padding: '10px',
+            top: '50px', // Initial top position
+            left: '50px' // Initial left position
+        }
+    });
 
-    // Add intro panel to the main panel.
+    // Add the panel to the root UI
     panel.add(intro);
 }
-
 // Function to create reference panel.
 function referencecreate() {
     var referenceZero = ui.Label({
