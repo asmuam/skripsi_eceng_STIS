@@ -328,11 +328,11 @@ ui.root.add(map);
 // Add the main panel to the UI root.
 ui.root.insert(1, panel);
 
-// Call the reference panel creation function.
-referencecreate();
-
 // Call the panelcreate function to create the intro panel.
 panelcreate();
+
+// Call the reference panel creation function.
+referencecreate();
 
 // Set basemap options.
 map.setOptions('Base', {
