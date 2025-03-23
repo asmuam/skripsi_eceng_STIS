@@ -27,12 +27,12 @@ Map.addLayer(
 );
 Map.addLayer(
   rf.clip(roi),
-{min: 0, max: 5, palette: ['lime', 'yellow','blue','darkgreen','brown','grey'], opacity: 1},
+{min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
   "rf"
 );
 Map.addLayer(
   cnn1.clip(roi),
- {min: 0, max: 5, palette: ['lime', 'yellow','blue','darkgreen','brown','grey'], opacity: 1},
+ {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
  "cnn"
 );
 
