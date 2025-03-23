@@ -607,10 +607,6 @@ function redraw(layer, opacity) {
         // Remove the previous dot if exists
         map.layers().remove(dotLayer);
     }
-
-    // Set the new dot layer
-    dotLayer = dot;
-
     // Add the updated dot layer to the map
     map.layers().add(dotLayer);
     // Fetch the info that corresponds to the selected layer
