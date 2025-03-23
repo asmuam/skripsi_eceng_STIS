@@ -572,94 +572,72 @@ function redraw(layer) {
     )
     .add(select);
 
-    // Construct the legend widgets.
-    function makeLegend(vis) {
-        // Creates a color bar thumbnail image for use in legend from the given
-        // color palette.
-        function makeColorBarParams(palette) {
-            return {
-            // Bounding box for color bar.
-                bbox: [0, 0, 1, 0.1],
-                // Dimensions of color bar.
-                dimensions: '100x10',
-                // Format of color bar.
-                format: 'png',
-                // Min value for color bar.
-                min: 0,
-                // Max value for color bar.
-                max: 1,
-                // Color palette for color bar.
-                palette: palette
-            };
+    // If the selected layer is "none" or "citra", reset and skip legend creation.
+    if (layer === 'none' || layer === 'citra') {
+        if (layer !== 'none') {
+            // Add the layer for "citra" without a legend.
+            var visImg = info.img.visualize(info.vis);
+            map.addLayer(visImg, {}, layer);
         }
-
-        // Create the color bar for the legend.
-        var colorBar = ui.Thumbnail({
-        // Image to use for color bar.
-            image: ee.Image.pixelLonLat().select(0),
-            // Parameters for color bar.
-            params: makeColorBarParams(vis.palette),
-            style: {
-                // Stretch color bar horizontally.
-                stretch: 'horizontal',
-                // No margin for color bar.
-                margin: '0px 0px',
-                // Max height of color bar.
-                maxHeight: '10%',
-                // Width of color bar.
-                width: '100%'
-            },
-        });
-
-        // Create a panel with three numbers for the legend.
-        var legendLabels = ui.Panel({
-            widgets: [
-                ui.Label(vis.min, {
-                    margin: '0px 0px'
-                }),
-                ui.Label('10.5', {
-                    margin: '0px 0px',
-                    textAlign: 'center',
-                    stretch: 'horizontal'
-                }),
-                ui.Label(vis.max, {
-                    margin: '0px 0px'
-                }),
-            ],
-            layout: ui.Panel.Layout.flow('horizontal')
-        });
-
-        // Add label to legend.
-        legend.add(
+        return;
+    }
+    
+    // Construct the legend for "cnn1d" or "rf".
+    legend
+        .add(
             ui.Label({
-                value: info.desc,
+                value: info.desc, // Add the description of the selected layer.
                 style: {
                     fontSize: '14px',
+                    fontWeight: 'bold',
                     textAlign: 'left',
-                    padding: '0px 0px 4px 0px',
-                    margin: '8px 0px'
+                    margin: '4px 0px'
                 },
             })
         );
 
-        // Add colorbar to legend.
-        legend.add(colorBar);
+    // Add the color bar to the legend.
+    var colorBar = ui.Thumbnail({
+        image: ee.Image.pixelLonLat().select(0),
+        params: {
+            bbox: [0, 0, 1, 0.1],
+            dimensions: '100x10',
+            format: 'png',
+            min: 0,
+            max: 1,
+            palette: info.vis.palette
+        },
+        style: {
+            stretch: 'horizontal',
+            margin: '8px 0px',
+            maxHeight: '24px'
+        }
+    });
 
-        // Add labels to legend.
-        legend.add(legendLabels);
-    }
+    legend.add(colorBar);
 
-    // If layer is none, reset layers on map.
-    if (layer == 'none') {
-        map.layers().reset();
-    } else {
-        // Check which layer is selected and create the corresponding legend.
-        makeLegend(info.vis);
+    // Add the labels corresponding to the classes.
+    var classLabels = [
+        'Eceng Gondok',
+        'Keramba Jaring Apung',
+        'Air',
+        'Vegetasi Lain',
+        'Tanah',
+        'Lain-lain'
+    ];
 
-        // Add layer to map.
-        var visImg = info.img.visualize(info.vis);
-        map.addLayer(visImg, {}, layer);
-    }
+    var labelPanel = ui.Panel(
+        classLabels.map(function (label, index) {
+            return ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px' });
+        }),
+        ui.Panel.Layout.flow('vertical')
+    );
+
+    legend.add(labelPanel);
+
+    // Add the layer to the map.
+    var visImg = info.img.visualize(info.vis);
+    map.addLayer(visImg, {}, layer);
 }
 
 // Register the `redraw` function to the layer selector.
