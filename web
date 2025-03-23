@@ -261,12 +261,6 @@ panel.style().set({
     fontWeight: 'bold'
 });
 
-// Add the main panel to the UI root.
-ui.root.insert(1, panel);
-
-// Call the panelcreate function to create the intro panel.
-panelcreate();
-
 // Clear existing map.
 ui.root.clear();
 
@@ -275,6 +269,12 @@ var map = ui.Map();
 
 // Add custom map.
 ui.root.add(map);
+
+// Add the main panel to the UI root.
+ui.root.insert(1, panel);
+
+// Call the panelcreate function to create the intro panel.
+panelcreate();
 
 // Set basemap options.
 map.setOptions('Base', {
