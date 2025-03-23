@@ -491,18 +491,18 @@ var dataInfo = {
     },
 };
 
+// Create a new legend panel for the top-right corner.
+var legendPanel = ui.Panel({
+    style: {
+        position: 'bottom-right',
+        width: '25%',
+    }
+});
+
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
     // Clear the main panel and call the panel creation functions.
     legendPanel.clear();
-
-    // Create a new legend panel for the top-right corner.
-    var legendPanel = ui.Panel({
-        style: {
-            position: 'bottom-right',
-            width: '25%',
-        }
-    });
 
     // Create labels for latitude and longitude.
     var latLabel = ui.Label({
