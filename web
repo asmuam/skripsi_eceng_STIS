@@ -436,7 +436,7 @@ inspector.add(
 var introPanel = ui.Panel()
 // Set the width and font style for the main panel.
 introPanel.style().set({
-  width: '30%',
+  width: '25%',
   fontSize: '1vw',
   fontWeight: 'bold',
   border: '5px solid darkgray',
