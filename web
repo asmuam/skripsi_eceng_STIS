@@ -709,10 +709,12 @@ map.add(legend);
 // Add the inspector panel to the default map.
 map.add(inspector);
 
-// Set basemap options.
-map.setOptions('Base', {
-    Base: basemapStyle
-});
+// // Set basemap options.
+// map.setOptions('Base', {
+//     Base: basemapStyle
+// });
+
+map.setOptions('SATELLITE');
 
 // Set visibility options to remove geometry creator, map type controller,
 // and layer list.
