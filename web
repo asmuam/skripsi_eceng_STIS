@@ -401,7 +401,7 @@ ui.root.clear();
 // Initiate new map object.
 var map = ui.Map();
 // Set the center and zoom level of the new map.
-map.centerObject(roi, 12);
+map.centerObject(roi, 14);
 
 // Add custom map.
 ui.root.add(map);
