@@ -455,6 +455,7 @@ var dataInfo = {
             bands:['B4','B3','B2'],
             min: 0,
             max: 0.3,
+            opacity: 0.7
         }
     },
     'radar': {
@@ -465,6 +466,7 @@ var dataInfo = {
             bands:['VV','VH','VV_VH_ratio'],
             min: -40,
             max: 0,
+            opacity: 0.7
         }
     },
     'rf': {
@@ -475,7 +477,7 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
-            opacity: 0.8
+            opacity: 0.7
         }
     },
     'cnn1d': {
@@ -486,7 +488,7 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
-            opacity: 0.8
+            opacity: 0.7
         }
     },
 };
