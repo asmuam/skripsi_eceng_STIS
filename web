@@ -499,6 +499,9 @@ var legendPanel = ui.Panel({
     }
 });
 
+// Add the legend panel to the map.
+map.add(legendPanel);
+
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
     // Clear the main panel and call the panel creation functions.
@@ -533,9 +536,6 @@ map.onClick(function(coords) {
     )
     legendPanel.add(latLabel);
     legendPanel.add(lonLabel);
-
-    // Add the legend panel to the map.
-    map.add(legendPanel);
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
