@@ -589,7 +589,7 @@ function redraw(layer) {
     // Reset the layers and the legend.
     map.layers().reset();
     legend.clear();
-
+    map.addLayer(sbwp);
     // Construct the layer selection widgets.
     legend
     .add(
@@ -696,8 +696,6 @@ function redraw(layer) {
     if (layer !== 'none') {
         map.addLayer(visImg, {}, layer);
     }
-    
-    map.addLayer(sbwp);
 }
 
 // Register the `redraw` function to the layer selector.
