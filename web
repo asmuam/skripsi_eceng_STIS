@@ -731,7 +731,7 @@ opacitySlider.onChange(function(value) {
 select.onChange(redraw);
 
 // Invoke the redraw function at start up to initialize the exceedance map.
-redraw('citra', 0.7);
+redraw('citra', opacitySlider.getValue());
 map.addLayer(sbwp);
 
 // Add legend to map.
