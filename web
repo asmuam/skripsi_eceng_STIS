@@ -456,6 +456,16 @@ var dataInfo = {
             max: 0.3,
         }
     },
+    'radar': {
+        name: 'Citra radar satelit Sentinel-1',
+        desc: 'Citra radar satelit Sentinel-1 dalam bentuk RGB (VV, VH, VV/VH)',
+        img: image,
+        vis: {
+            bands:['VV','VH','VV/VH'],
+            min: -40,
+            max: 0,
+        }
+    },
     'rf': {
         name: 'Klasifikasi Random Forest',
         desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
