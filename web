@@ -2,9 +2,6 @@
 var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     image = ee.Image("projects/ee-222111840/assets/rawa_pening_image");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Set the center and zoom level of the new map.
-map.centerObject(roi, 12);
-
 // Define base map style.
 var basemapStyle = [{
         featureType: 'all',
@@ -403,6 +400,9 @@ ui.root.clear();
 
 // Initiate new map object.
 var map = ui.Map();
+
+// Set the center and zoom level of the new map.
+map.centerObject(roi, 12);
 
 // Add custom map.
 ui.root.add(map);
