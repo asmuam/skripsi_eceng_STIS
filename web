@@ -613,7 +613,7 @@ function redraw(layer) {
     var visImg = info.img.visualize(info.vis);
 
     // If the selected layer is "citra", reset and skip legend creation.
-    if (layer === 'citra' && layer === 'radar') {
+    if (layer === 'citra' || layer === 'radar') {
         if (layer !== 'none') {
             // Add the layer for "citra" without a legend.
             // Add the description of the selected layer.
