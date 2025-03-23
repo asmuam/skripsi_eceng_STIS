@@ -709,6 +709,13 @@ var opacitySlider = ui.Slider({
     style: {width: '200px', margin: '10px'}
 });
 
+// Invoke the redraw function at start up to initialize the exceedance map.
+redraw('citra');
+map.addLayer(sbwp);
+
+// Add legend to map.
+map.add(legend);
+
 // Add the opacity slider to the legend panel
 legend.add(
     ui.Label({
@@ -723,21 +730,8 @@ legend.add(
 );
 legend.add(opacitySlider);
 
-
-// Invoke the redraw function at start up to initialize the exceedance map.
-redraw('citra');
-map.addLayer(sbwp);
-
-// Add legend to map.
-map.add(legend);
-
 // Add the inspector panel to the default map.
 map.add(inspector);
-
-// // Set basemap options.
-// map.setOptions('Base', {
-//     Base: basemapStyle
-// });
 
 map.setOptions('SATELLITE');
 
