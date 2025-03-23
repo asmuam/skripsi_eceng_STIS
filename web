@@ -407,17 +407,6 @@ introPanel.style().set({
     border: '5px solid darkgray'
 });
 
-// Create data panel.
-var dataPanel = ui.Panel();
-// Set the width and font style for the main panel.
-dataPanel.style().set({
-    width: '30%',
-    height: '50%',
-    fontSize: '1vw',
-    fontWeight: 'bold',
-    border: '5px solid darkgray'
-});
-
 // Clear existing map.
 ui.root.clear();
 
@@ -430,7 +419,6 @@ map.centerObject(roi, 14);
 ui.root.add(map);
 // Add the main panel to the UI root.
 ui.root.insert(1, introPanel);
-ui.root.insert(2, dataPanel);
 
 // Call the panelcreate function to create the intro panel.
 panelcreate();
