@@ -571,16 +571,6 @@ function redraw(layer) {
         })
     )
     .add(select);
-
-    // If the selected layer is "none" or "citra", reset and skip legend creation.
-    if (layer === 'none' || layer === 'citra') {
-        if (layer !== 'none') {
-            // Add the layer for "citra" without a legend.
-            var visImg = info.img.visualize(info.vis);
-            map.addLayer(visImg, {}, layer);
-        }
-        return;
-    }
     
     // Construct the legend for "cnn1d" or "rf".
     legend
@@ -614,6 +604,16 @@ function redraw(layer) {
         }
     });
 
+    // If the selected layer is "none" or "citra", reset and skip legend creation.
+    if (layer === 'none' || layer === 'citra') {
+        if (layer !== 'none') {
+            // Add the layer for "citra" without a legend.
+            var visImg = info.img.visualize(info.vis);
+            map.addLayer(visImg, {}, layer);
+        }
+        return;
+    }
+    
     legend.add(colorBar);
 
     // Add the labels corresponding to the classes.
