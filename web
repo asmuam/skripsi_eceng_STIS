@@ -577,7 +577,7 @@ map.onClick(function(coords) {
 var legend = ui.Panel({
     style: {
         position: 'bottom-left',
-        width: '30%',
+        width: '35%',
         padding: '8px', // Adds spacing around content
         whiteSpace: 'normal', // Ensures text wraps within the panel
     }
