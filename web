@@ -236,7 +236,8 @@ function panelcreate() {
             value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya. ' +
            'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
            'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
-           'Hasil klasifikasi mencakup enam kelas: eceng gondok, keramba jaring apung, air, vegetasi lain, tanah, dan lain-lain. ' +
+           'Hasil klasifikasi mencakup enam kelas: (0)eceng gondok, (1)keramba jaring apung, (2)air' +
+           ', (3)vegetasi lain, (4)tanah, dan (5)lain-lain. ' +
            'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lainnya sesuai dengan peta SHP dari ' +
            'Balai Besar Wilayah Sungai Pemali Juana. Lapisan data dapat diganti melalui panel legenda.',
             style: {
