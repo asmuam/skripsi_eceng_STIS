@@ -397,10 +397,21 @@ inspector.add(
     })
 );
 
-// Create main panel.
+// Create intro panel.
 var introPanel = ui.Panel();
 // Set the width and font style for the main panel.
 introPanel.style().set({
+    width: '30%',
+    height: '50%',
+    fontSize: '1vw',
+    fontWeight: 'bold',
+    border: '5px solid darkgray'
+});
+
+// Create data panel.
+var dataPanel = ui.Panel();
+// Set the width and font style for the main panel.
+dataPanel.style().set({
     width: '30%',
     height: '50%',
     fontSize: '1vw',
@@ -420,6 +431,7 @@ map.centerObject(roi, 14);
 ui.root.add(map);
 // Add the main panel to the UI root.
 ui.root.insert(1, introPanel);
+ui.root.insert(2, dataPanel);
 
 // Call the panelcreate function to create the intro panel.
 panelcreate();
@@ -491,7 +503,7 @@ map.onClick(function(coords) {
 
 
     // Add panels to show longitude, latitude, and pixel values to the main panel.
-    introPanel.add(ui.Panel([lat, lon], ui.Panel.Layout.flow('horizontal')));
+    introPanel.add(ui.Panel([lat, lon], ui.Panel.Layout.flow('vertical')));
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
