@@ -223,51 +223,95 @@ var basemapStyle = [{
 
 // Function to create the intro panel with labels.
 function panelcreate() {
-    // Create a panel with draggable and resizable properties
-    var intro = ui.Panel({
-        widgets: [
-            ui.Label({
-                value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
-                style: {
-                    fontSize: '1.4vw',
-                    fontWeight: 'bold'
-                },
-            }),
-            ui.Label({
-                value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya.\n' +
-                       'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D.\n' +
-                       'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral.\n' +
-                       'Hasil klasifikasi mencakup enam kelas:',
-                style: {
-                    fontSize: '0.9vw',
-                    fontWeight: 'normal'
-                },
-            }),
-            ui.Label({
-                value: '0. Eceng Gondok\n1. Keramba Jaring Apung\n2. Air\n3. Vegetasi Lain\n4. Tanah\n5. Lain-Lain',
-                style: {
-                    fontSize: '0.9vw',
-                    fontWeight: 'normal',
-                    whiteSpace: 'pre' // Ensures formatting of numbered list
-                },
-            })
-        ],
-        style: {
-            width: '400px',
-            position: 'absolute', // Allows dragging
-            resize: 'both',       // Enables resizing
-            overflow: 'auto',     // Ensures scroll if content overflows
-            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
-            border: '1px solid black',
-            padding: '10px',
-            top: '50px', // Initial top position
-            left: '50px' // Initial left position
-        }
-    });
+    // Create an intro panel with labels.
+    var intro = ui.Panel([
+        ui.Label({
+            value: 'Sebaran Eceng Gondok Danau Rawa Pening 2024',
+            style: {
+                fontSize: '1.4vw',
+                fontWeight: 'bold'
+            },
+        }),
+        ui.Label({
+            value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening dan sekitarnya. ' +
+           'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+           'Data citra satelit Sentinel 1 dan 2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+           'Hasil klasifikasi mencakup enam kelas:',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: '0. Eceng Gondok',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: '1. Keramba Jaring Apung',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: '2. Air',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: '3. Vegetasi lain',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: '4. Tanah',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: '5. Lain-lain',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: 'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: 'Petas Batas Wilayah Penelitian diambil dari Peta Sub Batas Wilayah Perencanaan'+
+            'Danau Rawa Pening dari Balai Besar Wilayah Sungai Pemali Juana.',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+        ui.Label({
+            value: 'Lapisan data dapat diganti melalui panel legenda.',
+            style: {
+                fontSize: '0.9vw',
+                fontWeight: 'normal'
+            },
+        }),
+    ]);
 
-    // Add the panel to the root UI
+    // Add intro panel to the main panel.
     panel.add(intro);
 }
+
 // Function to create reference panel.
 function referencecreate() {
     var referenceZero = ui.Label({
