@@ -448,6 +448,7 @@ var dataInfo = {
         desc: 'Citra dasar RGB satelit Sentinel-2',
         img: image,
         vis: {
+            bands:['B4','B3','B2'],
             min: 0,
             max: 0.3,
         }
