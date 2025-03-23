@@ -572,7 +572,7 @@ var items = [];
 Object.keys(dataInfo).forEach(function(key) {
     items.push({value: key, label: dataInfo[key].name});
 });
-items.push({value: 'none', label: 'Remove all'});
+items.push({value: 'none', label: 'Select Layer'});
 
 var select = ui.Select({
     items: items,
