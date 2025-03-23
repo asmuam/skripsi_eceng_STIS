@@ -369,7 +369,7 @@ function referencecreate() {
 
 // Create an inspector panel with a horizontal layout.
 var inspector = ui.Panel({
-    layout: ui.Panel.Layout.flow('vertical'),
+    layout: ui.Panel.Layout.flow('horizontal'),
 });
 
 // Add a label to the panel.
