@@ -571,16 +571,24 @@ function redraw(layer) {
         })
     )
     .add(select);
-    
-        // If the selected layer is "none" or "citra", reset and skip legend creation.
-    if (layer === 'none' || layer === 'citra') {
+
+    // If the selected layer is "none", just reset and return.
+    if (layer === 'none') {
+        return;
+    }
+
+    // Construct the visualization image only for layers other than "none".
+    var visImg = info.img.visualize(info.vis);
+
+    // If the selected layer is "citra", reset and skip legend creation.
+    if (layer === 'citra') {
         if (layer !== 'none') {
             // Add the layer for "citra" without a legend.
-            // Construct the legend for "cnn1d" or "rf".
+            // Add the description of the selected layer.
             legend
                 .add(
                     ui.Label({
-                        value: info.desc, // Add the description of the selected layer.
+                        value: info.desc,
                         style: {
                             fontSize: '14px',
                             fontWeight: 'bold',
@@ -589,12 +597,11 @@ function redraw(layer) {
                         },
                     })
                 );
-            var visImg = info.img.visualize(info.vis);
             map.addLayer(visImg, {}, layer);
         }
         return;
     }
-    
+
     // Construct the legend for "cnn1d" or "rf".
     legend
         .add(
@@ -608,7 +615,7 @@ function redraw(layer) {
                 },
             })
         );
-        
+
     // Add the labels corresponding to the classes.
     var classLabels = [
         'Eceng Gondok',
@@ -652,9 +659,10 @@ function redraw(layer) {
         legend.add(legendItem);
     });
 
-    // Add the layer to the map.
-    var visImg = info.img.visualize(info.vis);
-    map.addLayer(visImg, {}, layer);
+    // Add the layer to the map, for layers other than "none" or "citra".
+    if (layer !== 'none') {
+        map.addLayer(visImg, {}, layer);
+    }
 }
 
 // Register the `redraw` function to the layer selector.
