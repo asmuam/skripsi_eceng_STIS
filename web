@@ -474,68 +474,52 @@ var dataInfo = {
 
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
-    // Clear the main panel.
+    // Clear the main panel and call the panel creation functions.
     introPanel.clear();
-
-    // Call the panel creation function again.
     panelcreate();
-
-    // Call the reference panel creation function again.
     referencecreate();
 
-    // Create labels to hold lon/lat values.
-    var lat = ui.Label();
-    var lon = ui.Label();
-
-    // Clear the inspector panel.
-    inspector.clear();
-
-    // Show the inspector panel and add a loading label.
-    inspector.style().set('shown', true);
-    inspector.add(
-        ui.Label({
-            value: 'Loading...',
-            style: {
-                color: 'gray',
-                fontSize: '1.7vmin',
-                fontWeight: 'normal',
-                textAlign: 'center',
-                margin: '0px 0px 0px 0px'
-            },
-        })
-    );
-
-    // Update the lon/lat labels with values from the click event.
-    lat.setValue('Lat: ' + coords.lat.toFixed(2));
-    lon.setValue('Lon: ' + coords.lon.toFixed(2));
-
-    // Create a new panel for the top-right legend.
-    var coordsPanel = ui.Panel({
-        widgets: [lat, lon],
+    // Create a new legend panel for the top-right corner.
+    var legendPanel = ui.Panel({
         style: {
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            padding: '10px',
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',  // Semi-transparent background
+            position: 'top-right',
+            padding: '8px',
+            backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent background
             border: '1px solid black',
-            borderRadius: '5px',
+            borderRadius: '4px'
         }
     });
 
-    // Add the panel to the map.
-    map.add(coordsPanel);
+    // Create labels for latitude and longitude.
+    var latLabel = ui.Label({
+        value: 'Lat: ' + coords.lat.toFixed(2),
+        style: {
+            fontSize: '12px',
+            padding: '4px'
+        }
+    });
+    var lonLabel = ui.Label({
+        value: 'Lon: ' + coords.lon.toFixed(2),
+        style: {
+            fontSize: '12px',
+            padding: '4px'
+        }
+    });
+
+    // Add the labels to the legend panel.
+    legendPanel.add(latLabel);
+    legendPanel.add(lonLabel);
+
+    // Add the legend panel to the map.
+    ui.root.add(legendPanel);
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
-    var dot = ui.Map.Layer(point, {
-        color: 'red'
-    });
+    var dot = ui.Map.Layer(point, { color: 'red' });
     map.layers().set(1, dot);
 
-    // Clear the inspector and display a new label for further clicks.
+    // Update the inspector with a message.
     inspector.clear();
-
     inspector.style().set('shown', true);
     inspector.add(
         ui.Label({
