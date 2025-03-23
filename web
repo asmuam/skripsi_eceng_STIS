@@ -466,7 +466,7 @@ var dataInfo = {
             bands:['VV','VH','VV_VH_ratio'],
             min: -40,
             max: 0,
-            opacity: 0.7
+            opacity: 0.5
         }
     },
     'rf': {
@@ -494,7 +494,7 @@ var dataInfo = {
 };
 
 // Create a new legend panel for the top-right corner.
-var legendPanel = ui.Panel({
+var dataPanel = ui.Panel({
     style: {
         position: 'bottom-right',
         width: '25%',
@@ -502,12 +502,12 @@ var legendPanel = ui.Panel({
 });
 
 // Add the legend panel to the map.
-map.add(legendPanel);
+map.add(dataPanel);
 
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
     // Clear the main panel and call the panel creation functions.
-    legendPanel.clear();
+    dataPanel.clear();
 
     // Create labels for latitude and longitude.
     var latLabel = ui.Label({
@@ -526,7 +526,7 @@ map.onClick(function(coords) {
     });
 
     // Add the labels to the legend panel.
-    legendPanel
+    dataPanel
     .add(
         ui.Label({
             value: 'Selected Pixel Data',
@@ -538,8 +538,8 @@ map.onClick(function(coords) {
             },
         })
     )
-    legendPanel.add(latLabel);
-    legendPanel.add(lonLabel);
+    dataPanel.add(latLabel);
+    dataPanel.add(lonLabel);
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
@@ -733,3 +733,26 @@ map.setControlVisibility({
 
 // Set the default map's cursor to a 'crosshair'.
 map.style().set('cursor', 'crosshair');
+
+// Create opacity slider panel
+var opacitySlider = ui.Slider({
+    min: 0,
+    max: 1,
+    value: 0.7,  // Set default opacity value
+    step: 0.05,
+    style: {width: '200px', margin: '10px'}
+});
+
+// Add the opacity slider to the legend panel
+legend.add(
+    ui.Label({
+        value: 'Opacity Control',
+        style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            margin: '4px 0px'
+        },
+    })
+);
+legend.add(opacitySlider);
