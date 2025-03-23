@@ -323,7 +323,7 @@ function referencecreate() {
         },
     });
     var referenceOne = ui.Label({
-        value: 'Aset Balai Besar Wilayah Sungai Pemali Juana',
+        value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana',
         style: {
             color: 'black',
             fontWeight: 'bold',
@@ -332,7 +332,7 @@ function referencecreate() {
         targetUrl: 'drive.google.com'
     });
     var referenceTwo = ui.Label({
-        value: 'Kode Python untuk Pengolahan',
+        value: '💻 Kode Python untuk Pengolahan',
         style: {
             color: 'black',
             fontWeight: 'bold',
