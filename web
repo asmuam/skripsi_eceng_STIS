@@ -504,6 +504,18 @@ map.onClick(function(coords) {
     });
 
     // Add the labels to the legend panel.
+    legendPanel
+    .add(
+        ui.Label({
+            value: 'Selected Pixel Data',
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textAlign: 'left',
+                margin: '4px 0px'
+            },
+        })
+    )
     legendPanel.add(latLabel);
     legendPanel.add(lonLabel);
 
