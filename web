@@ -426,6 +426,16 @@ var thePalette = [
 // Define information about each layer that will be used to visualize it and
 // describe it in a selector widget and legend.
 var dataInfo = {
+    'citra': {
+        name: 'Citra RGB satelit Sentinel-2',
+        desc: 'Citra dasar RGB satelit Sentinel-2',
+        img: image,
+        vis: {
+            bands:['B4','B3','B2'],
+            min: 0,
+            max: 0.3,
+        }
+    },
     'rf': {
         name: 'Klasifikasi Random Forest',
         desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
@@ -446,16 +456,6 @@ var dataInfo = {
             max: 5,
             palette: thePalette,
             opacity: 0.8
-        }
-    },
-    'citra': {
-        name: 'Citra RGB satelit Sentinel-2',
-        desc: 'Citra dasar RGB satelit Sentinel-2',
-        img: image,
-        vis: {
-            bands:['B4','B3','B2'],
-            min: 0,
-            max: 0.3,
         }
     },
 };
