@@ -705,6 +705,7 @@ select.onChange(redraw);
 
 // Invoke the redraw function at start up to initialize the exceedance map.
 redraw('citra');
+map.addLayer(sbwp);
 
 // Add legend to map.
 map.add(legend);
