@@ -332,14 +332,14 @@ function referencecreate() {
         targetUrl: 'drive.google.com'
     });
     var referenceTwo = ui.Label({
-        value: 'Surface PM₂.₅',
+        value: 'Kode Python untuk Pengolahan',
         style: {
             color: 'black',
             fontWeight: 'bold',
             textAlign: 'left',
             padding: '0px 0px 4px 0px'
         },
-        targetUrl: 'https://sites.wustl.edu/acag/datasets/surface-pm2-5/'
+        targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2'
     });
     var referenceThree = ui.Label({
         value: 'Created by:',
@@ -389,7 +389,7 @@ var panel = ui.Panel();
 
 // Set the width and font style for the main panel.
 panel.style().set({
-    width: '20%',
+    width: '30%',
     fontSize: '1vw',
     fontWeight: 'bold'
 });
