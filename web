@@ -312,8 +312,9 @@ function panelcreate() {
             },
         }),
         ui.Label({
-            value: 'Peta Batas Wilayah Penelitian diambil dari Peta Sub Batas Wilayah Perencanaan '+
-            'Danau Rawa Pening dari Balai Besar Wilayah Sungai Pemali Juana.',
+            value: 'Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah '+
+            'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai '+
+            'Pemali Juana.',
             style: {
                 fontSize: '0.9vw',
                 fontWeight: 'normal'
