@@ -729,7 +729,7 @@ opacitySlider.onChange(function(value) {
 
 // Register the `redraw` function to the layer selector.
 select.onChange(redraw);
-
+print(opacitySlider.getValue())
 // Invoke the redraw function at start up to initialize the exceedance map.
 redraw('citra', opacitySlider.getValue());
 map.addLayer(sbwp);
