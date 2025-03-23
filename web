@@ -455,7 +455,6 @@ var dataInfo = {
             bands:['B4','B3','B2'],
             min: 0,
             max: 0.3,
-            opacity: 0.7
         }
     },
     'radar': {
@@ -466,7 +465,6 @@ var dataInfo = {
             bands:['VV','VH','VV_VH_ratio'],
             min: -40,
             max: 0,
-            opacity: 0.5
         }
     },
     'rf': {
@@ -477,7 +475,6 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
-            opacity: 0.7
         }
     },
     'cnn1d': {
@@ -488,7 +485,6 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
-            opacity: 0.7
         }
     },
 };
@@ -585,16 +581,16 @@ var select = ui.Select({
 
 // Redraw function is called when the user changes the selected layer.
 function redraw(layer) {
-    // Fetch the info that corresponds to the selected layer.
+    // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
 
-    // Reset the layers and the legend.
+    // Reset the layers and the legend
     map.layers().reset();
     legend.clear();
     map.addLayer(sbwp);
-    // Construct the layer selection widgets.
-    legend
-    .add(
+
+    // Construct the layer selection widgets
+    legend.add(
         ui.Label({
             value: 'Choose display layer:',
             style: {
@@ -607,41 +603,42 @@ function redraw(layer) {
     )
     .add(select);
 
-    // If the selected layer is "none", just reset and return.
+    // If the selected layer is "none", just reset and return
     if (layer === 'none') {
         return;
     }
 
-    // Construct the visualization image only for layers other than "none".
+    // Construct the visualization image only for layers other than "none"
     var visImg = info.img.visualize(info.vis);
 
-    // If the selected layer is "citra", reset and skip legend creation.
+    // Apply opacity from the slider to the visualization image
+    visImg = visImg.set('opacity', opacitySlider.getValue());
+
+    // If the selected layer is "citra" or "radar", reset and skip legend creation
     if (layer === 'citra' || layer === 'radar') {
         if (layer !== 'none') {
-            // Add the layer for "citra" without a legend.
-            // Add the description of the selected layer.
-            legend
-                .add(
-                    ui.Label({
-                        value: info.desc,
-                        style: {
-                            fontSize: '14px',
-                            fontWeight: 'bold',
-                            textAlign: 'left',
-                            margin: '4px 0px'
-                        },
-                    })
-                );
+            // Add the layer for "citra" without a legend
+            legend.add(
+                ui.Label({
+                    value: info.desc,
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'left',
+                        margin: '4px 0px'
+                    },
+                })
+            );
             map.addLayer(visImg, {}, layer);
         }
         return;
     }
 
-    // Construct the legend for "cnn1d" or "rf".
+    // Construct the legend for "cnn1d" or "rf"
     legend
         .add(
             ui.Label({
-                value: info.desc, // Add the description of the selected layer.
+                value: info.desc, // Add the description of the selected layer
                 style: {
                     fontSize: '14px',
                     fontWeight: 'bold',
@@ -651,7 +648,7 @@ function redraw(layer) {
             })
         );
 
-    // Add the labels corresponding to the classes.
+    // Add the labels corresponding to the classes
     var classLabels = [
         'Eceng Gondok',
         'Keramba Jaring Apung',
@@ -661,9 +658,9 @@ function redraw(layer) {
         'Lain-lain'
     ];
 
-    var classColors = info.vis.palette; // Use the palette from dataInfo.
+    var classColors = info.vis.palette; // Use the palette from dataInfo
 
-    // Add each label with its corresponding color box.
+    // Add each label with its corresponding color box
     classLabels.forEach(function (label, index) {
         var colorBox = ui.Label({
             style: {
@@ -694,7 +691,7 @@ function redraw(layer) {
         legend.add(legendItem);
     });
 
-    // Add the layer to the map, for layers other than "none" or "citra".
+    // Add the layer to the map, for layers other than "none" or "citra"
     if (layer !== 'none') {
         map.addLayer(visImg, {}, layer);
     }
