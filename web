@@ -482,11 +482,8 @@ map.onClick(function(coords) {
     // Create a new legend panel for the top-right corner.
     var legendPanel = ui.Panel({
         style: {
-            position: 'top-right',
-            padding: '8px',
-            backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent background
-            border: '1px solid black',
-            borderRadius: '4px'
+            position: 'bottom-right',
+            width: '25%',
         }
     });
 
@@ -511,7 +508,7 @@ map.onClick(function(coords) {
     legendPanel.add(lonLabel);
 
     // Add the legend panel to the map.
-    ui.root.add(legendPanel);
+    map.add(legendPanel);
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
