@@ -504,6 +504,8 @@ var dataPanel = ui.Panel({
 // Add the legend panel to the map.
 map.add(dataPanel);
 
+var dotLayer = null;
+
 // Register a callback on the default map to be invoked when the map is clicked.
 map.onClick(function(coords) {
     // Clear the main panel and call the panel creation functions.
@@ -544,8 +546,18 @@ map.onClick(function(coords) {
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
     var dot = ui.Map.Layer(point, { color: 'red' });
-    map.layers().set(1, dot);
+    // If a dot already exists, update its position, else add it as a new point
+    if (dotLayer) {
+        // Remove the previous dot if exists
+        map.layers().remove(dotLayer);
+    }
 
+    // Set the new dot layer
+    dotLayer = dot;
+
+    // Add the updated dot layer to the map
+    map.layers().add(dotLayer);
+    
     // Update the inspector with a message.
     inspector.clear();
     inspector.style().set('shown', true);
