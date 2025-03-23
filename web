@@ -259,42 +259,49 @@ function panelcreate() {
             value: '0. Eceng Gondok',
             style: {
                 fontSize: '0.9vw',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                padding: '0',
+                margin: '0px 0px 0px 8px'
             },
         }),
         ui.Label({
             value: '1. Keramba Jaring Apung',
             style: {
                 fontSize: '0.9vw',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                margin: '0px 0px 0px 8px'
             },
         }),
         ui.Label({
             value: '2. Air',
             style: {
                 fontSize: '0.9vw',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                margin: '0px 0px 0px 8px'
             },
         }),
         ui.Label({
             value: '3. Vegetasi lain',
             style: {
                 fontSize: '0.9vw',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                margin: '0px 0px 0px 8px'
             },
         }),
         ui.Label({
             value: '4. Tanah',
             style: {
                 fontSize: '0.9vw',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                margin: '0px 0px 0px 8px'
             },
         }),
         ui.Label({
             value: '5. Lain-lain',
             style: {
                 fontSize: '0.9vw',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                margin: '0px 0px 0px 8px'
             },
         }),
         ui.Label({
