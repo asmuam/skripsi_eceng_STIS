@@ -322,7 +322,7 @@ function panelcreate() {
             },
         }),
         ui.Label({
-            value: 'Lapisan data dapat diganti melalui panel legenda.',
+            value: 'Lapisan data (layer) dapat diganti melalui panel legenda.',
             style: {
                 fontSize: '0.9vw',
                 fontWeight: 'normal'
