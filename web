@@ -601,14 +601,6 @@ var select = ui.Select({
 
 // Redraw function is called when the user changes the selected layer.
 function redraw(layer, opacity) {
-    // Add the updated dot layer to the map
-    // If a dot already exists, update its position, else add it as a new point
-    if (dotLayer) {
-        // Remove the previous dot if exists
-        map.layers().remove(dotLayer);
-    }
-    // Add the updated dot layer to the map
-    map.layers().add(dotLayer);
     // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
     info.vis.opacity = opacity;
@@ -669,6 +661,14 @@ function redraw(layer, opacity) {
                 })
             );
             map.addLayer(visImg, {}, layer);
+                // Add the updated dot layer to the map
+    // If a dot already exists, update its position, else add it as a new point
+    if (dotLayer) {
+        // Remove the previous dot if exists
+        map.layers().remove(dotLayer);
+    }
+    // Add the updated dot layer to the map
+    map.layers().add(dotLayer);
         }
         return;
     }
