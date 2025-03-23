@@ -455,6 +455,7 @@ var dataInfo = {
             bands:['B4','B3','B2'],
             min: 0,
             max: 0.3,
+            opacity: 1.0
         }
     },
     'radar': {
@@ -465,6 +466,7 @@ var dataInfo = {
             bands:['VV','VH','VV_VH_ratio'],
             min: -40,
             max: 0,
+            opacity: 1.0
         }
     },
     'rf': {
@@ -475,6 +477,7 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
+            opacity: 1.0
         }
     },
     'cnn1d': {
@@ -485,6 +488,7 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
+            opacity: 1.0
         }
     },
 };
@@ -583,7 +587,7 @@ var select = ui.Select({
 function redraw(layer, opacity) {
     // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
-
+    info.vis.opacity = opacity;
     // Reset the layers and the legend
     map.layers().reset();
     legend.clear();
@@ -624,9 +628,6 @@ function redraw(layer, opacity) {
 
     // Construct the visualization image only for layers other than "none"
     var visImg = info.img.visualize(info.vis);
-
-    // Apply opacity from the slider to the visualization image
-    visImg = visImg.set('opacity', opacity);
 
     // If the selected layer is "citra" or "radar", reset and skip legend creation
     if (layer === 'citra' || layer === 'radar') {
