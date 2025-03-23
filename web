@@ -413,32 +413,6 @@ panelcreate();
 // Call the reference panel creation function.
 referencecreate();
 
-
-// Add the inspector panel to the default map.
-map.add(inspector);
-
-// Set basemap options.
-map.setOptions('Base', {
-    Base: basemapStyle
-});
-
-// Set visibility options to remove geometry creator, map type controller,
-// and layer list.
-map.setControlVisibility({
-    all: false,
-    layerList: false,
-    zoomControl: true,
-    scaleControl: true,
-    mapTypeControl: false,
-    fullscreenControl: false
-});
-
-// Set the default map's cursor to a 'crosshair'.
-map.style().set('cursor', 'crosshair');
-
-// Set the center and zoom level of the new map.
-map.centerObject(roi, 12);
-
 // Load in all relevant datasets.
 // PM2.5 data for the year 2020 regridded to the same grids as the
 // population estimates.
@@ -812,3 +786,28 @@ redraw('ex');
 
 // Add legend to map.
 map.add(legend);
+
+// Add the inspector panel to the default map.
+map.add(inspector);
+
+// Set basemap options.
+map.setOptions('Base', {
+    Base: basemapStyle
+});
+
+// Set visibility options to remove geometry creator, map type controller,
+// and layer list.
+map.setControlVisibility({
+    all: false,
+    layerList: false,
+    zoomControl: true,
+    scaleControl: true,
+    mapTypeControl: false,
+    fullscreenControl: false
+});
+
+// Set the default map's cursor to a 'crosshair'.
+map.style().set('cursor', 'crosshair');
+
+// Set the center and zoom level of the new map.
+map.centerObject(roi, 12);
