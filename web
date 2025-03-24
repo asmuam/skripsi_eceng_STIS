@@ -433,7 +433,7 @@ map.onClick(function(coords) {
 
     // If the dot already exists, remove it.
     if (dot) {
-        map.removeLayer(dot);  // Removes the previous dot from the map
+        map.remove(dot);  // Removes the previous dot from the map
     }
 
     // Create a new point geometry based on the clicked coordinates.
