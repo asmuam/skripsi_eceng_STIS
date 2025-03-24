@@ -114,3 +114,189 @@ function panelcreate() {
     // Add intro panel to the main panel.
     introPanel.add(intro);
 }
+// Function to create reference panel.
+function referencecreate() {
+    var referenceZero = ui.Label({
+        value: 'Data Tambahan:',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'left'
+        },
+    });
+    var referenceOne = ui.Label({
+        value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'left'
+        },
+        targetUrl: 'drive.google.com'
+    });
+    var referenceTwo = ui.Label({
+        value: '💻 Kode Python untuk Pengolahan',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            padding: '0px 0px 4px 0px'
+        },
+        targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2'
+    });
+    var referenceThree = ui.Label({
+        value: 'Created by:',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+    });
+    var author = ui.Label({
+        value: '222111840@stis.ac.id',
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+        targetUrl: 'mailto:222111840@stis.ac.id'
+    });
+
+    // Add reference to the panel.
+    introPanel.add(referenceZero);
+    introPanel.add(referenceOne);
+    introPanel.add(referenceTwo);
+    introPanel.add(referenceThree);
+    introPanel.add(author);
+}
+// Redraw function is called when the user changes the selected layer.
+function redraw(layer, opacity) {
+    // Fetch the info that corresponds to the selected layer
+    var info = dataInfo[layer];
+
+    // Reset the layers and the legend
+    map.layers().reset();
+    legend.clear();
+    map.addLayer(sbwp);
+
+    // Construct the layer selection widgets
+    legend.add(
+        ui.Label({
+            value: 'Choose display layer:',
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textAlign: 'left',
+                margin: '4px 0px'
+            },
+        })
+    )
+    .add(select);
+
+    // Add opacity slider to the legend
+    legend.add(
+        ui.Label({
+            value: 'Adjust Opacity:',
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textAlign: 'left',
+                margin: '4px 0px'
+            },
+        })
+    )
+    .add(opacitySlider);
+
+    // If the selected layer is "none", just reset and return
+    if (layer === 'none') {
+        return;
+    }
+
+    // Construct the visualization image only for layers other than "none"
+    var visImg = info.img.visualize(info.vis);
+
+    // Apply opacity from the slider to the visualization image
+    visImg = visImg.set('opacity', opacity);
+
+    // If the selected layer is "citra" or "radar", reset and skip legend creation
+    if (layer === 'citra' || layer === 'radar') {
+        if (layer !== 'none') {
+            // Add the layer for "citra" without a legend
+            legend.add(
+                ui.Label({
+                    value: info.desc,
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'left',
+                        margin: '4px 0px'
+                    },
+                })
+            );
+            map.addLayer(visImg, {}, layer);
+        }
+        return;
+    }
+
+    // Construct the legend for "cnn1d" or "rf"
+    legend
+        .add(
+            ui.Label({
+                value: info.desc, // Add the description of the selected layer
+                style: {
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    textAlign: 'left',
+                    margin: '4px 0px'
+                },
+            })
+        );
+
+    // Add the labels corresponding to the classes
+    var classLabels = [
+        'Eceng Gondok',
+        'Keramba Jaring Apung',
+        'Air',
+        'Vegetasi Lain',
+        'Tanah',
+        'Lain-lain'
+    ];
+
+    var classColors = info.vis.palette; // Use the palette from dataInfo
+
+    // Add each label with its corresponding color box
+    classLabels.forEach(function (label, index) {
+        var colorBox = ui.Label({
+            style: {
+                backgroundColor: classColors[index],
+                padding: '8px',
+                margin: '4px',
+                border: '1px solid black',
+                width: '20px',
+                height: '20px',
+            }
+        });
+
+        var textLabel = ui.Label({
+            value: index + ': ' + label,
+            style: {
+                margin: '4px 0px',
+                fontSize: '12px',
+                padding: '0 4px'
+            }
+        });
+
+        var legendItem = ui.Panel({
+            widgets: [colorBox, textLabel],
+            layout: ui.Panel.Layout.flow('horizontal'),
+            style: { margin: '4px 0px' }
+        });
+
+        legend.add(legendItem);
+    });
+
+    // Add the layer to the map, for layers other than "none" or "citra"
+    if (layer !== 'none') {
+        map.addLayer(visImg, {}, layer);
+    }
+}
+
