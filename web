@@ -385,7 +385,7 @@ var dataPanel = ui.Panel({
 var legend = ui.Panel({
     style: {
         position: 'bottom-left',
-        width: '25%'
+        width: '30%'
     }
 });
 
