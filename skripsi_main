@@ -3189,9 +3189,6 @@ var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox
       NIR: image_sen2.select('B8'), // NIR band
       RE2: image_sen2.select('B6'), // Red Edge 2 band
       SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
-      wavelength_nir: wavelength_nir, // NIR wavelength
-      wavelength_red: wavelength_red, // Red wavelength
-      wavelength_swir1: wavelength_swir1, // SWIR1 wavelength
     }
   )
   .rename('FDI')
