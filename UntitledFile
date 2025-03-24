@@ -1,21 +1,252 @@
-// Define a Geometry object.
-var geometry = ee.Geometry({
-  'type': 'Polygon',
-  'coordinates':
-    [[[-122.081, 37.417],
-      [-122.086, 37.421],
-      [-122.084, 37.418],
-      [-122.089, 37.416]]]
-});
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
+    image = ee.Image("projects/ee-222111840/assets/rf"),
+    cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
+    rf = ee.Image("projects/ee-222111840/assets/rf"),
+    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Define color palette for layers
+var thePalette = [
+    "#32CD32", "#BECD32", "#1E90FF", "#228B22", "#D2B48C", "#808080"
+];
 
-// Apply the area method to the Geometry object.
-var geometryArea = geometry.area({'maxError': 1});
+// Data information for layers
+var dataInfo = {
+    'citra': {
+        name: 'Citra RGB satelit Sentinel-2',
+        desc: 'Citra dasar RGB satelit Sentinel-2',
+        img: image,
+        vis: {
+            bands: ['B4', 'B3', 'B2'],
+            min: 0,
+            max: 0.3,
+        }
+    },
+    'radar': {
+        name: 'Citra radar satelit Sentinel-1',
+        desc: 'Citra radar satelit Sentinel-1 dalam bentuk RGB (VV, VH, VV/VH)',
+        img: image,
+        vis: {
+            bands: ['VV', 'VH', 'VV_VH_ratio'],
+            min: -40,
+            max: 0,
+        }
+    },
+    'rf': {
+        name: 'Klasifikasi Random Forest',
+        desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
+        img: rf,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+        }
+    },
+    'cnn1d': {
+        name: 'Klasifikasi CNN1D',
+        desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
+        img: cnn1d,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+        }
+    },
+};
 
-// Print the result to the console.
-print('geometry.area(...) =', geometryArea);
+// Function to create the intro panel with labels
+function panelCreate() {
+    var intro = ui.Panel([
+        ui.Label('Sebaran Eceng Gondok', labelStyle(1.4)),
+        ui.Label('Danau Rawa Pening 2024', labelStyle(1.4)),
+        ui.Label('Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
+            'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+            'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+            'Hasil klasifikasi mencakup enam kelas:', labelStyle(0.9)),
+        ...classificationLabels(),
+        ui.Label('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih', labelStyle(0.9)),
+        ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah Perencanaan Danau Rawa Pening ' +
+            'yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', labelStyle(0.9)),
+        ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', labelStyle(0.9)),
+    ]);
+    introPanel.add(intro);
+}
 
-// Display relevant geometries on the map.
-Map.setCenter(-122.085, 37.422, 15);
-Map.addLayer(geometry,
-             {'color': 'black'},
-             'Geometry [black]: geometry');
+// Function to create classification labels
+function classificationLabels() {
+    var labels = [
+        '0. Eceng Gondok', '1. Keramba Jaring Apung', '2. Air',
+        '3. Vegetasi lain', '4. Tanah', '5. Lain-lain'
+    ];
+    return labels.map(function(label) {
+        return ui.Label(label, labelStyle(0.9, 'normal', '0px 0px 0px 8px'));
+    });
+}
+
+// Generalized label style function
+function labelStyle(fontSize, fontWeight, margin) {
+    return {
+        fontSize: fontSize + 'px',  // Concatenate the fontSize with 'px' manually
+        fontWeight: fontWeight || 'bold', // Default to 'bold' if not provided
+        textAlign: 'center',
+        stretch: 'horizontal',
+        margin: margin || '0px' // Default to '0px' if margin is not provided
+    };
+}
+
+// Function to create the reference panel
+function referenceCreate() {
+    var references = [
+        { text: 'Data Tambahan:', style: { fontWeight: 'bold' } },
+        { text: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana', url: 'drive.google.com' },
+        { text: '💻 Kode Python untuk Pengolahan', url: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2' },
+        { text: 'Created by:', style: { textAlign: 'center', fontWeight: 'bold' } },
+        { text: '222111840@stis.ac.id', url: 'mailto:222111840@stis.ac.id', style: { textAlign: 'center', fontWeight: 'bold' } }
+    ];
+
+    references.forEach(function(ref) {
+        var label = ui.Label({
+            value: ref.text,
+            style: ref.style || {},
+            targetUrl: ref.url || undefined,
+        });
+        introPanel.add(label);
+    });
+}
+
+// Function to create the inspector panel
+function createInspector() {
+    var inspector = ui.Panel({ layout: ui.Panel.Layout.flow('vertical') });
+    inspector.add(ui.Label('Click on a location to extract variables', labelStyle(1.7, 'bold')));
+    return inspector;
+}
+
+// Function to handle map click events
+function onMapClick(coords) {
+    dataPanel.clear();
+    var latLabel = ui.Label('Lat: ' + coords.lat.toFixed(2), { fontSize: '12px', margin: '0px 0px 0px 8px' });
+    var lonLabel = ui.Label('Lon: ' + coords.lon.toFixed(2), { fontSize: '12px', margin: '0px 0px 0px 8px' });
+
+    dataPanel.add(ui.Label('Selected Pixel Data', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left' }));
+    dataPanel.add(latLabel);
+    dataPanel.add(lonLabel);
+
+    var point = ee.Geometry.Point(coords.lon, coords.lat);
+    var dot = ui.Map.Layer(point, { color: 'red' });
+    map.layers().set(1, dot);
+
+    inspector.clear();
+    inspector.add(ui.Label('Click on another location...', { fontSize: '1.7vmin', fontWeight: 'bold', textAlign: 'center' }));
+}
+
+// Function to initialize and set up the map
+function initializeMap() {
+    var map = ui.Map();
+    map.centerObject(roi, 14);
+    ui.root.add(map);
+    ui.root.insert(1, introPanel);
+
+    map.onClick(onMapClick);
+    return map;
+}
+
+// Function to handle layer selection and update map and legend
+function redrawLayer(layer, opacity) {
+    var info = dataInfo[layer];
+
+    if (layer === 'none') return;
+
+    map.layers().reset();
+    legend.clear();
+    map.addLayer(sbwp);
+
+    legend.add(ui.Label('Choose display layer:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left' }));
+    legend.add(select);
+    legend.add(ui.Label('Adjust Opacity:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left' }));
+    legend.add(opacitySlider);
+
+    var visImg = info.img.visualize(info.vis).set('opacity', opacity);
+
+    if (layer === 'citra' || layer === 'radar') {
+        map.addLayer(visImg, {}, layer);
+        return;
+    }
+
+    createLegend(info);
+    map.addLayer(visImg, {}, layer);
+}
+
+// Function to create the legend for selected layers
+function createLegend(info) {
+    // Add description label
+    legend.add(ui.Label(info.desc, { 
+        fontSize: '14px', 
+        fontWeight: 'bold', 
+        textAlign: 'left' 
+    }));
+
+    // Define class labels and colors
+    var classLabels = ['Eceng Gondok', 'Keramba Jaring Apung', 'Air', 'Vegetasi Lain', 'Tanah', 'Lain-lain'];
+    var classColors = info.vis.palette;
+
+    // Loop through class labels and colors to create legend items
+    classLabels.forEach(function(label, index) {
+        // Create color box
+        var colorBox = ui.Label({ 
+            style: { 
+                backgroundColor: classColors[index], 
+                padding: '8px', 
+                margin: '4px', 
+                border: '1px solid black', 
+                width: '20px', 
+                height: '20px' 
+            } 
+        });
+
+        // Create text label
+        var textLabel = ui.Label({ 
+            value: index + ': ' + label,  // Concatenate index with label
+            style: { 
+                margin: '4px 0px', 
+                fontSize: '12px', 
+                padding: '0 4px' 
+            } 
+        });
+
+        // Combine color box and text label into one panel
+        var legendItem = ui.Panel({ 
+            widgets: [colorBox, textLabel], 
+            layout: ui.Panel.Layout.flow('horizontal'), 
+            style: { margin: '4px 0px' } 
+        });
+
+        // Add the legend item to the legend panel
+        legend.add(legendItem);
+    });
+}
+
+// Function to handle opacity changes and trigger redraw
+function onOpacityChange(value) {
+    var selectedLayer = select.getValue();
+    redrawLayer(selectedLayer, value);
+}
+
+// Create the initial UI components
+var introPanel = ui.Panel({ style: { width: '30%', fontSize: '1vw', fontWeight: 'bold', border: '5px solid darkgray' } });
+var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%' } });
+var inspector = createInspector();
+var select = ui.Select({ items: Object.keys(dataInfo).map(function(key) { return { value: key, label: dataInfo[key].name }; }), value: 'none', style: { margin: '8px 0px' } });
+var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.7, step: 0.05, style: { width: '200px', margin: '10px' } });
+
+select.onChange(redrawLayer);
+opacitySlider.onChange(onOpacityChange);
+
+var map = initializeMap();
+map.add(dataPanel);
+map.add(inspector);
+map.add(legend);
+
+redrawLayer('citra', opacitySlider.getValue());
+map.setOptions('SATELLITE');
+map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: false, fullscreenControl: false });
+map.style().set('cursor', 'crosshair');
