@@ -5,3 +5,216 @@ var sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp")
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     image = ee.Image("projects/ee-222111840/assets/rawa_pening_image");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Function to create the intro panel with labels.
+function createIntroPanel() {
+    var intro = ui.Panel([
+        createLabel('Sebaran Eceng Gondok', '1.4vw', 'bold'),
+        createLabel('Danau Rawa Pening 2024', '1.4vw', 'bold'),
+        createLabel('Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
+            'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+            'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+            'Hasil klasifikasi mencakup enam kelas:'),
+        createLabel('0. Eceng Gondok', '0.9vw', 'normal', '0px 0px 0px 8px'),
+        createLabel('1. Keramba Jaring Apung', '0.9vw', 'normal', '0px 0px 0px 8px'),
+        createLabel('2. Air', '0.9vw', 'normal', '0px 0px 0px 8px'),
+        createLabel('3. Vegetasi lain', '0.9vw', 'normal', '0px 0px 0px 8px'),
+        createLabel('4. Tanah', '0.9vw', 'normal', '0px 0px 0px 8px'),
+        createLabel('5. Lain-lain', '0.9vw', 'normal', '0px 0px 0px 8px'),
+        createLabel('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih'),
+        createLabel('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah ' +
+            'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai ' +
+            'Pemali Juana.'),
+        createLabel('Lapisan data (layer) dapat diganti melalui panel legenda.')
+    ]);
+
+    // Add intro panel to the main panel.
+    introPanel.add(intro);
+}
+
+// Function to create reference panel with additional info.
+function createReferencePanel() {
+    var referenceZero = ui.Label({
+        value: 'Data Tambahan:',
+        style: {color: 'black', fontWeight: 'bold', textAlign: 'left'}
+    });
+    var referenceOne = createLinkLabel('📁 Aset Balai Besar Wilayah Sungai Pemali Juana', 'drive.google.com');
+    var referenceTwo = createLinkLabel('💻 Kode Python untuk Pengolahan', 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2');
+    var referenceThree = ui.Label({
+        value: 'Created by:',
+        style: {color: 'black', fontWeight: 'bold', textAlign: 'center'}
+    });
+    var author = createLinkLabel('222111840@stis.ac.id', 'mailto:222111840@stis.ac.id');
+
+    // Add reference to the panel.
+    introPanel.add(referenceZero);
+    introPanel.add(referenceOne);
+    introPanel.add(referenceTwo);
+    introPanel.add(referenceThree);
+    introPanel.add(author);
+}
+
+// Helper function to create a label with given styles.
+function createLabel(value, fontSize = '1vw', fontWeight = 'normal', margin = '0px') {
+    return ui.Label({
+        value: value,
+        style: {
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            textAlign: 'center',
+            margin: margin,
+            stretch: 'horizontal'
+        }
+    });
+}
+
+// Helper function to create a clickable link label.
+function createLinkLabel(value, targetUrl) {
+    return ui.Label({
+        value: value,
+        style: {color: 'black', fontWeight: 'bold', textAlign: 'left'},
+        targetUrl: targetUrl
+    });
+}
+
+// Function to initialize the map.
+function initializeMap() {
+    // Clear existing map.
+    ui.root.clear();
+
+    // Initiate new map object and set center.
+    var map = ui.Map();
+    map.centerObject(roi, 14);
+    ui.root.add(map);
+    ui.root.insert(1, introPanel);
+
+    // Create and add intro and reference panels.
+    createIntroPanel();
+    createReferencePanel();
+}
+
+// Initialize the map.
+initializeMap();
+
+// Color palette for classification layers.
+var colorPalette = [
+    "#32CD32", "#BECD32", "#1E90FF", "#228B22", "#D2B48C", "#808080"
+];
+
+// Define layer information for various satellite images and classification results.
+var dataInfo = {
+    'citra': {
+        name: 'Citra RGB satelit Sentinel-2',
+        desc: 'Citra dasar RGB satelit Sentinel-2',
+        img: image,
+        vis: {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}
+    },
+    'radar': {
+        name: 'Citra radar satelit Sentinel-1',
+        desc: 'Citra radar satelit Sentinel-1 dalam bentuk RGB (VV, VH, VV/VH)',
+        img: image,
+        vis: {bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0}
+    },
+    'rf': {
+        name: 'Klasifikasi Random Forest',
+        desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
+        img: rf,
+        vis: {min: 0, max: 5, palette: colorPalette}
+    },
+    'cnn1d': {
+        name: 'Klasifikasi CNN1D',
+        desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
+        img: cnn1d,
+        vis: {min: 0, max: 5, palette: colorPalette}
+    }
+};
+
+// Panel for displaying pixel information.
+var dataPanel = ui.Panel({style: {position: 'bottom-right', width: '25%'}});
+map.add(dataPanel);
+
+// Inspector panel for latitude and longitude.
+var inspector = ui.Panel({layout: ui.Panel.Layout.flow('vertical')});
+inspector.add(createLabel('Click on a location to extract variables', '1.7vmin', 'bold'));
+map.add(inspector);
+
+// Legend panel setup.
+var legend = ui.Panel({style: {position: 'bottom-left', width: '25%'}});
+map.add(legend);
+
+// Opacity slider setup.
+var opacitySlider = ui.Slider({
+    min: 0,
+    max: 1,
+    value: 0.7,
+    step: 0.05,
+    style: {width: '200px', margin: '10px'}
+});
+
+// Layer selector setup.
+var layerSelect = ui.Select({
+    items: Object.keys(dataInfo).map(function(key) { return {value: key, label: dataInfo[key].name}; }),
+    value: 'citra',
+    style: {margin: '8px 0px'}
+});
+
+// Function to update the map and legend when a new layer is selected.
+function updateLayerDisplay(layer, opacity) {
+    var info = dataInfo[layer];
+
+    // Reset layers and legend.
+    map.layers().reset();
+    legend.clear();
+    map.addLayer(sbwp);
+
+    // Construct the visualization image for the selected layer.
+    var visImg = info.img.visualize(info.vis).set('opacity', opacity);
+
+    // Display layer if not "none".
+    if (layer !== 'none') {
+        map.addLayer(visImg, {}, layer);
+        createLegend(info);
+    }
+}
+
+// Function to create legend for classification layers.
+function createLegend(info) {
+    legend.add(createLabel(info.desc, '14px', 'bold'));
+
+    var classLabels = ['Eceng Gondok', 'Keramba Jaring Apung', 'Air', 'Vegetasi Lain', 'Tanah', 'Lain-lain'];
+    classLabels.forEach(function(label, index) {
+        var colorBox = ui.Label({
+            style: {
+                backgroundColor: info.vis.palette[index],
+                padding: '8px',
+                margin: '4px',
+                width: '20px',
+                height: '20px',
+                border: '1px solid black'
+            }
+        });
+        var textLabel = createLabel(index + ': ' + label, '12px');
+        legend.add(ui.Panel({widgets: [colorBox, textLabel], layout: ui.Panel.Layout.flow('horizontal')}));
+    });
+}
+
+// Redraw the selected layer when opacity changes.
+opacitySlider.onChange(function(value) {
+    var selectedLayer = layerSelect.getValue();
+    updateLayerDisplay(selectedLayer, value);
+});
+
+// Initialize the map with default layer and opacity.
+updateLayerDisplay('citra', opacitySlider.getValue());
+
+// Hide unnecessary map controls.
+map.setControlVisibility({
+    all: false,
+    layerList: false,
+    zoomControl: true,
+    scaleControl: true,
+    mapTypeControl: false,
+    fullscreenControl: false
+});
+
+// Set the default cursor to a 'crosshair'.
+map.style().set('cursor', 'crosshair');
