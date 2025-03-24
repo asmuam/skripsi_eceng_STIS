@@ -3232,20 +3232,20 @@ var bsi = image_sen2
   )
   .rename('BSI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-var ndbsi = image_sen2.expression(
-  '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
-    'SWIR1': image_sen2.select('B11'),
-    'Blue': image_sen2.select('B2'),
-    'k': image_sen2.expression(
-      '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
-        'SWIR1': image_sen2.select('B11'),
-        'NIR': image_sen2.select('B8'),
-        'Red': image_sen2.select('B4'),
-        'Green': image_sen2.select('B3')
-      })
-  }
-).rename('NDBSI')
-.copyProperties(image_sen2, image_sen2.propertyNames());
+// var ndbsi = image_sen2.expression(
+//   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
+//     'SWIR1': image_sen2.select('B11'),
+//     'Blue': image_sen2.select('B2'),
+//     'k': image_sen2.expression(
+//       '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
+//         'SWIR1': image_sen2.select('B11'),
+//         'NIR': image_sen2.select('B8'),
+//         'Red': image_sen2.select('B4'),
+//         'Green': image_sen2.select('B3')
+//       })
+//   }
+// ).rename('NDBSI')
+// .copyProperties(image_sen2, image_sen2.propertyNames());
 
 // radar
 var vv_vh_ratio = image_sen1
@@ -3273,7 +3273,7 @@ image_sen2 = image_sen2.addBands([
   fdi,
   ndbi,
   bsi,
-  ndbsi,
+  // ndbsi,
 ]);    // Merge all indices into a Sentinel-2 image
 image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
   .select([
@@ -3304,7 +3304,7 @@ image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 ima
     'FDI', 
     'NDBI',
     'BSI',
-    'NDBSI',
+    // 'NDBSI',
   ])
   .toFloat() 
 image_sen1 = image_sen1.addBands([
@@ -3340,7 +3340,7 @@ var sen2_bands = [
   'NDBI',
   'BSI',
   'NDII',
-  'NDBSI',
+  // 'NDBSI',
 ]
 var sen1_bands = ['VV', 'VH','VV_VH_ratio']
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
@@ -3438,7 +3438,7 @@ Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH','VV_VH_ratio'], min: -30, max: 0}, 'combinedImage S1 clip')
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
-Map.addLayer(combinedImage.clip(roi), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
+Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
 
 Export.table.toDrive({
