@@ -114,7 +114,6 @@ function panelcreate() {
     // Add intro panel to the main panel.
     introPanel.add(intro);
 }
-
 // Function to create reference panel.
 function referencecreate() {
     var referenceZero = ui.Label({
