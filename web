@@ -431,16 +431,19 @@ map.onClick(function(coords) {
     dataPanel.add(latLabel);
     dataPanel.add(lonLabel);
 
-    // Add a red dot showing the point clicked on.
-    var point = ee.Geometry.Point(coords.lon, coords.lat);
+    // If the dot already exists, remove it.
     if (dot) {
-        // Update the dot position if it's already created.
-        dot.setEeObject(point);
-    } else {
-        // Create a new dot and add it to the map.
-        dot = ui.Map.Layer(point, { color: 'red' });
-        map.layers().set(1, dot);
+        map.removeLayer(dot);  // Removes the previous dot from the map
     }
+
+    // Create a new point geometry based on the clicked coordinates.
+    var point = ee.Geometry.Point(coords.lon, coords.lat);
+
+    // Create a new dot and add it to the map.
+    dot = ui.Map.Layer(point, { color: 'red' });
+
+    // Add the new dot layer to the map.
+    map.addLayer(dot);
 
     // Update the inspector with a message.
     inspector.clear();
