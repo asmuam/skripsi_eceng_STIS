@@ -391,6 +391,7 @@ var legend = ui.Panel({
         width: '30%'
     }
 });
+var dot = null;                                       // Create a variable for the dot to be updated later.
 
 map.centerObject(roi, 14);                            // Set the center and zoom level of the new map.
 map.add(dataPanel);                                   // Add the legend panel to the map.
@@ -432,8 +433,14 @@ map.onClick(function(coords) {
 
     // Add a red dot showing the point clicked on.
     var point = ee.Geometry.Point(coords.lon, coords.lat);
-    var dot = ui.Map.Layer(point, { color: 'red' });
-    map.layers().set(1, dot);
+    if (dot) {
+        // Update the dot position if it's already created.
+        dot.setEeObject(point);
+    } else {
+        // Create a new dot and add it to the map.
+        dot = ui.Map.Layer(point, { color: 'red' });
+        map.layers().set(1, dot);
+    }
 
     // Update the inspector with a message.
     inspector.clear();
