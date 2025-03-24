@@ -3331,8 +3331,6 @@ var sen2_bands = [
   'SAVI',
   'WAVI',
   'RENDVI',
-  'GARI',
-  'GARIv2',
   'NDWI',
   'MNDWI',
   'LSWI',
