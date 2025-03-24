@@ -54,7 +54,7 @@ function createReferencePanel() {
 }
 
 // Helper function to create a label with given styles.
-function createLabel(value, fontSize = '1vw', fontWeight = 'normal', margin = '0px') {
+function createLabel(value, fontSize , fontWeight , margin ) {
     return ui.Label({
         value: value,
         style: {
