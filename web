@@ -459,8 +459,9 @@ var select = ui.Select({
     value: items[0].value,
     style: {margin: '8px 0px'}
 });
-select.onChange(redraw);                              // Register the `redraw` function to the layer selector.
-
+select.onChange(function(layer) {
+    redraw(layer, opacitySlider.getValue());
+});              // Redraw is called with both the selected layer and the opacity value
 var opacitySlider = ui.Slider({
     min: 0,
     max: 1,
