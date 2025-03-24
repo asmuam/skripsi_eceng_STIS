@@ -443,7 +443,7 @@ map.onClick(function(coords) {
     dot = ui.Map.Layer(point, { color: 'red' });
 
     // Add the new dot layer to the map.
-    map.addLayer(dot);
+    map.add(dot);
 
     // Update the inspector with a message.
     inspector.clear();
