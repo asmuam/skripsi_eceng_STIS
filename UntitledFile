@@ -250,7 +250,12 @@ var select = ui.Select({
     style: { margin: '8px 0px' }
 });
 var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.7, step: 0.05, style: { width: '200px', margin: '10px' } });
-
+var legend = ui.Panel({
+    style: {
+        position: 'bottom-left',
+        width: '25%'
+    }
+});
 select.onChange(redrawLayer);
 opacitySlider.onChange(onOpacityChange);
 
