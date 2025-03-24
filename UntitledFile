@@ -128,6 +128,16 @@ var dataInfo = {
     }
 };
 
+// Create intro panel.
+var introPanel = ui.Panel();
+// Set the width and font style for the main panel.
+introPanel.style().set({
+    width: '30%',
+    fontSize: '1vw',
+    fontWeight: 'bold',
+    border: '5px solid darkgray'
+});
+
 // Panel for displaying pixel information.
 var dataPanel = ui.Panel({style: {position: 'bottom-right', width: '25%'}});
 map.add(dataPanel);
