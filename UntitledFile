@@ -62,13 +62,20 @@ function panelCreate() {
         ui.Label('Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
             'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
             'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
-            'Hasil klasifikasi mencakup enam kelas:', labelStyle(0.9)),
-        ...classificationLabels(),
-        ui.Label('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih', labelStyle(0.9)),
-        ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah Perencanaan Danau Rawa Pening ' +
-            'yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', labelStyle(0.9)),
-        ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', labelStyle(0.9)),
+            'Hasil klasifikasi mencakup enam kelas:', labelStyle(0.9))
     ]);
+
+    // Manually add the classification labels instead of using spread operator
+    var classificationLabelsArray = classificationLabels(); // Get the labels array
+    classificationLabelsArray.forEach(function(label) {
+        intro.add(label); // Add each label to the intro panel
+    });
+
+    intro.add(ui.Label('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih', labelStyle(0.9)));
+    intro.add(ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah Perencanaan Danau Rawa Pening ' +
+        'yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', labelStyle(0.9)));
+    intro.add(ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', labelStyle(0.9)));
+
     introPanel.add(intro);
 }
 
