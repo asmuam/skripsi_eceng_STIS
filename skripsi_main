@@ -3104,6 +3104,8 @@ var sentinel1List = sentinel1.toList(sentinel1.size());                       //
 var image_sen2 = ee.Image(sentinel2List.get(1));                              // 7/26/2024
 var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
 
+print(image_sen2)
+print(image_sen1)
 // VIs
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
