@@ -293,6 +293,9 @@ function redraw(layer, opacity) {
     // Add the layer to the map, for layers other than "none" or "citra"
     if (layer !== 'none') {
         map.addLayer(visImg, {}, layer);
+        if (dot) {
+        map.add(dot);  // Removes the previous dot from the map
+    }
     }
 }                 // Redraw function is called when the user changes the selected layer.
 
