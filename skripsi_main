@@ -3046,7 +3046,6 @@ var roi =
          [110.44937980001855, -7.269627416561605],
          [110.44530629237855, -7.267886130514792]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Function to get the image with the closest date or according to targetDate
 function getClosestImage(collection, targetDate) {
   return collection
     .map(function (image) {
@@ -3056,10 +3055,8 @@ function getClosestImage(collection, targetDate) {
     })
     .sort('date_diff')
     .first(); // Citra dengan selisih waktu terkecil
-}
-
-// Function for masking Sentinel-2 clouds while preserving initial properties
-function maskS2clouds(image) {
+}                        // Function to get the image with the closest date or according to targetDate
+function maskS2clouds(image) {  
   var qa = image.select('QA60');
   var cloudBitMask = 1 << 10;
   var cirrusBitMask = 1 << 11;
@@ -3069,9 +3066,7 @@ function maskS2clouds(image) {
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   var maskedImage = image.updateMask(mask).divide(10000);
   return maskedImage.copyProperties(image, image.propertyNames());
-}
-
-// Function to match images by date
+}                                            // Function for masking Sentinel-2 clouds while preserving initial properties
 function findMatchingDates(s1Collection, s2Collection) {
   var s1Dates = s1Collection.aggregate_array('system:time_start');
   var s2Dates = s2Collection.aggregate_array('system:time_start');
@@ -3087,36 +3082,27 @@ function findMatchingDates(s1Collection, s2Collection) {
   commonDates = commonDates.sort();
 
   return commonDates;
-}
+}                  // Function to match images by date
 
-// Fixed date for image
-var targetDate = ee.Date('2024-7-15');
-// Tanggal tetap untuk citra
-var targetDateS1 = ee.Date('2024-07-25');
-var targetDateS2 = ee.Date('2024-07-26');
+
+var targetDate = ee.Date('2024-7-15');                                        // Fixed date for image
+var targetDateS1 = ee.Date('2024-07-25');                                     // Tanggal tetap untuk citra s1
+var targetDateS2 = ee.Date('2024-07-26');                                     // Tanggal tetap untuk citra s2
 var range = 1;
-
-// Sentinel-2
-var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
-  // .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day'))
   .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .map(maskS2clouds)
   .sort('system:time_start');
-
-// Sentinel-1
-var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
-  // .filterDate(targetDate.advance(-range, 'day'), targetDate.advance(range, 'day'))
   .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'));
 
-// Image selection
-// TODO : set s1 = 7/25/2024, s2 = 7/26/2024 
-var sentinel2List = sentinel2.toList(sentinel2.size());
-var sentinel1List = sentinel1.toList(sentinel1.size());
-var image_sen2 = ee.Image(sentinel2List.get(1)); // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(0)); // 7/25/2024
+var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
+var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
+var image_sen2 = ee.Image(sentinel2List.get(1));                              // 7/26/2024
+var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
 
 // VIs
 var ndvi = image_sen2
