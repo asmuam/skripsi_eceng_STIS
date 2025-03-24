@@ -5,7 +5,6 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
     sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Function to create the intro panel with labels.
 function panelcreate() {
     // Create an intro panel with labels.
     var intro = ui.Panel([
@@ -113,8 +112,7 @@ function panelcreate() {
 
     // Add intro panel to the main panel.
     introPanel.add(intro);
-}
-// Function to create reference panel.
+}                          // Function to create the intro panel with labels.
 function referencecreate() {
     var referenceZero = ui.Label({
         value: 'Data Tambahan:',
@@ -167,8 +165,7 @@ function referencecreate() {
     introPanel.add(referenceTwo);
     introPanel.add(referenceThree);
     introPanel.add(author);
-}
-// Redraw function is called when the user changes the selected layer.
+}                      // Function to create reference panel. 
 function redraw(layer, opacity) {
     // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
@@ -298,15 +295,15 @@ function redraw(layer, opacity) {
     if (layer !== 'none') {
         map.addLayer(visImg, {}, layer);
     }
-}
+}                 // Redraw function is called when the user changes the selected layer.
 
-// Create an inspector panel with a horizontal layout.
 var inspector = ui.Panel({
     layout: ui.Panel.Layout.flow('vertical'),
-});
-// Add a label to the panel.
-inspector.add(
-    ui.Label({
+});                      // Create an inspector panel with a horizontal layout.
+var introPanel = ui.Panel();                          // Create intro panel.
+var map = ui.Map();                                   // Initiate new map object.
+
+inspector.add(ui.Label({
         value: 'Click on a location to extract variables',
         style: {
             fontSize: '1.7vmin',
@@ -314,38 +311,21 @@ inspector.add(
             textAlign: 'center',
             margin: '0px 0px 0px 0px'
         },
-    })
-);
-
-// Create intro panel.
-var introPanel = ui.Panel();
-// Set the width and font style for the main panel.
+    }));                       // Add a label to the panel.
 introPanel.style().set({
     width: '30%',
     fontSize: '1vw',
     fontWeight: 'bold',
     border: '5px solid darkgray'
-});
+});                        // Set the width and font style for the main panel.
 
-// Clear existing map.
-ui.root.clear();
+ui.root.clear();                                      // Clear existing map.
+ui.root.add(map);                                     // Add custom map.
+ui.root.insert(1, introPanel);                        // Add the main panel to the UI root.
 
-// Initiate new map object.
-var map = ui.Map();
-// Set the center and zoom level of the new map.
-map.centerObject(roi, 14);
+panelcreate();                                        // Call the panelcreate function to create the intro panel.
+referencecreate();                                    // Call the reference panel creation function.
 
-// Add custom map.
-ui.root.add(map);
-// Add the main panel to the UI root.
-ui.root.insert(1, introPanel);
-
-// Call the panelcreate function to create the intro panel.
-panelcreate();
-// Call the reference panel creation function.
-referencecreate();
-
-// Define color palette:
 var thePalette = [
     "#32CD32",
     "#BECD32",
@@ -353,10 +333,7 @@ var thePalette = [
     "#228B22",
     "#D2B48C",
     "#808080"
-];
-
-// Define information about each layer that will be used to visualize it and
-// describe it in a selector widget and legend.
+];                               // Define color palette:
 var dataInfo = {
     'citra': {
         name: 'Citra RGB satelit Sentinel-2',
@@ -398,20 +375,22 @@ var dataInfo = {
             palette: thePalette,
         }
     },
-};
-
-// Create a new legend panel for the top-right corner.
+};                                 // Define information about each layer that will be used to visualize it and describe it in a selector widget and legend.
 var dataPanel = ui.Panel({
     style: {
         position: 'bottom-right',
         width: '25%',
     }
+});                      // Create a new legend panel for the top-right corner.
+var legend = ui.Panel({
+    style: {
+        position: 'bottom-left',
+        width: '25%'
+    }
 });
 
-// Add the legend panel to the map.
-map.add(dataPanel);
-
-// Register a callback on the default map to be invoked when the map is clicked.
+map.centerObject(roi, 14);                            // Set the center and zoom level of the new map.
+map.add(dataPanel);                                   // Add the legend panel to the map.
 map.onClick(function(coords) {
     // Clear the main panel and call the panel creation functions.
     dataPanel.clear();
@@ -467,21 +446,12 @@ map.onClick(function(coords) {
             },
         })
     );
-});
+});                  // Register a callback on the default map to be invoked when the map is clicked.
 
-var legend = ui.Panel({
-    style: {
-        position: 'bottom-left',
-        width: '25%'
-    }
-});
-
-// Create a layer selector that dictates which layer is visible on the map.
-// The list of possible layers are generated from the data info provided above.
-var items = [];
+var items = [];                                       // Create a layer selector that dictates which layer is visible on the map.
 Object.keys(dataInfo).forEach(function(key) {
     items.push({value: key, label: dataInfo[key].name});
-});
+});   // The list of possible layers are generated from the data info provided above.
 items.push({value: 'none', label: 'Select Layer'});
 
 var select = ui.Select({
@@ -489,39 +459,27 @@ var select = ui.Select({
     value: items[0].value,
     style: {margin: '8px 0px'}
 });
+select.onChange(redraw);                              // Register the `redraw` function to the layer selector.
 
-// Create opacity slider panel
 var opacitySlider = ui.Slider({
     min: 0,
     max: 1,
     value: 0.75,  // Set default opacity value
     step: 0.05,
     style: {width: '200px', margin: '10px'}
-});
-
-// Function to handle opacity changes and trigger redraw with updated opacity
+});                 // Create opacity slider panel
 opacitySlider.onChange(function(value) {
     // Get the current layer from the select widget
     var selectedLayer = select.getValue();
     redraw(selectedLayer, value);
-});
+});        // Function to handle opacity changes and trigger redraw with updated opacity
 
-// Register the `redraw` function to the layer selector.
-select.onChange(redraw);
-// Invoke the redraw function at start up to initialize the exceedance map.
-redraw('citra', opacitySlider.getValue());
+redraw('citra', opacitySlider.getValue());            // Invoke the redraw function at start up to initialize the exceedance map.
+
 map.addLayer(sbwp);
-
-// Add legend to map.
-map.add(legend);
-
-// Add the inspector panel to the default map.
-map.add(inspector);
-
+map.add(legend);                                      // Add legend to map.
+map.add(inspector);                                   // Add the inspector panel to the default map.
 map.setOptions('SATELLITE');
-
-// Set visibility options to remove geometry creator, map type controller,
-// and layer list.
 map.setControlVisibility({
     all: false,
     layerList: false,
@@ -529,8 +487,6 @@ map.setControlVisibility({
     scaleControl: true,
     mapTypeControl: false,
     fullscreenControl: false
-});
-
-// Set the default map's cursor to a 'crosshair'.
-map.style().set('cursor', 'crosshair');
+});                      // Set visibility options to remove geometry creator, map type controller, and layer list
+map.style().set('cursor', 'crosshair');               // Set the default map's cursor to a 'crosshair'.
 
