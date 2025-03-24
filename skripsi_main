@@ -3106,6 +3106,7 @@ var image_sen1 = ee.Image(sentinel1List.get(0));                              //
 
 print(image_sen2)
 print(image_sen1)
+
 // VIs
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
@@ -3114,7 +3115,6 @@ var ndvi = image_sen2
   })
   .rename('NDVI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var gndvi = image_sen2
   .expression('(NIR - GREEN) / (NIR + GREEN)', {
     GREEN: image_sen2.select('B3'),
@@ -3122,7 +3122,6 @@ var gndvi = image_sen2
   })
   .rename('GNDVI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var evi = image_sen2
   .expression('2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
     RED: image_sen2.select('B4'),
@@ -3131,7 +3130,6 @@ var evi = image_sen2
   })
   .rename('EVI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var savi = image_sen2
   .expression('((NIR - RED) * (1 + L)) / (NIR + RED + L)', {
     RED: image_sen2.select('B4'),
@@ -3139,8 +3137,7 @@ var savi = image_sen2
     L: 0.5,
   })
   .rename('SAVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
-
+  .copyProperties(image_sen2, image_sen2.propertyNames())
 var wavi = image_sen2
   .expression('((NIR - BLUE) * (1 + L)) / (NIR + BLUE + L)', {
     NIR: image_sen2.select('B8'),
@@ -3149,7 +3146,6 @@ var wavi = image_sen2
   })
   .rename('WAVI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
 var rendvi = image_sen2
   .expression('(NIR - RE) / (NIR + RE)', {
     NIR: image_sen2.select('B8'),
@@ -3157,42 +3153,13 @@ var rendvi = image_sen2
   })
   .rename('RENDVI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
-var gari = image_sen2
-  .expression(
-    '(NIR - (GREEN - (BLUE - RED))) / (NIR - (GREEN + (BLUE - RED)))',
-    {
-      GREEN: image_sen2.select('B3'),
-      BLUE: image_sen2.select('B2'),
-      NIR: image_sen2.select('B8'),
-      RED: image_sen2.select('B4'),
-    }
-  )
-  .rename('GARI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-
-var gari2 = image_sen2
-  .expression(
-    '(NIR - (GREEN - 1.7 * (BLUE - RED))) / (NIR + (GREEN - 1.7 * (BLUE - RED)))',
-    {
-      GREEN: image_sen2.select('B3'),
-      BLUE: image_sen2.select('B2'),
-      NIR: image_sen2.select('B8'),
-      RED: image_sen2.select('B4'),
-    }
-  )
-  .rename('GARIv2')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-
-// 819/1600
-var ndii = image_sen2
+var ndii = image_sen2   // 819/1600
   .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
     SWIR1: image_sen2.select('B11'),
     NIR: image_sen2.select('B8'),
   })
   .rename('NDII')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
 var ndavi = image_sen2
   .expression('(NIR - BLUE) / (NIR + BLUE)', {
     NIR: image_sen2.select('B8'),
@@ -3200,7 +3167,6 @@ var ndavi = image_sen2
   })
   .rename('NDAVI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
 var lswi = image_sen2
   .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
     NIR: image_sen2.select('B8'),
@@ -3208,9 +3174,7 @@ var lswi = image_sen2
   })
   .rename('LSWI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
-  // fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
-var fai = image_sen2
+var fai = image_sen2    // fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
   .expression('NIR - (RED + (SWIR1 - RED) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
     RED: image_sen2.select('B4'), // Red
     NIR: image_sen2.select('B8'), // NIR
@@ -3218,16 +3182,9 @@ var fai = image_sen2
   })
   .rename('FAI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
-// Define the wavelength values (in meters)
-var wavelength_nir = 842 * 1e-9 // NIR
-var wavelength_red = 665 * 1e-9 // Red
-var wavelength_swir1 = 1610 * 1e-9 // SWIR1
-// Calculate the Floating Debris Index (FDI)
-// https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
-var fdi = image_sen2
+var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
   .expression(
-    'NIR - (RE2 + (SWIR1 - RE2) * ((wavelength_nir - wavelength_red) / (wavelength_swir1 - wavelength_red))) * 10',
+    'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
     {
       NIR: image_sen2.select('B8'), // NIR band
       RE2: image_sen2.select('B6'), // Red Edge 2 band
@@ -3248,7 +3205,6 @@ var ndwi = image_sen2
   })
   .rename('NDWI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
 var mndwi = image_sen2
   .expression('(GREEN - SWIR1) / (GREEN + SWIR1)', {
     GREEN: image_sen2.select('B3'),
@@ -3256,7 +3212,7 @@ var mndwi = image_sen2
   })
   .rename('MNDWI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
+  
 // Built-Up Indices
 var ndbi = image_sen2
   .expression('(SWIR2 - NIR) / (SWIR2 + NIR)', {
@@ -3295,7 +3251,8 @@ var ndbsi = image_sen2.expression(
 ).rename('NDBSI')
 .copyProperties(image_sen2, image_sen2.propertyNames());
 
-var vv_vh_ratio = image_sen1
+
+var vv_vh_ratio = image_sen1    // Radar
   .expression('VV / VH', {
     VV: image_sen1.select('VV'),
     VH: image_sen1.select('VH'),
@@ -3303,7 +3260,7 @@ var vv_vh_ratio = image_sen1
   .rename('VV_VH_ratio')
   .copyProperties(image_sen1, image_sen1.propertyNames())
 
-// Merge all indices into a Sentinel-2 image
+
 image_sen2 = image_sen2.addBands([
   ndvi,
   gndvi,
@@ -3323,10 +3280,10 @@ image_sen2 = image_sen2.addBands([
   ndbi,
   bsi,
   ndbsi,
-]);
+]);    // Merge all indices into a Sentinel-2 image
 
-// Select the required bands from the Sentinel-2 imagery, including the composite index band
-image_sen2 = image_sen2
+
+image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
   .select([
     'B1',
     'B2',
@@ -3402,12 +3359,11 @@ var sen2_bands = [
 
 var sen1_bands = ['VV', 'VH','VV_VH_ratio']
 
-// Merge bands from Sentinel-2 and Sentinel-1
-var combinedBands = sen2_bands.concat(sen1_bands);
 
-// Merge Classess
-// Set the seed
-var seed = 222111840;
+var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
+
+
+var seed = 222111840;   // Set the seed
 
 // Add a random column to each feature collection
 var ecengRandom = eceng.randomColumn('random', seed);
@@ -3491,10 +3447,6 @@ print('Sentinel-1 VV 26 Juli 2024:', image_sen1)
 print('Full Sample',sampled)
 print('Combined Image',combinedImage)
 
-// Show the same date
-// print('Matching Dates:', matchingDates);
-
-
 // Viz
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
@@ -3505,23 +3457,19 @@ Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImag
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['NDBSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
-// Export sample to drive
+
 Export.table.toDrive({
   collection: sampled, 
   description: 'csv_sample_drive', 
   folder: 'GEE_Exports', 
   fileFormat: 'csv',
   fileNamePrefix: 'data_sample',
-})
-
-// Export sample to asset
+})   // Export sample to drive
 Export.table.toAsset({
   collection: sampled, 
   description: 'sampel_asset', 
   assetId: 'projects/ee-222111840/assets/sampel',
-})
-
-// Export combined image to drive
+})   // Export sample to asset
 Export.image.toDrive({
   image: combinedImage.clip(rawa_pening_shp), 
   description: 'rawa_pening_image_drive',
@@ -3533,25 +3481,21 @@ Export.image.toDrive({
   formatOptions: {
     cloudOptimized: true
   }
-})
-
-// Export combined image to asset
+})   // Export combined image to drive
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp), 
   description: 'rawa_pening_image_asset', 
   assetId: 'projects/ee-222111840/assets/rawa_pening_image', 
   region: rawa_pening_shp, 
   scale: 10, 
-})
-
-// Ekspor FeatureCollection ke Google Drive sebagai shapefile
+})   // Export combined image to asset
 Export.table.toDrive({
   collection: rawa_pening_shp,
   description: 'export_shapefile',
   fileFormat: 'SHP',
   folder: 'GEE_Exports',
   fileNamePrefix: 'rawa_pening'
-});
+})   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
 
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
