@@ -242,7 +242,13 @@ function onOpacityChange(value) {
 var introPanel = ui.Panel({ style: { width: '30%', fontSize: '1vw', fontWeight: 'bold', border: '5px solid darkgray' } });
 var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%' } });
 var inspector = createInspector();
-var select = ui.Select({ items: Object.keys(dataInfo).map(function(key) { return { value: key, label: dataInfo[key].name }; }), value: 'none', style: { margin: '8px 0px' } });
+var select = ui.Select({
+    items: [{value: 'none', label: 'None'}].concat(Object.keys(dataInfo).map(function(key) { 
+        return { value: key, label: dataInfo[key].name }; 
+    })),
+    value: 'none',
+    style: { margin: '8px 0px' }
+});
 var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.7, step: 0.05, style: { width: '200px', margin: '10px' } });
 
 select.onChange(redrawLayer);
