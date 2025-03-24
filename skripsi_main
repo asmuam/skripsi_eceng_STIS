@@ -3235,7 +3235,6 @@ var bsi = image_sen2
   )
   .rename('BSI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-
 var ndbsi = image_sen2.expression(
   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
     'SWIR1': image_sen2.select('B11'),
@@ -3251,8 +3250,8 @@ var ndbsi = image_sen2.expression(
 ).rename('NDBSI')
 .copyProperties(image_sen2, image_sen2.propertyNames());
 
-
-var vv_vh_ratio = image_sen1    // Radar
+// radar
+var vv_vh_ratio = image_sen1
   .expression('VV / VH', {
     VV: image_sen1.select('VV'),
     VH: image_sen1.select('VH'),
@@ -3281,8 +3280,6 @@ image_sen2 = image_sen2.addBands([
   bsi,
   ndbsi,
 ]);    // Merge all indices into a Sentinel-2 image
-
-
 image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
   .select([
     'B1',
@@ -3317,11 +3314,9 @@ image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 ima
     'NDBSI',
   ])
   .toFloat() 
-
 image_sen1 = image_sen1.addBands([
   vv_vh_ratio
 ])
-
 image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio']).toFloat()
 
 var sen2_bands = [
@@ -3356,12 +3351,8 @@ var sen2_bands = [
   'NDII',
   'NDBSI',
 ]
-
 var sen1_bands = ['VV', 'VH','VV_VH_ratio']
-
-
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
-
 
 var seed = 222111840;   // Set the seed
 
@@ -3401,6 +3392,8 @@ var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 // Memotong citra Sentinel-2 dan Sentinel-1 dengan shapefile rawa_pening_shp
 var clippedImageS2 = image_sen2.clip(rawa_pening_shp);
 var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
+
+// Area
 var areaImageS2 = image_sen2.unmask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp,
@@ -3410,13 +3403,13 @@ var areaImageS1 = image_sen1.unmask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp
   });
-// Calculate the number of valid pixels
+  
 var validPixelCount = clippedImageS2.mask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp.geometry(),
   scale: 10,
   maxPixels: 1e10
-}).values().get(0);
+}).values().get(0);  // Calculate the number of valid pixels
 
 // Calculate the total number of pixels in the clipped image
 var totalPixelCount = clippedImageS2.select(0).reduceRegion({
