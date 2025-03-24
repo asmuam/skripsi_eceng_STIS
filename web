@@ -169,7 +169,9 @@ function referencecreate() {
 function redraw(layer, opacity) {
     // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
-
+    // Update the opacity value in the dataInfo object
+    info.vis.opacity = opacity;
+    
     // Reset the layers and the legend
     map.layers().reset();
     legend.clear();
@@ -210,9 +212,6 @@ function redraw(layer, opacity) {
 
     // Construct the visualization image only for layers other than "none"
     var visImg = info.img.visualize(info.vis);
-
-    // Apply opacity from the slider to the visualization image
-    visImg = visImg.set('opacity', opacity);
 
     // If the selected layer is "citra" or "radar", reset and skip legend creation
     if (layer === 'citra' || layer === 'radar') {
@@ -343,6 +342,7 @@ var dataInfo = {
             bands:['B4','B3','B2'],
             min: 0,
             max: 0.3,
+            opacity: 0.7
         }
     },
     'radar': {
@@ -353,6 +353,7 @@ var dataInfo = {
             bands:['VV','VH','VV_VH_ratio'],
             min: -40,
             max: 0,
+            opacity: 0.7
         }
     },
     'rf': {
@@ -363,6 +364,7 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
+            opacity: 0.7
         }
     },
     'cnn1d': {
@@ -373,6 +375,7 @@ var dataInfo = {
             min: 0,
             max: 5,
             palette: thePalette,
+            opacity: 0.7
         }
     },
 };                                 // Define information about each layer that will be used to visualize it and describe it in a selector widget and legend.
