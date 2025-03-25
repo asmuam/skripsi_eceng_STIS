@@ -2371,10 +2371,7 @@ var roi =
               "landcover": 3,
               "system:index": "49"
             })]),
-    tanah = 
-    /* color: #c76029 */
-    /* shown: false */
-    ee.FeatureCollection(
+    tanah = /* color: #c76029 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44472689829931, -7.267834762463424]),
             {
@@ -2675,10 +2672,7 @@ var roi =
               "landcover": 4,
               "system:index": "49"
             })]),
-    lainnya = 
-    /* color: #909090 */
-    /* shown: false */
-    ee.FeatureCollection(
+    lainnya = /* color: #909090 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44824641847644, -7.267512076516082]),
             {
@@ -3039,7 +3033,10 @@ var roi =
               "landcover": 5,
               "system:index": "59"
             })]),
-    geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
+    geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.MultiPoint(
         [[110.4282239982091, -7.306864265713673],
          [110.43143918124096, -7.270461352047681],
          [110.44192381767198, -7.2732645175501744],
@@ -3218,7 +3215,22 @@ var ndbi = image_sen2
   })
   .rename('NDBI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
-
+var nbai = image_sen2
+  .expression('((SWIR2 - SWIR1) / GREEN) / ((SWIR2 + SWIR1) / GREEN)', {
+    SWIR2: image_sen2.select('B12'),
+    SWIR1: image_sen2.select('B11'),
+    GREEN: image_sen2.select('B3'),
+  })
+  .rename('NBAI')
+  .copyProperties(image_sen2, image_sen2.propertyNames()); 
+var nbi = image_sen2
+  .expression('(RED * SWIR2) / (NIR)', {
+    SWIR2: image_sen2.select('B12'),
+    NIR: image_sen2.select('B8'),
+    RED: image_sen2.select('B4'),
+  })
+  .rename('NBI')
+  .copyProperties(image_sen2, image_sen2.propertyNames()); 
 // Soil indices
 var bsi = image_sen2
   .expression(
@@ -3232,20 +3244,20 @@ var bsi = image_sen2
   )
   .rename('BSI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-// var ndbsi = image_sen2.expression(
-//   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
-//     'SWIR1': image_sen2.select('B11'),
-//     'Blue': image_sen2.select('B2'),
-//     'k': image_sen2.expression(
-//       '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
-//         'SWIR1': image_sen2.select('B11'),
-//         'NIR': image_sen2.select('B8'),
-//         'Red': image_sen2.select('B4'),
-//         'Green': image_sen2.select('B3')
-//       })
-//   }
-// ).rename('NDBSI')
-// .copyProperties(image_sen2, image_sen2.propertyNames());
+var ndbsi = image_sen2.expression(
+  '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
+    'SWIR1': image_sen2.select('B11'),
+    'Blue': image_sen2.select('B2'),
+    'k': image_sen2.expression(
+      '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
+        'SWIR1': image_sen2.select('B11'),
+        'NIR': image_sen2.select('B8'),
+        'Red': image_sen2.select('B4'),
+        'Green': image_sen2.select('B3')
+      })
+  }
+).rename('NDBSI')
+.copyProperties(image_sen2, image_sen2.propertyNames());
 
 // radar
 var vv_vh_ratio = image_sen1
@@ -3271,8 +3283,10 @@ image_sen2 = image_sen2.addBands([
   lswi,
   fai,
   ndbi,
+  nbai,
+  nbi,
   bsi,
-  // ndbsi,
+  ndbsi,
 ]);    // Merge all indices into a Sentinel-2 image
 image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
   .select([
@@ -3301,8 +3315,10 @@ image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 ima
     'LSWI',
     'FAI',
     'NDBI',
+    'NBAI',
+    'NBI',
     'BSI',
-    // 'NDBSI',
+    'NDBSI',
   ])
   .toFloat() 
 image_sen1 = image_sen1.addBands([
@@ -3335,9 +3351,11 @@ var sen2_bands = [
   'NDAVI',
   'FAI',
   'NDBI',
+  'NBAI',
+  'NBI',
   'BSI',
   'NDII',
-  // 'NDBSI',
+  'NDBSI',
 ]
 var sen1_bands = ['VV', 'VH','VV_VH_ratio']
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
