@@ -3182,17 +3182,17 @@ var fai = image_sen2    // fai https://custom-scripts.sentinel-hub.com/custom-sc
   })
   .rename('FAI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
-  .expression(
-    'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
-    {
-      NIR: image_sen2.select('B8'), // NIR band
-      RE2: image_sen2.select('B6'), // Red Edge 2 band
-      SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
-    }
-  )
-  .rename('FDI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
+// var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
+//   .expression(
+//     'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
+//     {
+//       NIR: image_sen2.select('B8'), // NIR band
+//       RE2: image_sen2.select('B6'), // Red Edge 2 band
+//       SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
+//     }
+//   )
+//   .rename('FDI')
+//   .copyProperties(image_sen2, image_sen2.propertyNames())
 
 // WIs
 var ndwi = image_sen2
