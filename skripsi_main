@@ -2672,7 +2672,10 @@ var roi =
               "landcover": 4,
               "system:index": "49"
             })]),
-    lainnya = /* color: #909090 */ee.FeatureCollection(
+    lainnya = 
+    /* color: #909090 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44824641847644, -7.267512076516082]),
             {
