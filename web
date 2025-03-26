@@ -169,9 +169,7 @@ function referencecreate() {
 function redraw(layer, opacity) {
     // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
-    // Update the opacity value in the dataInfo object
-    info.vis.opacity = opacity;
-    
+
     // Reset the layers and the legend
     map.layers().reset();
     legend.clear();
@@ -209,7 +207,10 @@ function redraw(layer, opacity) {
     if (layer === 'none') {
         return;
     }
-
+    
+    // Update the opacity value in the dataInfo object
+    info.vis.opacity = opacity;
+    
     // Construct the visualization image only for layers other than "none"
     var visImg = info.img.visualize(info.vis);
 
