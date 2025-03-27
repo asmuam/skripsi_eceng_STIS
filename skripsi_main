@@ -7798,13 +7798,14 @@ var tanahRandom = tanah.randomColumn('random', seed);
 var vegetasiLainRandom = vegetasi_lain.randomColumn('random', seed);
 var lainnyaRandom = lainnya.randomColumn('random', seed);
 
-// Limit each feature collection to 50 random items
-var ecengSampled = ecengRandom.limit(50, 'random');
-var kjaSampled = kjaRandom.limit(50, 'random');
-var airSampled = airRandom.limit(50, 'random');
-var tanahSampled = tanahRandom.limit(50, 'random');
-var vegetasiLainSampled = vegetasiLainRandom.limit(50, 'random');
-var lainnyaSampled = lainnyaRandom.limit(50, 'random');
+// Limit each feature collection to x random items
+var x = 200
+var ecengSampled = ecengRandom.limit(x, 'random');
+var kjaSampled = kjaRandom.limit(x, 'random');
+var airSampled = airRandom.limit(x, 'random');
+var tanahSampled = tanahRandom.limit(x, 'random');
+var vegetasiLainSampled = vegetasiLainRandom.limit(x, 'random');
+var lainnyaSampled = lainnyaRandom.limit(x, 'random');
 
 // Merge the sampled feature collections
 var classNames = ecengSampled.merge(kjaSampled).merge(airSampled).merge(tanahSampled).merge(vegetasiLainSampled).merge(lainnyaSampled);
