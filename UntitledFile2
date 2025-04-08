@@ -323,10 +323,13 @@ var seed = 222111840;   // Set the seed
 // Merge Sentinel-1 and Sentinel-2 imagery
 var combinedImage = image_sen2.addBands(image_sen1);
 
+Map.centerObject(roi, 14)
+Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Natural Color');
+
 Export.image.toDrive({
   image: combinedImage.clip(roi), 
-  description: 'rawa_pening_image_drive',
-  fileNamePrefix: 'rawa_pening_image',
+  description: 'waduk_jatiluhur_image_drive',
+  fileNamePrefix: 'waduk_jatiluhur_image',
   folder: 'GEE_Exports',
   region: roi, 
   scale: 10,
@@ -337,8 +340,8 @@ Export.image.toDrive({
 })   // Export combined image to drive
 Export.image.toAsset({
   image: combinedImage.clip(roi), 
-  description: 'rawa_pening_image_asset', 
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image', 
+  description: 'waduk_jatiluhur_image_asset', 
+  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image', 
   region: roi, 
   scale: 10, 
 })   // Export combined image to asset
