@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = /* color: #d6c6c6 */ee.FeatureCollection(
+var waduk_jatiluhur = /* color: #d6c6c6 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[107.38786887371344, -6.564701533483087],
@@ -41,32 +41,28 @@ var roi = /* color: #d6c6c6 */ee.FeatureCollection(
     rawa_pening_image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
     cnn1 = ee.Image("projects/ee-222111840/assets/cnn1"),
     rf = ee.Image("projects/ee-222111840/assets/rf"),
-    das = ee.FeatureCollection("projects/ee-222111840/assets/das"),
-    geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Geometry.MultiPoint();
+    das = ee.FeatureCollection("projects/ee-222111840/assets/das");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Pusatkan peta ke koordinat tersebut
-Map.centerObject(roi, 14);
+Map.centerObject(waduk_jatiluhur, 14);
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
 Map.addLayer(
-  rawa_pening_image.clip(roi),
+  rawa_pening_image.clip(waduk_jatiluhur),
  {bands:['B4','B3','B2'],min: 0, max: 0.3},
  "s2"
 );
 Map.addLayer(
-  rawa_pening_image.clip(roi),
+  rawa_pening_image.clip(waduk_jatiluhur),
  {bands:['VV'],min: -40, max: 0},
  "s1"
 );
 Map.addLayer(
-  rf.clip(roi),
+  rf.clip(waduk_jatiluhur),
 {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
   "rf"
 );
 Map.addLayer(
-  cnn1.clip(roi),
+  cnn1.clip(waduk_jatiluhur),
  {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
  "cnn"
 );
@@ -78,7 +74,7 @@ Map.addLayer(
 );
 
 Export.table.toAsset({
-  collection: roi,
+  collection: waduk_jatiluhur,
   description: 'waduk_jatiluhur',
   assetId: 'users/222111840/waduk_jatiluhur'
 });
