@@ -45,25 +45,25 @@ var waduk_jatiluhur = /* color: #d6c6c6 */ee.FeatureCollection(
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Pusatkan peta ke koordinat tersebut
-Map.centerObject(waduk_jatiluhur, 14);
+Map.centerObject(roi, 14);
 // Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
 Map.addLayer(
-  rawa_pening_image.clip(waduk_jatiluhur),
+  rawa_pening_image.clip(roi),
  {bands:['B4','B3','B2'],min: 0, max: 0.3},
  "s2"
 );
 Map.addLayer(
-  rawa_pening_image.clip(waduk_jatiluhur),
+  rawa_pening_image.clip(roi),
  {bands:['VV'],min: -40, max: 0},
  "s1"
 );
 Map.addLayer(
-  rf.clip(waduk_jatiluhur),
+  rf.clip(roi),
 {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
   "rf"
 );
 Map.addLayer(
-  cnn1.clip(waduk_jatiluhur),
+  cnn1.clip(roi),
  {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
  "cnn"
 );
