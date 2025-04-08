@@ -1,0 +1,345 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var roi = ee.FeatureCollection("users/222111840/waduk_jatiluhur");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+function getClosestImage(collection, targetDate) {
+  return collection
+    .map(function (image) {
+      var imageDate = ee.Date(image.get('system:time_start')); // Gunakan system:time_start
+      var diff = ee.Number(imageDate.difference(targetDate, 'day')).abs(); // Selisih waktu
+      return image.set('date_diff', diff);
+    })
+    .sort('date_diff')
+    .first(); // Citra dengan selisih waktu terkecil
+}                        // Function to get the image with the closest date or according to targetDate
+function maskS2clouds(image) {  
+  var qa = image.select('QA60');
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  var mask = qa
+    .bitwiseAnd(cloudBitMask)
+    .eq(0)
+    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  var maskedImage = image.updateMask(mask).divide(10000);
+  return maskedImage.copyProperties(image, image.propertyNames());
+}                                            // Function for masking Sentinel-2 clouds while preserving initial properties
+function findMatchingDates(s1Collection, s2Collection) {
+  var s1Dates = s1Collection.aggregate_array('system:time_start');
+  var s2Dates = s2Collection.aggregate_array('system:time_start');
+
+  s1Dates = s1Dates.map(function (date) {
+    return ee.Date(date).format('YYYY-MM-dd');
+  });
+  s2Dates = s2Dates.map(function (date) {
+    return ee.Date(date).format('YYYY-MM-dd');
+  });
+
+  var commonDates = s1Dates.filter(ee.Filter.inList('item', s2Dates));
+  commonDates = commonDates.sort();
+
+  return commonDates;
+}                  // Function to match images by date
+
+
+var targetDate = ee.Date('2024-7-27');                                        // Fixed date for image
+var targetDateS1 = ee.Date('2024-07-27');                                     // Tanggal tetap untuk citra s1
+var targetDateS2 = ee.Date('2024-07-27');                                     // Tanggal tetap untuk citra s2
+var range = 1;
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
+  .filterBounds(roi)
+  .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .map(maskS2clouds)
+  .sort('system:time_start');
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
+  .filterBounds(roi)
+  .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'));
+
+var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
+var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
+var image_sen2 = ee.Image(sentinel2List.get(0));                              // 7/26/2024
+var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
+
+print(image_sen2)
+print(image_sen1)
+
+// VIs
+var ndvi = image_sen2
+  .expression('(NIR - RED) / (NIR + RED)', {
+    RED: image_sen2.select('B4'),
+    NIR: image_sen2.select('B8'),
+  })
+  .rename('NDVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames());
+var gndvi = image_sen2
+  .expression('(NIR - GREEN) / (NIR + GREEN)', {
+    GREEN: image_sen2.select('B3'),
+    NIR: image_sen2.select('B8'),
+  })
+  .rename('GNDVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames());
+var evi = image_sen2
+  .expression('2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    RED: image_sen2.select('B4'),
+    NIR: image_sen2.select('B8'),
+    BLUE: image_sen2.select('B2'),
+  })
+  .rename('EVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames());
+var savi = image_sen2
+  .expression('((NIR - RED) * (1 + L)) / (NIR + RED + L)', {
+    RED: image_sen2.select('B4'),
+    NIR: image_sen2.select('B8'),
+    L: 0.5,
+  })
+  .rename('SAVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var wavi = image_sen2
+  .expression('((NIR - BLUE) * (1 + L)) / (NIR + BLUE + L)', {
+    NIR: image_sen2.select('B8'),
+    BLUE: image_sen2.select('B2'),
+    L: 0.5,
+  })
+  .rename('WAVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var rendvi = image_sen2
+  .expression('(NIR - RE) / (NIR + RE)', {
+    NIR: image_sen2.select('B8'),
+    RE: image_sen2.select('B5'),
+  })
+  .rename('RENDVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var ndii = image_sen2   // 819/1600
+  .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
+    SWIR1: image_sen2.select('B11'),
+    NIR: image_sen2.select('B8'),
+  })
+  .rename('NDII')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var ndavi = image_sen2
+  .expression('(NIR - BLUE) / (NIR + BLUE)', {
+    NIR: image_sen2.select('B8'),
+    BLUE: image_sen2.select('B2'),
+  })
+  .rename('NDAVI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var lswi = image_sen2
+  .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
+    NIR: image_sen2.select('B8'),
+    SWIR1: image_sen2.select('B11'),
+  })
+  .rename('LSWI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var fai = image_sen2    // fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
+  .expression('NIR - (RED + (SWIR1 - RED) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
+    RED: image_sen2.select('B4'), // Red
+    NIR: image_sen2.select('B8'), // NIR
+    SWIR1: image_sen2.select('B11'), // SWIR
+  })
+  .rename('FAI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+// var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
+//   .expression(
+//     'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
+//     {
+//       NIR: image_sen2.select('B8'), // NIR band
+//       RE2: image_sen2.select('B6'), // Red Edge 2 band
+//       SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
+//     }
+//   )
+//   .rename('FDI')
+//   .copyProperties(image_sen2, image_sen2.propertyNames())
+
+// WIs
+var ndwi = image_sen2
+  .expression('(GREEN - NIR) / (GREEN + NIR)', {
+    GREEN: image_sen2.select('B3'),
+    NIR: image_sen2.select('B8'),
+  })
+  .rename('NDWI')
+  .copyProperties(image_sen2, image_sen2.propertyNames());
+var mndwi = image_sen2
+  .expression('(GREEN - SWIR1) / (GREEN + SWIR1)', {
+    GREEN: image_sen2.select('B3'),
+    SWIR1: image_sen2.select('B11'),
+  })
+  .rename('MNDWI')
+  .copyProperties(image_sen2, image_sen2.propertyNames());
+  
+// Built-Up Indices
+var ndbi = image_sen2
+  .expression('(SWIR2 - NIR) / (SWIR2 + NIR)', {
+    SWIR2: image_sen2.select('B12'),
+    NIR: image_sen2.select('B8'),
+  })
+  .rename('NDBI')
+  .copyProperties(image_sen2, image_sen2.propertyNames());
+var nbai = image_sen2
+  .expression('((SWIR2 - SWIR1) / GREEN) / ((SWIR2 + SWIR1) / GREEN)', {
+    SWIR2: image_sen2.select('B12'),
+    SWIR1: image_sen2.select('B11'),
+    GREEN: image_sen2.select('B3'),
+  })
+  .rename('NBAI')
+  .copyProperties(image_sen2, image_sen2.propertyNames()); 
+var nbi = image_sen2
+  .expression('(RED * SWIR2) / (NIR)', {
+    SWIR2: image_sen2.select('B12'),
+    NIR: image_sen2.select('B8'),
+    RED: image_sen2.select('B4'),
+  })
+  .rename('NBI')
+  .copyProperties(image_sen2, image_sen2.propertyNames()); 
+// Soil indices
+var bsi = image_sen2
+  .expression(
+    '((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED) + (NIR + BLUE))',
+    {
+      RED: image_sen2.select('B4'),
+      SWIR1: image_sen2.select('B11'),
+      NIR: image_sen2.select('B8'),
+      BLUE: image_sen2.select('B2'),
+    }
+  )
+  .rename('BSI')
+  .copyProperties(image_sen2, image_sen2.propertyNames())
+var ndbsi = image_sen2.expression(
+  '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
+    'SWIR1': image_sen2.select('B11'),
+    'Blue': image_sen2.select('B2'),
+    'k': image_sen2.expression(
+      '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
+        'SWIR1': image_sen2.select('B11'),
+        'NIR': image_sen2.select('B8'),
+        'Red': image_sen2.select('B4'),
+        'Green': image_sen2.select('B3')
+      })
+  }
+).rename('NDBSI')
+.copyProperties(image_sen2, image_sen2.propertyNames());
+
+// radar
+var vv_vh_ratio = image_sen1
+  .expression('VV / VH', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('VV_VH_ratio')
+  .copyProperties(image_sen1, image_sen1.propertyNames())
+
+
+image_sen2 = image_sen2.addBands([
+  ndvi,
+  gndvi,
+  evi,
+  savi,
+  wavi,
+  rendvi,
+  ndii,
+  ndavi,
+  ndwi,
+  mndwi,
+  lswi,
+  fai,
+  ndbi,
+  nbai,
+  nbi,
+  bsi,
+  ndbsi,
+]);    // Merge all indices into a Sentinel-2 image
+image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
+  .select([
+    'B1',
+    'B2',
+    'B3',
+    'B4',
+    'B5',
+    'B6',
+    'B7',
+    'B8',
+    'B8A',
+    'B9',
+    'B11',
+    'B12', 
+    'NDVI',
+    'GNDVI',
+    'EVI',
+    'SAVI',
+    'WAVI',
+    'RENDVI',
+    'NDII',
+    'NDAVI', 
+    'NDWI',
+    'MNDWI',
+    'LSWI',
+    'FAI',
+    'NDBI',
+    'NBAI',
+    'NBI',
+    'BSI',
+    'NDBSI',
+  ])
+  .toFloat() 
+image_sen1 = image_sen1.addBands([
+  vv_vh_ratio
+])
+image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio']).toFloat()
+
+var sen2_bands = [
+  'B1',
+  'B2',
+  'B3',
+  'B4',
+  'B5',
+  'B6',
+  'B7',
+  'B8',
+  'B8A',
+  'B9',
+  'B11',
+  'B12',
+  'NDVI',
+  'GNDVI',
+  'EVI',
+  'SAVI',
+  'WAVI',
+  'RENDVI',
+  'NDWI',
+  'MNDWI',
+  'LSWI',
+  'NDAVI',
+  'FAI',
+  'NDBI',
+  'NBAI',
+  'NBI',
+  'BSI',
+  'NDII',
+  'NDBSI',
+]
+var sen1_bands = ['VV', 'VH','VV_VH_ratio']
+var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
+
+var seed = 222111840;   // Set the seed
+
+// Merge Sentinel-1 and Sentinel-2 imagery
+var combinedImage = image_sen2.addBands(image_sen1);
+
+Export.image.toDrive({
+  image: combinedImage.clip(roi), 
+  description: 'rawa_pening_image_drive',
+  fileNamePrefix: 'rawa_pening_image',
+  folder: 'GEE_Exports',
+  region: roi, 
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+})   // Export combined image to drive
+Export.image.toAsset({
+  image: combinedImage.clip(roi), 
+  description: 'rawa_pening_image_asset', 
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image', 
+  region: roi, 
+  scale: 10, 
+})   // Export combined image to asset
+
