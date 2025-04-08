@@ -41,7 +41,8 @@ var waduk_jatiluhur = /* color: #d6c6c6 */ee.FeatureCollection(
     rawa_pening_image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
     cnn1 = ee.Image("projects/ee-222111840/assets/cnn1"),
     rf = ee.Image("projects/ee-222111840/assets/rf"),
-    das = ee.FeatureCollection("projects/ee-222111840/assets/das");
+    das = ee.FeatureCollection("projects/ee-222111840/assets/das"),
+    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Pusatkan peta ke koordinat tersebut
 Map.centerObject(waduk_jatiluhur, 14);
