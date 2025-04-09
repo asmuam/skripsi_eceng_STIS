@@ -59,7 +59,7 @@ var waduk_jatiluhur = ee.FeatureCollection("users/222111840/waduk_jatiluhur"),
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Parameter umum
 var roi = danau_toba; // Ganti ROI dengan wilayah yang Anda pilih
-var maxDifferenceDays = 7; // Maksimal perbedaan hari antar citra
+var maxDifferenceDays = 5; // Maksimal perbedaan hari antar citra
 var range = 720; // Rentang pencarian hari untuk Sentinel
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
@@ -76,6 +76,22 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
   .sort('system:time_start');
 
+// Get the first image from each collection
+var sentinel1Image = ee.Image(sentinel1.toList(1).get(0));
+var sentinel2Image = ee.Image(sentinel2.toList(1).get(0));
+
+// Get the system:time_start property as dates
+var sentinel1Date = ee.Date(sentinel1Image.get('system:time_start'));
+var sentinel2Date = ee.Date(sentinel2Image.get('system:time_start'));
+
+// Calculate the absolute difference in days
+var dateDifference = sentinel1Date.difference(sentinel2Date, 'day').abs();
+
+// Print the results
+print('Sentinel-1 date:', sentinel1Date.format('YYYY-MM-dd'));
+print('Sentinel-2 date:', sentinel2Date.format('YYYY-MM-dd'));
+print('Difference in days:', dateDifference);
+
 function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
     var sentinel1List = sentinel1.toList(sentinel1.size());
     var sentinel2List = sentinel2.toList(sentinel2.size());
@@ -89,7 +105,7 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
         for (var j = 0; j < sentinel2.size(); j++) {
             var s2 = ee.Image(sentinel2List.get(j));
             var s2Date = ee.Date(s2.get('system:time_start')); // Mendapatkan system:time_start dalam milidetik
-            var difference = s1Date.difference(s2Date, 'days').abs(); // Perbedaan dalam hari
+            var difference = s1Date.difference(s2Date, 'day').abs(); // Perbedaan dalam hari
             
             // Menambahkan log untuk melihat nilai perbedaan
             print('Perbedaan tanggal:', s1Date.format('YYYY-MM-dd'), 'dan', s2Date.format('YYYY-MM-dd'), 'adalah', difference, 'hari');
