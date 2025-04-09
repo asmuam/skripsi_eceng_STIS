@@ -141,8 +141,6 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
     return { sentinel1Image: s1Coverage, sentinel2Image: s2Coverage, dates: bestDates };
 }
 
-// Pemanggilan fungsi untuk melihat hasil
-var
 
 // Pemanggilan fungsi
 var bestResult = getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays);
