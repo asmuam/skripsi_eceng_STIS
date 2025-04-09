@@ -88,6 +88,10 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
     print('Jumlah citra Sentinel-1:', sentinel1.size());
     print('Jumlah citra Sentinel-2:', sentinel2.size());
 
+    // Cek apakah list berhasil diubah menjadi list
+    print('Sentinel-1 List:', sentinel1List);
+    print('Sentinel-2 List:', sentinel2List);
+
     // Iterasi untuk membandingkan tanggal Sentinel-1 dan Sentinel-2
     for (var i = 0; i < sentinel1.size(); i++) {
         var s1 = ee.Image(sentinel1List.get(i));
