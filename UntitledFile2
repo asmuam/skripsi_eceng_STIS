@@ -76,81 +76,37 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
   .sort('system:time_start');
 
-function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
-    // Mengonversi koleksi citra menjadi list agar bisa diiterasi
-    var sentinel1List = sentinel1.toList(sentinel1.size());
-    var sentinel2List = sentinel2.toList(sentinel2.size());
+// Filtered Sentinel-2 collection
+var sentinel2Filtered = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterBounds(roi)
+  .filterDate('2023-06-17', '2023-06-23') // June 20 ± 3 days
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
+  .sort('system:time_start');
 
-    var bestDifference = maxDifferenceDays + 1; // Inisialisasi dengan nilai yang lebih besar dari maxDifferenceDays
-    var bestDates = null;
+// Filtered Sentinel-1 collection
+var sentinel1Filtered = ee.ImageCollection('COPERNICUS/S1_GRD')
+  .filterBounds(roi)
+  .filterDate('2023-06-18', '2023-06-19') // Exact date: June 18, 2023
+  .sort('system:time_start');
 
-    // Log untuk memeriksa jumlah citra dalam masing-masing koleksi
-    print('Jumlah citra Sentinel-1:', sentinel1.size());
-    print('Jumlah citra Sentinel-2:', sentinel2.size());
+// Mosaic images in each collection
+var sentinel2Mosaic = sentinel2Filtered.mosaic().clip(roi);
+var sentinel1Mosaic = sentinel1Filtered.mosaic().clip(roi);
 
-    // Cek apakah list berhasil diubah menjadi list
-    print('Sentinel-1 List:', sentinel1List);
-    print('Sentinel-2 List:', sentinel2List);
+// Verify coverage of ROI
+var roiBounds = roi.bounds();
+var sentinel1Coverage = sentinel1Mosaic.geometry().contains(roiBounds, 1);
+var sentinel2Coverage = sentinel2Mosaic.geometry().contains(roiBounds, 1);
 
-    // Iterasi untuk membandingkan tanggal Sentinel-1 dan Sentinel-2
-    for (var i = 0; i < sentinel1.size(); i++) {
-        var s1 = ee.Image(sentinel1List.get(i));
-        var s1Date = ee.Date(s1.get('system:time_start')); // Mendapatkan system:time_start dalam milidetik
-        
-        // Log untuk mencetak tanggal citra Sentinel-1 yang sedang diproses
-        print('Citra Sentinel-1 ke-', i, 'tanggal:', s1Date.format('YYYY-MM-dd'));
+// Print results
+print('Sentinel-1 Mosaic Coverage:', sentinel1Coverage);
+print('Sentinel-2 Mosaic Coverage:', sentinel2Coverage);
 
-        for (var j = 0; j < sentinel2.size(); j++) {
-            var s2 = ee.Image(sentinel2List.get(j));
-            var s2Date = ee.Date(s2.get('system:time_start')); // Mendapatkan system:time_start dalam milidetik
-            
-            // Log untuk mencetak tanggal citra Sentinel-2 yang sedang diproses
-            print('Citra Sentinel-2 ke-', j, 'tanggal:', s2Date.format('YYYY-MM-dd'));
+// Display the mosaics on the map
+Map.centerObject(roi);
+Map.addLayer(sentinel1Mosaic, {}, 'Sentinel-1 Mosaic');
+Map.addLayer(sentinel2Mosaic, {}, 'Sentinel-2 Mosaic');
 
-            // Menghitung perbedaan tanggal dalam hari
-            var difference = s1Date.difference(s2Date, 'day').abs(); // Perbedaan dalam hari
-
-            // Menambahkan log untuk melihat nilai perbedaan antara citra Sentinel-1 dan Sentinel-2
-            print('Perbedaan tanggal antara Sentinel-1 dan Sentinel-2:', difference, 'hari');
-
-            // Mengecek apakah perbedaan tanggal lebih kecil dari bestDifference
-            if (difference < bestDifference) {
-                bestDifference = difference;
-                bestDates = { sentinel1: s1Date, sentinel2: s2Date };
-
-                // Log jika pasangan tanggal yang lebih baik ditemukan
-                print('Ditemukan pasangan citra dengan perbedaan lebih kecil:', bestDifference, 'hari');
-            }
-        }
-    }
-
-    // Jika tidak ada pasangan citra yang memenuhi kriteria
-    if (bestDates === null) {
-        print('Tidak ditemukan pasangan citra dengan perbedaan tanggal lebih kecil dari', maxDifferenceDays, 'hari.');
-    } else {
-        print('Pasangan tanggal terbaik ditemukan:', bestDates.sentinel1.format('YYYY-MM-dd'), 'dan', bestDates.sentinel2.format('YYYY-MM-dd'));
-    }
-
-    // Ambil citra Sentinel-1 dan Sentinel-2 yang sesuai
-    var bestSentinel1 = sentinel1.filter(ee.Filter.eq('system:time_start', bestDates ? bestDates.sentinel1.millis() : 0));
-    var bestSentinel2 = sentinel2.filter(ee.Filter.eq('system:time_start', bestDates ? bestDates.sentinel2.millis() : 0));
-
-    // Log untuk memeriksa apakah citra ditemukan atau tidak
-    print('Citra Sentinel-1 yang dipilih:', bestSentinel1.size(), 'citra');
-    print('Citra Sentinel-2 yang dipilih:', bestSentinel2.size(), 'citra');
-
-    var s1Coverage = bestSentinel1.mosaic().clip(roi);
-    var s2Coverage = bestSentinel2.mosaic().clip(roi);
-
-    return { sentinel1Image: s1Coverage, sentinel2Image: s2Coverage, dates: bestDates };
-}
-
-
-// Pemanggilan fungsi
-var bestResult = getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays);
-print('Tanggal terbaik:', bestResult.dates);
-print('Citra Sentinel-1:', bestResult.sentinel1Image);
-print('Citra Sentinel-2:', bestResult.sentinel2Image);
 
 // VIs
 var ndvi = combinedImage 
