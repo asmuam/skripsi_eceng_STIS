@@ -82,12 +82,12 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
 
     var bestDifference = maxDifferenceDays + 1; // Inisialisasi dengan nilai yang lebih besar
     var bestDates = null;
-
+    print("xxx =", ee.Date(sentinel1List.get(0).get('system:time_start')))
     // Iterasi untuk membandingkan tanggal Sentinel-1 dan Sentinel-2
     for (var i = 0; i < sentinel1.size(); i++) {
         var s1 = ee.Image(sentinel1List.get(i));
         var s1Date = ee.Date(s1.get('system:time_start')); // Mendapatkan system:time_start dalam milidetik
-
+        
         for (var j = 0; j < sentinel2.size(); j++) {
             var s2 = ee.Image(sentinel2List.get(j));
             var s2Date = ee.Date(s2.get('system:time_start')); // Mendapatkan system:time_start dalam milidetik
