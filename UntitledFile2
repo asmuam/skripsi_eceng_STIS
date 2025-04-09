@@ -1,233 +1,286 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = ee.FeatureCollection("users/222111840/waduk_jatiluhur");
+var waduk_jatiluhur = ee.FeatureCollection("users/222111840/waduk_jatiluhur"),
+    bengawan_solo = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[111.72128829132018, -7.119456693309461],
+                  [111.72496827805328, -7.132167987886488],
+                  [111.72096374885493, -7.1328120591393365],
+                  [111.72133656749683, -7.136522110152037],
+                  [111.72735276940521, -7.1352073647412455],
+                  [111.7294636684529, -7.132359615458543],
+                  [111.72956557183707, -7.12860156890269],
+                  [111.72692093364455, -7.1177746117711225],
+                  [111.72889503947951, -7.115134357791344],
+                  [111.73327240459182, -7.112664429028993],
+                  [111.74305710307814, -7.115389866904822],
+                  [111.75438675395705, -7.124247428204681],
+                  [111.75936493860807, -7.124332600489215],
+                  [111.76357064208794, -7.123736418089196],
+                  [111.76245483822768, -7.121309120322852],
+                  [111.7567900132344, -7.120840694100849],
+                  [111.74970898143508, -7.11347354508707],
+                  [111.74039635173537, -7.109726048197046],
+                  [111.7270925950215, -7.10891692553676],
+                  [111.72301563731887, -7.114282659719202]]]),
+            {
+              "system:index": "0"
+            })]),
+    danau_toba = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[99.16599761867788, 2.3369583020128792],
+                  [99.17973052883413, 2.446725851586419],
+                  [99.08909332180288, 2.433005391008793],
+                  [99.05888091945913, 2.5427651007261938],
+                  [98.96000396633413, 2.6141039303633424],
+                  [98.95451080227163, 2.712874053457923],
+                  [98.67710601711538, 2.9076467624478757],
+                  [98.58921539211538, 2.910389805182578],
+                  [98.50090303462544, 2.904963883123351],
+                  [98.49540987056294, 2.847358318962676],
+                  [98.52287569087544, 2.76231628558809],
+                  [98.61076631587544, 2.6525756566544105],
+                  [98.65196504634419, 2.586726578946354],
+                  [98.63548555415669, 2.5455691635645077],
+                  [98.71513643306294, 2.504410433758404],
+                  [98.79204072993794, 2.3973917368836615],
+                  [98.80577364009419, 2.312319604664925],
+                  [98.87169160884419, 2.2931090557300107]]]),
+            {
+              "system:index": "0"
+            })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-function getClosestImage(collection, targetDate) {
-  return collection
-    .map(function (image) {
-      var imageDate = ee.Date(image.get('system:time_start')); // Gunakan system:time_start
-      var diff = ee.Number(imageDate.difference(targetDate, 'day')).abs(); // Selisih waktu
-      return image.set('date_diff', diff);
-    })
-    .sort('date_diff')
-    .first(); // Citra dengan selisih waktu terkecil
-}                        // Function to get the image with the closest date or according to targetDate
-function maskS2clouds(image) {  
-  var qa = image.select('QA60');
-  var cloudBitMask = 1 << 10;
-  var cirrusBitMask = 1 << 11;
-  var mask = qa
-    .bitwiseAnd(cloudBitMask)
-    .eq(0)
-    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
-  var maskedImage = image.updateMask(mask).divide(10000);
-  return maskedImage.copyProperties(image, image.propertyNames());
-}                                            // Function for masking Sentinel-2 clouds while preserving initial properties
-function findMatchingDates(s1Collection, s2Collection) {
-  var s1Dates = s1Collection.aggregate_array('system:time_start');
-  var s2Dates = s2Collection.aggregate_array('system:time_start');
+// Parameter umum
+var roi = danau_toba; // Ganti ROI dengan wilayah yang Anda pilih
+var maxDifferenceDays = 10; // Maksimal perbedaan hari antar citra
+var range = 500; // Rentang pencarian hari untuk Sentinel
+var cloudThreshold = 10; // Persentase maksimum piksel berawan
 
-  s1Dates = s1Dates.map(function (date) {
-    return ee.Date(date).format('YYYY-MM-dd');
-  });
-  s2Dates = s2Dates.map(function (date) {
-    return ee.Date(date).format('YYYY-MM-dd');
-  });
-
-  var commonDates = s1Dates.filter(ee.Filter.inList('item', s2Dates));
-  commonDates = commonDates.sort();
-
-  return commonDates;
-}                  // Function to match images by date
-
-
-var targetDate = ee.Date('2024-7-27');                                        // Fixed date for image
-var targetDateS1 = ee.Date('2024-07-27');                                     // Tanggal tetap untuk citra s1
-var targetDateS2 = ee.Date('2024-07-27');                                     // Tanggal tetap untuk citra s2
-var range = 1;
-var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
+// Koleksi Sentinel-2
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
-  .map(maskS2clouds)
+  .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .sort('system:time_start');
-var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
+
+// Koleksi Sentinel-1
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'));
+  .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
+  .sort('system:time_start');
 
-var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
-var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
-var image_sen2 = ee.Image(sentinel2List.get(0));                              // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
+// Fungsi untuk mencari pasangan citra berdasarkan jarak tanggal minimum
+function getCombinedImage(s1Collection, s2Collection) {
+  var matchedImages = s2Collection.map(function(s2Image) {
+    var s2Date = ee.Date(s2Image.get('system:time_start'));
+    var closestS1Image = s1Collection
+      .map(function(s1Image) {
+        var s1Date = ee.Date(s1Image.get('system:time_start'));
+        var dateDifference = s2Date.difference(s1Date, 'day').abs();
+        return s1Image.set('dateDifference', dateDifference);
+      })
+      .sort('dateDifference')
+      .first(); // Ambil citra Sentinel-1 dengan jarak waktu minimum
+    
+    // Kembalikan pasangan citra Sentinel-1 dan Sentinel-2 sebagai Feature
+    return ee.Feature(null, {
+      s1Image: closestS1Image,
+      s2Image: s2Image,
+      dateDifference: closestS1Image.get('dateDifference')
+    });
+  });
+  
+  // Urutkan pasangan citra berdasarkan jarak waktu minimum
+  var sortedMatchedImages = matchedImages.sort('dateDifference');
+  
+  // Pilih pasangan citra pertama
+  var firstMatchedImage = sortedMatchedImages.first();
+  var s1Image = ee.Image(firstMatchedImage.get('s1Image'));
+  var s2Image = ee.Image(firstMatchedImage.get('s2Image'));
+  
+  // Gabungkan citra Sentinel-1 dan Sentinel-2 menjadi satu citra
+  var combinedImage = s2Image.addBands(s1Image);
+  return combinedImage;
+}
 
-print(image_sen2)
-print(image_sen1)
+// Panggil fungsi untuk mendapatkan citra gabungan
+var combinedImage = getCombinedImage(sentinel1, sentinel2);
+
+// Print hasil citra gabungan
+print('Citra gabungan pertama Sentinel-1 dan Sentinel-2:', combinedImage);
 
 // VIs
-var ndvi = image_sen2
+var ndvi = combinedImage 
   .expression('(NIR - RED) / (NIR + RED)', {
-    RED: image_sen2.select('B4'),
-    NIR: image_sen2.select('B8'),
+    RED: combinedImage .select('B4'),
+    NIR: combinedImage .select('B8'),
   })
   .rename('NDVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
-var gndvi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames());
+var gndvi = combinedImage 
   .expression('(NIR - GREEN) / (NIR + GREEN)', {
-    GREEN: image_sen2.select('B3'),
-    NIR: image_sen2.select('B8'),
+    GREEN: combinedImage .select('B3'),
+    NIR: combinedImage .select('B8'),
   })
   .rename('GNDVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
-var evi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames());
+var evi = combinedImage 
   .expression('2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
-    RED: image_sen2.select('B4'),
-    NIR: image_sen2.select('B8'),
-    BLUE: image_sen2.select('B2'),
+    RED: combinedImage .select('B4'),
+    NIR: combinedImage .select('B8'),
+    BLUE: combinedImage .select('B2'),
   })
   .rename('EVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
-var savi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames());
+var savi = combinedImage 
   .expression('((NIR - RED) * (1 + L)) / (NIR + RED + L)', {
-    RED: image_sen2.select('B4'),
-    NIR: image_sen2.select('B8'),
+    RED: combinedImage .select('B4'),
+    NIR: combinedImage .select('B8'),
     L: 0.5,
   })
   .rename('SAVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var wavi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var wavi = combinedImage 
   .expression('((NIR - BLUE) * (1 + L)) / (NIR + BLUE + L)', {
-    NIR: image_sen2.select('B8'),
-    BLUE: image_sen2.select('B2'),
+    NIR: combinedImage .select('B8'),
+    BLUE: combinedImage .select('B2'),
     L: 0.5,
   })
   .rename('WAVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var rendvi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var rendvi = combinedImage 
   .expression('(NIR - RE) / (NIR + RE)', {
-    NIR: image_sen2.select('B8'),
-    RE: image_sen2.select('B5'),
+    NIR: combinedImage .select('B8'),
+    RE: combinedImage .select('B5'),
   })
   .rename('RENDVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var ndii = image_sen2   // 819/1600
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var ndii = combinedImage    // 819/1600
   .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
-    SWIR1: image_sen2.select('B11'),
-    NIR: image_sen2.select('B8'),
+    SWIR1: combinedImage .select('B11'),
+    NIR: combinedImage .select('B8'),
   })
   .rename('NDII')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var ndavi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var ndavi = combinedImage 
   .expression('(NIR - BLUE) / (NIR + BLUE)', {
-    NIR: image_sen2.select('B8'),
-    BLUE: image_sen2.select('B2'),
+    NIR: combinedImage .select('B8'),
+    BLUE: combinedImage .select('B2'),
   })
   .rename('NDAVI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var lswi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var lswi = combinedImage 
   .expression('(NIR - SWIR1) / (NIR + SWIR1)', {
-    NIR: image_sen2.select('B8'),
-    SWIR1: image_sen2.select('B11'),
+    NIR: combinedImage .select('B8'),
+    SWIR1: combinedImage .select('B11'),
   })
   .rename('LSWI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var fai = image_sen2    // fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var fai = combinedImage     // fai https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/apa_script/
   .expression('NIR - (RED + (SWIR1 - RED) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {
-    RED: image_sen2.select('B4'), // Red
-    NIR: image_sen2.select('B8'), // NIR
-    SWIR1: image_sen2.select('B11'), // SWIR
+    RED: combinedImage .select('B4'), // Red
+    NIR: combinedImage .select('B8'), // NIR
+    SWIR1: combinedImage .select('B11'), // SWIR
   })
   .rename('FAI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-// var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+// var fdi = combinedImage     // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
 //   .expression(
 //     'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
 //     {
-//       NIR: image_sen2.select('B8'), // NIR band
-//       RE2: image_sen2.select('B6'), // Red Edge 2 band
-//       SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
+//       NIR: combinedImage .select('B8'), // NIR band
+//       RE2: combinedImage .select('B6'), // Red Edge 2 band
+//       SWIR1: combinedImage .select('B11'), // SWIR1 band (Band 11 for SWIR)
 //     }
 //   )
 //   .rename('FDI')
-//   .copyProperties(image_sen2, image_sen2.propertyNames())
+//   .copyProperties(combinedImage , combinedImage .propertyNames())
 
 // WIs
-var ndwi = image_sen2
+var ndwi = combinedImage 
   .expression('(GREEN - NIR) / (GREEN + NIR)', {
-    GREEN: image_sen2.select('B3'),
-    NIR: image_sen2.select('B8'),
+    GREEN: combinedImage .select('B3'),
+    NIR: combinedImage .select('B8'),
   })
   .rename('NDWI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
-var mndwi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames());
+var mndwi = combinedImage 
   .expression('(GREEN - SWIR1) / (GREEN + SWIR1)', {
-    GREEN: image_sen2.select('B3'),
-    SWIR1: image_sen2.select('B11'),
+    GREEN: combinedImage .select('B3'),
+    SWIR1: combinedImage .select('B11'),
   })
   .rename('MNDWI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
+  .copyProperties(combinedImage , combinedImage .propertyNames());
   
 // Built-Up Indices
-var ndbi = image_sen2
+var ndbi = combinedImage 
   .expression('(SWIR2 - NIR) / (SWIR2 + NIR)', {
-    SWIR2: image_sen2.select('B12'),
-    NIR: image_sen2.select('B8'),
+    SWIR2: combinedImage .select('B12'),
+    NIR: combinedImage .select('B8'),
   })
   .rename('NDBI')
-  .copyProperties(image_sen2, image_sen2.propertyNames());
-var nbai = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames());
+var nbai = combinedImage 
   .expression('((SWIR2 - SWIR1) / GREEN) / ((SWIR2 + SWIR1) / GREEN)', {
-    SWIR2: image_sen2.select('B12'),
-    SWIR1: image_sen2.select('B11'),
-    GREEN: image_sen2.select('B3'),
+    SWIR2: combinedImage .select('B12'),
+    SWIR1: combinedImage .select('B11'),
+    GREEN: combinedImage .select('B3'),
   })
   .rename('NBAI')
-  .copyProperties(image_sen2, image_sen2.propertyNames()); 
-var nbi = image_sen2
+  .copyProperties(combinedImage , combinedImage .propertyNames()); 
+var nbi = combinedImage 
   .expression('(RED * SWIR2) / (NIR)', {
-    SWIR2: image_sen2.select('B12'),
-    NIR: image_sen2.select('B8'),
-    RED: image_sen2.select('B4'),
+    SWIR2: combinedImage .select('B12'),
+    NIR: combinedImage .select('B8'),
+    RED: combinedImage .select('B4'),
   })
   .rename('NBI')
-  .copyProperties(image_sen2, image_sen2.propertyNames()); 
+  .copyProperties(combinedImage , combinedImage .propertyNames()); 
 // Soil indices
-var bsi = image_sen2
+var bsi = combinedImage 
   .expression(
     '((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED) + (NIR + BLUE))',
     {
-      RED: image_sen2.select('B4'),
-      SWIR1: image_sen2.select('B11'),
-      NIR: image_sen2.select('B8'),
-      BLUE: image_sen2.select('B2'),
+      RED: combinedImage .select('B4'),
+      SWIR1: combinedImage .select('B11'),
+      NIR: combinedImage .select('B8'),
+      BLUE: combinedImage .select('B2'),
     }
   )
   .rename('BSI')
-  .copyProperties(image_sen2, image_sen2.propertyNames())
-var ndbsi = image_sen2.expression(
+  .copyProperties(combinedImage , combinedImage .propertyNames())
+var ndbsi = combinedImage .expression(
   '(k < 0) ? -((SWIR1 - Blue) / (SWIR1 + Blue)) : ((SWIR1 - Blue) / (SWIR1 + Blue))', {
-    'SWIR1': image_sen2.select('B11'),
-    'Blue': image_sen2.select('B2'),
-    'k': image_sen2.expression(
+    'SWIR1': combinedImage .select('B11'),
+    'Blue': combinedImage .select('B2'),
+    'k': combinedImage .expression(
       '(1 - ((SWIR1 - NIR) / (3 * abs(NIR - Red)))) * (Red - Green)', {
-        'SWIR1': image_sen2.select('B11'),
-        'NIR': image_sen2.select('B8'),
-        'Red': image_sen2.select('B4'),
-        'Green': image_sen2.select('B3')
+        'SWIR1': combinedImage .select('B11'),
+        'NIR': combinedImage .select('B8'),
+        'Red': combinedImage .select('B4'),
+        'Green': combinedImage .select('B3')
       })
   }
 ).rename('NDBSI')
-.copyProperties(image_sen2, image_sen2.propertyNames());
+.copyProperties(combinedImage , combinedImage .propertyNames());
 
 // radar
-var vv_vh_ratio = image_sen1
+var vv_vh_ratio = combinedImage 
   .expression('VV / VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
+    VV: combinedImage .select('VV'),
+    VH: combinedImage .select('VH'),
   })
   .rename('VV_VH_ratio')
-  .copyProperties(image_sen1, image_sen1.propertyNames())
+  .copyProperties(combinedImage , combinedImage .propertyNames())
 
-
-image_sen2 = image_sen2.addBands([
+combinedImage  = combinedImage.addBands([
   ndvi,
   gndvi,
   evi,
@@ -245,104 +298,30 @@ image_sen2 = image_sen2.addBands([
   nbi,
   bsi,
   ndbsi,
-]);    // Merge all indices into a Sentinel-2 image
-image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
-  .select([
-    'B1',
-    'B2',
-    'B3',
-    'B4',
-    'B5',
-    'B6',
-    'B7',
-    'B8',
-    'B8A',
-    'B9',
-    'B11',
-    'B12', 
-    'NDVI',
-    'GNDVI',
-    'EVI',
-    'SAVI',
-    'WAVI',
-    'RENDVI',
-    'NDII',
-    'NDAVI', 
-    'NDWI',
-    'MNDWI',
-    'LSWI',
-    'FAI',
-    'NDBI',
-    'NBAI',
-    'NBI',
-    'BSI',
-    'NDBSI',
-  ])
-  .toFloat() 
-image_sen1 = image_sen1.addBands([
   vv_vh_ratio
-])
-image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio']).toFloat()
+]);    // Merge all indices into a Sentinel-2 image
 
-var sen2_bands = [
-  'B1',
-  'B2',
-  'B3',
-  'B4',
-  'B5',
-  'B6',
-  'B7',
-  'B8',
-  'B8A',
-  'B9',
-  'B11',
-  'B12',
-  'NDVI',
-  'GNDVI',
-  'EVI',
-  'SAVI',
-  'WAVI',
-  'RENDVI',
-  'NDWI',
-  'MNDWI',
-  'LSWI',
-  'NDAVI',
-  'FAI',
-  'NDBI',
-  'NBAI',
-  'NBI',
-  'BSI',
-  'NDII',
-  'NDBSI',
-]
-var sen1_bands = ['VV', 'VH','VV_VH_ratio']
-var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
+// Visualisasi di Map
+Map.centerObject(roi, 12);
+Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Natural Color');
 
-var seed = 222111840;   // Set the seed
-
-// Merge Sentinel-1 and Sentinel-2 imagery
-var combinedImage = image_sen2.addBands(image_sen1);
-
-Map.centerObject(roi, 14)
-Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Natural Color');
-
+// Ekspor ke Google Drive
 Export.image.toDrive({
-  image: combinedImage.clip(roi), 
-  description: 'waduk_jatiluhur_image_drive',
-  fileNamePrefix: 'waduk_jatiluhur_image',
+  image: combinedImage,
+  description: 'roi_image_drive',
   folder: 'GEE_Exports',
-  region: roi, 
+  fileNamePrefix: 'roi_combined_image',
+  region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-})   // Export combined image to drive
-Export.image.toAsset({
-  image: combinedImage.clip(roi), 
-  description: 'waduk_jatiluhur_image_asset', 
-  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image', 
-  region: roi, 
-  scale: 10, 
-})   // Export combined image to asset
+  formatOptions: {cloudOptimized: true}
+});
 
+// Ekspor ke Aset
+Export.image.toAsset({
+  image: combinedImage,
+  description: 'roi_image_asset',
+  assetId: 'projects/ee-222111840/assets/roi_combined_image',
+  region: roi,
+  scale: 10
+});
