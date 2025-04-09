@@ -70,7 +70,7 @@ function maskS2clouds(image) {
 }                                            // Function for masking Sentinel-2 clouds while preserving initial properties
 
 // Parameter umum
-var roi = danau_toba; // Ganti ROI dengan wilayah yang Anda pilih
+var roi = waduk_jatiluhur; // Ganti ROI dengan wilayah yang Anda pilih
 var maxDifferenceDays = 5; // Maksimal perbedaan hari antar citra
 var range = 730; // Rentang pencarian hari untuk Sentinel
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
@@ -89,10 +89,13 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
   .sort('system:time_start');
 
+print(sentinel1)
+print(sentinel2)
+
 // Filtered Sentinel-2 collection
 var sentinel2Filtered = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate('2023-06-17', '2023-06-23') // June 20 ± 3 days
+  .filterDate('2024-07-26', '2024-07-28') 
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -100,7 +103,7 @@ var sentinel2Filtered = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
 // Filtered Sentinel-1 collection
 var sentinel1Filtered = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate('2023-06-18', '2023-06-19') // Exact date: June 18, 2023
+  .filterDate('2024-07-26', '2024-07-28') 
   .sort('system:time_start');
 
 // Mosaic images in each collection
