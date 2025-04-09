@@ -104,7 +104,7 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
   
   print(sentinel1List)
   print(sentinel2List)
-  print(bestDates)
+  print(sentinel2List)
   // Ambil citra Sentinel-1 dan Sentinel-2 yang sesuai
   var bestSentinel1 = sentinel1.filter(ee.Filter.eq('system:time_start', bestDates.sentinel1.millis()));
   var bestSentinel2 = sentinel2.filter(ee.Filter.eq('system:time_start', bestDates.sentinel2.millis()));
