@@ -60,8 +60,8 @@ var waduk_jatiluhur = ee.FeatureCollection("users/222111840/waduk_jatiluhur"),
 // Parameter umum
 var roi = danau_toba; // Ganti ROI dengan wilayah yang Anda pilih
 var maxDifferenceDays = 5; // Maksimal perbedaan hari antar citra
-var range = 365; // Rentang pencarian hari untuk Sentinel
-var cloudThreshold = 10; // Persentase maksimum piksel berawan
+var range = 720; // Rentang pencarian hari untuk Sentinel
+var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
 // Koleksi Sentinel-2
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -101,7 +101,10 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
       }
     }
   }
-
+  
+  print(sentinel1List)
+  print(sentinel2List)
+  print(bestDates)
   // Ambil citra Sentinel-1 dan Sentinel-2 yang sesuai
   var bestSentinel1 = sentinel1.filter(ee.Filter.eq('system:time_start', bestDates.sentinel1.millis()));
   var bestSentinel2 = sentinel2.filter(ee.Filter.eq('system:time_start', bestDates.sentinel2.millis()));
