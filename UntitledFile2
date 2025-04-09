@@ -76,45 +76,53 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
   .sort('system:time_start');
 
-// Fungsi untuk mencari pasangan citra berdasarkan jarak tanggal minimum
-function getCombinedImage(s1Collection, s2Collection) {
-  var matchedImages = s2Collection.map(function(s2Image) {
-    var s2Date = ee.Date(s2Image.get('system:time_start'));
-    var closestS1Image = s1Collection
-      .map(function(s1Image) {
-        var s1Date = ee.Date(s1Image.get('system:time_start'));
-        var dateDifference = s2Date.difference(s1Date, 'day').abs();
-        return s1Image.set('dateDifference', dateDifference);
-      })
-      .sort('dateDifference')
-      .first(); // Ambil citra Sentinel-1 dengan jarak waktu minimum
-    
-    // Kembalikan pasangan citra Sentinel-1 dan Sentinel-2 sebagai Feature
-    return ee.Feature(null, {
-      s1Image: closestS1Image,
-      s2Image: s2Image,
-      dateDifference: closestS1Image.get('dateDifference')
-    });
-  });
+function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
+  // Konversi koleksi ke list untuk iterasi
+  var sentinel1List = sentinel1.toList(sentinel1.size());
+  var sentinel2List = sentinel2.toList(sentinel2.size());
   
-  // Urutkan pasangan citra berdasarkan jarak waktu minimum
-  var sortedMatchedImages = matchedImages.sort('dateDifference');
+  // Variabel untuk menyimpan hasil terbaik
+  var bestDifference = maxDifferenceDays + 1;
+  var bestDates = null;
+
+  // Iterasi untuk membandingkan tanggal Sentinel-1 dan Sentinel-2
+  for (var i = 0; i < sentinel1.size().getInfo(); i++) {
+    var s1 = ee.Image(sentinel1List.get(i));
+    var s1Date = ee.Date(s1.get('system:time_start'));
+
+    for (var j = 0; j < sentinel2.size().getInfo(); j++) {
+      var s2 = ee.Image(sentinel2List.get(j));
+      var s2Date = ee.Date(s2.get('system:time_start'));
+      var difference = s1Date.difference(s2Date, 'days').abs();
+
+      if (difference.getInfo() < bestDifference) {
+        bestDifference = difference.getInfo();
+        bestDates = { sentinel1: s1Date, sentinel2: s2Date };
+      }
+    }
+  }
+
+  // Ambil citra Sentinel-1 dan Sentinel-2 yang sesuai
+  var bestSentinel1 = sentinel1.filter(ee.Filter.eq('system:time_start', bestDates.sentinel1.millis()));
+  var bestSentinel2 = sentinel2.filter(ee.Filter.eq('system:time_start', bestDates.sentinel2.millis()));
   
-  // Pilih pasangan citra pertama
-  var firstMatchedImage = sortedMatchedImages.first();
-  var s1Image = ee.Image(firstMatchedImage.get('s1Image'));
-  var s2Image = ee.Image(firstMatchedImage.get('s2Image'));
-  
-  // Gabungkan citra Sentinel-1 dan Sentinel-2 menjadi satu citra
-  var combinedImage = s2Image.addBands(s1Image);
-  return combinedImage;
+  // Periksa apakah ROI tercover sepenuhnya
+  var s1Coverage = bestSentinel1.mosaic().clip(roi);
+  var s2Coverage = bestSentinel2.mosaic().clip(roi);
+
+  return {
+    sentinel1Image: s1Coverage,
+    sentinel2Image: s2Coverage,
+    dates: bestDates
+  };
 }
 
-// Panggil fungsi untuk mendapatkan citra gabungan
-var combinedImage = getCombinedImage(sentinel1, sentinel2);
+// Pemanggilan fungsi
+var bestResult = getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays);
 
-// Print hasil citra gabungan
-print('Citra gabungan pertama Sentinel-1 dan Sentinel-2:', combinedImage);
+print('Tanggal terbaik:', bestResult.dates);
+print('Citra Sentinel-1:', bestResult.sentinel1Image);
+print('Citra Sentinel-2:', bestResult.sentinel2Image);
 
 // VIs
 var ndvi = combinedImage 
