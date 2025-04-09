@@ -97,6 +97,9 @@ var image_sen1 = ee.Image(sentinel1List.get(0));      // 20240727               
 print(image_sen2)
 print(image_sen1)
 
+// Gabungkan citra Sentinel-1 dan Sentinel-2
+var combinedImage = image_sen2.addBands(image_sen1.select(['VV', 'VH']));
+
 // VIs
 var ndvi = combinedImage 
   .expression('(NIR - RED) / (NIR + RED)', {
