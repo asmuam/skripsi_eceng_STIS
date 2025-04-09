@@ -60,7 +60,7 @@ var waduk_jatiluhur = ee.FeatureCollection("users/222111840/waduk_jatiluhur"),
 // Parameter umum
 var roi = danau_toba; // Ganti ROI dengan wilayah yang Anda pilih
 var maxDifferenceDays = 10; // Maksimal perbedaan hari antar citra
-var range = 500; // Rentang pencarian hari untuk Sentinel
+var range = 1500; // Rentang pencarian hari untuk Sentinel
 var cloudThreshold = 10; // Persentase maksimum piksel berawan
 
 // Koleksi Sentinel-2
