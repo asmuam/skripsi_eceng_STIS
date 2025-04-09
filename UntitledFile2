@@ -94,6 +94,7 @@ var sentinel2Filtered = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate('2023-06-17', '2023-06-23') // June 20 ± 3 days
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
+  .map(maskS2clouds)
   .sort('system:time_start');
 
 // Filtered Sentinel-1 collection
