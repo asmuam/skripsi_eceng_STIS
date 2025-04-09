@@ -175,17 +175,6 @@ var fai = combinedImage     // fai https://custom-scripts.sentinel-hub.com/custo
   })
   .rename('FAI')
   .copyProperties(combinedImage , combinedImage .propertyNames())
-// var fdi = combinedImage     // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
-//   .expression(
-//     'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
-//     {
-//       NIR: combinedImage .select('B8'), // NIR band
-//       RE2: combinedImage .select('B6'), // Red Edge 2 band
-//       SWIR1: combinedImage .select('B11'), // SWIR1 band (Band 11 for SWIR)
-//     }
-//   )
-//   .rename('FDI')
-//   .copyProperties(combinedImage , combinedImage .propertyNames())
 
 // WIs
 var ndwi = combinedImage 
@@ -287,7 +276,7 @@ combinedImage  = combinedImage.addBands([
 
 // Ekspor ke Google Drive
 Export.image.toDrive({
-  image: combinedImage,
+  image: combinedImage.clip(roi),
   description: 'waduk_jatiluhur_image_drive',
   folder: 'GEE_Exports',
   fileNamePrefix: 'waduk_jatiluhur_image',
@@ -299,7 +288,7 @@ Export.image.toDrive({
 
 // Ekspor ke Aset
 Export.image.toAsset({
-  image: combinedImage,
+  image: combinedImage.clip(roi),
   description: 'waduk_jatiluhur_image_asset',
   assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image',
   region: roi,
