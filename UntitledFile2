@@ -95,8 +95,8 @@ function getBestDatesAndImages(sentinel1, sentinel2, roi, maxDifferenceDays) {
       var s2Date = ee.Date(s2.get('system:time_start'));
       var difference = s1Date.difference(s2Date, 'days').abs();
 
-      if (difference.getInfo() < bestDifference) {
-        bestDifference = difference.getInfo();
+      if (difference < bestDifference) {
+        bestDifference = difference;
         bestDates = { sentinel1: s1Date, sentinel2: s2Date };
       }
     }
