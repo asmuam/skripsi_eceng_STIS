@@ -274,6 +274,8 @@ combinedImage  = combinedImage.addBands([
   vv_vh_ratio
 ]);    // Merge all indices into a Sentinel-2 image
 
+combinedImage = combinedImage.toFloat();
+
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
