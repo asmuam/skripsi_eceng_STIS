@@ -75,60 +75,20 @@ var maxDifferenceDays = 5; // Maksimal perbedaan hari antar citra
 var range = 730; // Rentang pencarian hari untuk Sentinel
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
-// Koleksi Sentinel-2
+//  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
+  .filterDate('2024-07-26', '2024-07-28') 
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .map(maskS2clouds)
   .sort('system:time_start');
 
-// Koleksi Sentinel-1
+//  Sentinel-1 collection
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
-  .sort('system:time_start');
-
-print(sentinel1)
-print(sentinel2)
-
-// Filtered Sentinel-2 collection
-var sentinel2Filtered = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-  .filterBounds(roi)
-  .filterDate('2024-07-26', '2024-07-28') 
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
-  .map(maskS2clouds)
-  .sort('system:time_start');
-
-// Filtered Sentinel-1 collection
-var sentinel1Filtered = ee.ImageCollection('COPERNICUS/S1_GRD')
-  .filterBounds(roi)
   .filterDate('2024-07-26', '2024-07-28') 
   .sort('system:time_start');
 
-// Mosaic images in each collection
-var sentinel2Mosaic = sentinel2Filtered.mosaic().clip(roi);
-var sentinel1Mosaic = sentinel1Filtered.mosaic().clip(roi);
-
-// Verify coverage of ROI
-var roiBounds = roi.bounds();
-var sentinel1Coverage = sentinel1Mosaic.geometry().contains(roiBounds, 1);
-var sentinel2Coverage = sentinel2Mosaic.geometry().contains(roiBounds, 1);
-
-// Print results
-print('Sentinel-1 Mosaic Coverage:', sentinel1Coverage);
-print('Sentinel-2 Mosaic Coverage:', sentinel2Coverage);
-
-// Display the mosaics on the map
-// Sentinel-2 RGB Visualization
-var rgbVis = {
-  bands: ['B4', 'B3', 'B2'], // Red, Green, Blue
-  min: 0,
-  max: 0.3, // Adjust this range based on your scene
-};
-Map.centerObject(roi);
-Map.addLayer(sentinel1Mosaic, {}, 'Sentinel-1 Mosaic');
-Map.addLayer(sentinel2Mosaic, rgbVis, 'Sentinel-2 RGB Mosaic');
 
 // VIs
 var ndvi = combinedImage 
