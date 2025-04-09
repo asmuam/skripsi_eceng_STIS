@@ -275,16 +275,12 @@ combinedImage  = combinedImage.addBands([
   vv_vh_ratio
 ]);    // Merge all indices into a Sentinel-2 image
 
-// Visualisasi di Map
-Map.centerObject(roi, 12);
-Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Natural Color');
-
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage,
-  description: 'roi_image_drive',
+  description: 'waduk_jatiluhur_image_drive',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'roi_combined_image',
+  fileNamePrefix: 'waduk_jatiluhur_image',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -294,8 +290,8 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage,
-  description: 'roi_image_asset',
-  assetId: 'projects/ee-222111840/assets/roi_combined_image',
+  description: 'waduk_jatiluhur_image_asset',
+  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image',
   region: roi,
   scale: 10
 });
