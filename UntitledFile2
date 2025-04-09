@@ -120,8 +120,7 @@ print('Sentinel-2 Mosaic Coverage:', sentinel2Coverage);
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // Red, Green, Blue
   min: 0,
-  max: 3000, // Adjust this range based on your scene
-  gamma: 1.4
+  max: 0.3, // Adjust this range based on your scene
 };
 Map.centerObject(roi);
 Map.addLayer(sentinel1Mosaic, {}, 'Sentinel-1 Mosaic');
