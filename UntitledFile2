@@ -57,6 +57,18 @@ var waduk_jatiluhur = ee.FeatureCollection("users/222111840/waduk_jatiluhur"),
               "system:index": "0"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+function maskS2clouds(image) {  
+  var qa = image.select('QA60');
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  var mask = qa
+    .bitwiseAnd(cloudBitMask)
+    .eq(0)
+    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  var maskedImage = image.updateMask(mask).divide(10000);
+  return maskedImage.copyProperties(image, image.propertyNames());
+}                                            // Function for masking Sentinel-2 clouds while preserving initial properties
+
 // Parameter umum
 var roi = danau_toba; // Ganti ROI dengan wilayah yang Anda pilih
 var maxDifferenceDays = 5; // Maksimal perbedaan hari antar citra
@@ -68,6 +80,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
   .filterDate(ee.Date(Date.now()).advance(-range, 'day'), ee.Date(Date.now()))
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
+  .map(maskS2clouds)
   .sort('system:time_start');
 
 // Koleksi Sentinel-1
