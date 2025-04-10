@@ -398,7 +398,7 @@ var dataInfo = {
         }
     },
             'cnnv200_keras': {
-        name: 'Klasifikasi CNN1D V200',
+        name: 'Klasifikasi CNN1D V200 keras',
         desc: 'Hasil klasifikasi menggunakan CNN versi 200',
         img: cnnv200,
         vis: {
@@ -420,7 +420,7 @@ var dataInfo = {
         }
     },
     'cnnjatiluhur_keras': {
-        name: 'Klasifikasi CNN Jatiluhur',
+        name: 'Klasifikasi CNN Jatiluhur keras',
         desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
         img: cnnjatiluhur,
         vis: {
