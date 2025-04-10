@@ -3,7 +3,11 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
     rf = ee.Image("projects/ee-222111840/assets/rf"),
     cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
-    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
+    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
+    cnnjatiluhur = ee.Image("projects/ee-222111840/assets/cnn1_jatiluhur"),
+    cnnv200 = ee.Image("projects/ee-222111840/assets/cnn1_v200"),
+    cnnv200_keras = ee.Image("projects/ee-222111840/assets/rawa_pening_image_prediction_cnn1d_c9c23bd96b2741b97626b7af89a58440"),
+    cnnjatiluhur_keras = ee.Image("projects/ee-222111840/assets/waduk_jatiluhur_image_prediction_cnn1d_8b974d099ba38b0664aec0974c6e3eb4");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function panelcreate() {
     // Create an intro panel with labels.
@@ -382,6 +386,50 @@ var dataInfo = {
             opacity: 0.7
         }
     },
+    'cnnv200': {
+        name: 'Klasifikasi CNN1D V200',
+        desc: 'Hasil klasifikasi menggunakan CNN versi 200',
+        img: cnnv200,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+            opacity: 0.7
+        }
+    },
+            'cnnv200_keras': {
+        name: 'Klasifikasi CNN1D V200',
+        desc: 'Hasil klasifikasi menggunakan CNN versi 200',
+        img: cnnv200,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+            opacity: 0.7
+        }
+    },
+    'cnnjatiluhur': {
+        name: 'Klasifikasi CNN Jatiluhur',
+        desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
+        img: cnnjatiluhur,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+            opacity: 0.7
+        }
+    },
+    'cnnjatiluhur_keras': {
+        name: 'Klasifikasi CNN Jatiluhur',
+        desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
+        img: cnnjatiluhur,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+            opacity: 0.7
+        }
+    }
 };                                 // Define information about each layer that will be used to visualize it and describe it in a selector widget and legend.
 var dataPanel = ui.Panel({
     style: {
