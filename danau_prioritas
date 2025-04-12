@@ -345,6 +345,50 @@ combinedImage  = combinedImage.addBands([
 
 combinedImage = combinedImage.toFloat();
 
+var sen2_bands = [
+  'B1',
+  'B2',
+  'B3',
+  'B4',
+  'B5',
+  'B6',
+  'B7',
+  'B8',
+  'B8A',
+  'B9',
+  'B11',
+  'B12',
+  'NDVI',
+  'GNDVI',
+  'EVI',
+  'SAVI',
+  'WAVI',
+  'RENDVI',
+  'NDWI',
+  'MNDWI',
+  'LSWI',
+  'NDAVI',
+  'FAI',
+  'NDBI',
+  'NBAI',
+  'NBI',
+  'BSI',
+  'NDII',
+  'NDBSI',
+]
+var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']
+
+// Select bands for Sentinel-1
+var sentinel1Image = combinedImage.select(['VV', 'VH', 'VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']);
+
+// Select bands for Sentinel-2
+var sentinel2Image = combinedImage.select([
+  'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9',
+  'B11', 'B12', 'NDVI', 'GNDVI', 'EVI', 'SAVI', 'WAVI', 'RENDVI',
+  'NDWI', 'MNDWI', 'LSWI', 'NDAVI', 'FAI', 'NDBI', 'NBAI', 'NBI',
+  'BSI', 'NDII', 'NDBSI'
+]);
+
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
@@ -357,11 +401,53 @@ Export.image.toDrive({
   formatOptions: {cloudOptimized: true}
 });
 
+// Ekspor Sentinel-1 saja ke Google Drive
+Export.image.toDrive({
+  image: sentinel1Image.clip(roi),
+  description: 'danau_limboto_sentinel1_drive_20230928',
+  folder: 'GEE_Exports',
+  fileNamePrefix: 'danau_limboto_sentinel1',
+  region: roi,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {cloudOptimized: true}
+});
+
+// Ekspor Sentinel-2 saja ke Google Drive
+Export.image.toDrive({
+  image: sentinel2Image.clip(roi),
+  description: 'danau_limboto_sentinel2_drive_20230928',
+  folder: 'GEE_Exports',
+  fileNamePrefix: 'danau_limboto_sentinel2',
+  region: roi,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {cloudOptimized: true}
+});
+
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
   description: 'danau_limboto_image_asset_20230928',
   assetId: 'projects/ee-222111840/assets/danau_limboto_image',
+  region: roi,
+  scale: 10
+});
+
+// Ekspor Sentinel-1 saja ke Aset
+Export.image.toAsset({
+  image: sentinel1Image.clip(roi),
+  description: 'danau_limboto_sentinel1_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/danau_limboto_sentinel1',
+  region: roi,
+  scale: 10
+});
+
+// Ekspor Sentinel-2 saja ke Aset
+Export.image.toAsset({
+  image: sentinel2Image.clip(roi),
+  description: 'danau_limboto_sentinel2_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/danau_limboto_sentinel2',
   region: roi,
   scale: 10
 });
