@@ -81,10 +81,10 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterDate('2024-07-30', '2024-08-01') 
   .sort('system:time_start');
 
-var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
-var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
-var image_sen2 = ee.Image(sentinel2List.get(0));      // 20240727                         // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(0));      // 20240727                        // 7/25/2024
+var sentinel2List = sentinel2.toList(sentinel2.size());                       
+var sentinel1List = sentinel1.toList(sentinel1.size());                      
+var image_sen2 = ee.Image(sentinel2List.get(0));     
+var image_sen1 = ee.Image(sentinel1List.get(0));     
 
 print(sentinel2List)
 print(sentinel1List)
