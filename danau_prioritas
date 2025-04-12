@@ -63,31 +63,36 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }                                            // Function for masking Sentinel-2 clouds while preserving initial properties
 
-// Fungsi untuk mencocokkan citra berdasarkan tanggal yang sama
 function findMatchingDates(sentinel1, sentinel2) {
   var sentinel1List = sentinel1.toList(sentinel1.size());
   var sentinel2List = sentinel2.toList(sentinel2.size());
 
-  // Loop setiap citra Sentinel-1
+  // Loop through Sentinel-1 images and find matches in Sentinel-2
   var matchingImages = sentinel1List.map(function(s1) {
-    var s1Date = ee.Date(ee.Image(s1).get('system:time_start')).format('YYYY-MM-dd');
-    
-    // Cari kecocokan di Sentinel-2
-    var matchedImage = sentinel2List.map(function(s2) {
-      var s2Date = ee.Date(ee.Image(s2).get('system:time_start')).format('YYYY-MM-dd');
-      
-      return ee.Algorithms.If(s1Date.compareTo(s2Date).eq(0), {
-        sentinel1: s1,
-        sentinel2: s2
-      }, null);
-    }).flatten(); // Gunakan flatten untuk merapikan hasil
+    var s1Date = ee.Date(ee.Image(s1).get('system:time_start'));
 
-    return matchedImage;
+    // Check for matches within ±1 day in Sentinel-2
+    var matchedImages = sentinel2List.map(function(s2) {
+      var s2Date = ee.Date(ee.Image(s2).get('system:time_start'));
+      var diffDays = s1Date.difference(s2Date, 'day').abs(); // Calculate difference in days
+      return ee.Algorithms.If(diffDays.lte(1), s2, null); // Return image if within tolerance
+    });
+
+    // Filter out null matches and take the first valid match
+    var validMatches = matchedImages.filter(ee.Filter.notNull());
+    var firstMatch = validMatches.get(0); // Get the first matching image
+
+    // Return result if there's a match
+    return ee.Algorithms.If(firstMatch, {
+      sentinel1: s1,
+      sentinel2: firstMatch
+    }, null);
   });
 
-  return matchingImages.flatten(); // Gabungkan daftar hasil
+  // Remove null entries
+  var filteredResults = matchingImages.filter(ee.Filter.notNull());
+  return filteredResults;
 }
-
 
 // Parameter umum
 var roi = danau_limboto; // Ganti ROI dengan wilayah yang Anda pilih
@@ -96,7 +101,7 @@ var cloudThreshold = 5; // Persentase maksimum piksel berawan
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate('2022-03-28', '2025-12-31') 
+  .filterDate('2020-03-28', '2025-12-31') 
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -128,7 +133,7 @@ print(sentinel1FullCoverage)
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(1));     
+var image_sen2 = ee.Image(sentinel2List.get(8));     
 var image_sen1 = ee.Image(sentinel1List.get(60));     
 
 print(sentinel2List)
