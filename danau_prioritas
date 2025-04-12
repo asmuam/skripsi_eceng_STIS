@@ -207,8 +207,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(2));     
-var image_sen1 = ee.Image(sentinel1List.get(463));     
+var image_sen2 = ee.Image(sentinel2List.get(19));     
+var image_sen1 = ee.Image(sentinel1List.get(565));     
 
 print(sentinel2List)
 print(sentinel1List)
