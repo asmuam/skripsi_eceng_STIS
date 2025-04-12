@@ -187,8 +187,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(4));     
-var image_sen1 = ee.Image(sentinel1List.get(556));     
+var image_sen2 = ee.Image(sentinel2List.get(2));     
+var image_sen1 = ee.Image(sentinel1List.get(463));     
 
 print(sentinel2List)
 print(sentinel1List)
@@ -443,9 +443,9 @@ var sentinel2Image = combinedImage.select([
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
-  description: 'danau_limboto_image_drive_20230928',
+  description: 'danau_singkarak_image_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_limboto_image',
+  fileNamePrefix: 'danau_singkarak_image',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -455,9 +455,9 @@ Export.image.toDrive({
 // Ekspor Sentinel-1 saja ke Google Drive
 Export.image.toDrive({
   image: sentinel1Image.clip(roi),
-  description: 'danau_limboto_sentinel1_drive_20230928',
+  description: 'danau_singkarak_sentinel1_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_limboto_sentinel1',
+  fileNamePrefix: 'danau_singkarak_sentinel1',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -467,9 +467,9 @@ Export.image.toDrive({
 // Ekspor Sentinel-2 saja ke Google Drive
 Export.image.toDrive({
   image: sentinel2Image.clip(roi),
-  description: 'danau_limboto_sentinel2_drive_20230928',
+  description: 'danau_singkarak_sentinel2_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_limboto_sentinel2',
+  fileNamePrefix: 'danau_singkarak_sentinel2',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -479,8 +479,8 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
-  description: 'danau_limboto_image_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/danau_limboto_image',
+  description: 'danau_singkarak_image_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/danau_singkarak_image',
   region: roi,
   scale: 10
 });
@@ -488,8 +488,8 @@ Export.image.toAsset({
 // Ekspor Sentinel-1 saja ke Aset
 Export.image.toAsset({
   image: sentinel1Image.clip(roi),
-  description: 'danau_limboto_sentinel1_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/danau_limboto_sentinel1',
+  description: 'danau_singkarak_sentinel1_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/danau_singkarak_sentinel1',
   region: roi,
   scale: 10
 });
@@ -497,8 +497,8 @@ Export.image.toAsset({
 // Ekspor Sentinel-2 saja ke Aset
 Export.image.toAsset({
   image: sentinel2Image.clip(roi),
-  description: 'danau_limboto_sentinel2_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/danau_limboto_sentinel2',
+  description: 'danau_singkarak_sentinel2_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/danau_singkarak_sentinel2',
   region: roi,
   scale: 10
 });
