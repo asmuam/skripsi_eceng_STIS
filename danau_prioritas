@@ -67,7 +67,7 @@ function findMatchingDates(sentinel1, sentinel2) {
   var sentinel1List = sentinel1.toList(sentinel1.size());
   var sentinel2List = sentinel2.toList(sentinel2.size());
 
-  // Loop through Sentinel-1 images and find matches in Sentinel-2
+  // Loop through Sentinel-1 images to find matches in Sentinel-2
   var matchingImages = sentinel1List.map(function(s1) {
     var s1Date = ee.Date(ee.Image(s1).get('system:time_start'));
 
@@ -75,23 +75,27 @@ function findMatchingDates(sentinel1, sentinel2) {
     var matchedImages = sentinel2List.map(function(s2) {
       var s2Date = ee.Date(ee.Image(s2).get('system:time_start'));
       var diffDays = s1Date.difference(s2Date, 'day').abs(); // Calculate difference in days
-      return ee.Algorithms.If(diffDays.lte(1), s2, null); // Return image if within tolerance
+      return ee.Algorithms.If(diffDays.lte(1), {
+        sentinel1: s1,
+        sentinel2: s2
+      }, null);
     });
 
-    // Filter out null matches and take the first valid match
-    var validMatches = matchedImages.filter(ee.Filter.notNull());
-    var firstMatch = validMatches.get(0); // Get the first matching image
+    // Filter out null matches manually
+    var filteredMatches = matchedImages.map(function(item) {
+      return ee.Algorithms.If(item, item, null);
+    });
 
-    // Return result if there's a match
-    return ee.Algorithms.If(firstMatch, {
-      sentinel1: s1,
-      sentinel2: firstMatch
-    }, null);
+    // Flatten results into a single list
+    return filteredMatches;
   });
 
-  // Remove null entries
-  var filteredResults = matchingImages.filter(ee.Filter.notNull());
-  return filteredResults;
+  // Flatten and remove null entries
+  var finalResults = matchingImages.flatten().map(function(pair) {
+    return ee.Algorithms.If(pair, pair, null);
+  });
+
+  return finalResults;
 }
 
 // Parameter umum
