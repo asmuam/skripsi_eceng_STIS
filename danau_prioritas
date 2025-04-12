@@ -21,6 +21,28 @@ var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
                   [124.93770875201214, 1.2765330232775665]]]),
             {
               "system:index": "0"
+            })]),
+    danau_limboto = /* color: #0b4a8b */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[122.95580539671738, 0.5620881634284192],
+                  [122.99923572540244, 0.5444078658217878],
+                  [123.01691684735557, 0.5471543232577101],
+                  [123.02069339768289, 0.5631180820419548],
+                  [123.0201784135593, 0.5874927687753221],
+                  [123.01477108015074, 0.6058595401871374],
+                  [123.01099452983078, 0.6146137739278414],
+                  [123.00586614861626, 0.6178536975474171],
+                  [122.99966487886171, 0.6192483624678031],
+                  [122.988506889269, 0.6087776196873481],
+                  [122.97923717483988, 0.6074044060035434],
+                  [122.96842250800815, 0.5977919004917115],
+                  [122.96275768252923, 0.5816565856966206],
+                  [122.95400295223678, 0.584746330434298],
+                  [122.94825229396686, 0.5828581521568795],
+                  [122.94353160816694, 0.5768503127330539]]]),
+            {
+              "system:index": "0"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function maskS2clouds(image) {  
@@ -211,13 +233,30 @@ var ndbsi = combinedImage .expression(
 .copyProperties(combinedImage , combinedImage .propertyNames());
 
 // radar
-var vv_vh_ratio = combinedImage 
+var vv_vh_ratio = image_sen1
   .expression('VV / VH', {
-    VV: combinedImage .select('VV'),
-    VH: combinedImage .select('VH'),
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
   })
   .rename('VV_VH_ratio')
-  .copyProperties(combinedImage , combinedImage .propertyNames())
+  .copyProperties(image_sen1, image_sen1.propertyNames())
+
+var vv_vh_diff = image_sen1
+  .expression('VV - VH', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('VV_VH_diff')
+  .copyProperties(image_sen1, image_sen1.propertyNames());
+
+var vv_vh_mean = image_sen1
+  .expression('(VV + VH) / 2', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('VV_VH_mean')
+  .copyProperties(image_sen1, image_sen1.propertyNames());
+  
 
 combinedImage  = combinedImage.addBands([
   ndvi,
@@ -237,7 +276,9 @@ combinedImage  = combinedImage.addBands([
   nbi,
   bsi,
   ndbsi,
-  vv_vh_ratio
+  vv_vh_ratio,
+  vv_vh_mean,
+  vv_vh_diff
 ]);    // Merge all indices into a Sentinel-2 image
 
 combinedImage = combinedImage.toFloat();
@@ -245,9 +286,9 @@ print(combinedImage)
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
-  description: 'waduk_jatiluhur_image_drive',
+  description: 'danau_tondano_image_drive',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'waduk_jatiluhur_image',
+  fileNamePrefix: 'danau_tondano_image',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -257,8 +298,8 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
-  description: 'waduk_jatiluhur_image_asset',
-  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image',
+  description: 'danau_tondano_image_asset',
+  assetId: 'projects/ee-222111840/assets/danau_tondano_image',
   region: roi,
   scale: 10
 });
@@ -272,4 +313,4 @@ Map.addLayer(combinedImage.clip(roi), {
   bands: ['VV', 'VH', 'VV_VH_ratio'],
   min: -20, max: 0,
   gamma: 1.4
-}, 'Sentinel-1 Radar');
+}, 'Sentinel-1 Radar danau_tondano_image');
