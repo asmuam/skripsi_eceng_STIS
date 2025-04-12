@@ -7820,7 +7820,7 @@ var sen2_bands = [
   'NDII',
   'NDBSI',
 ]
-var sen1_bands = ['VV', 'VH','VV_VH_ratio']
+var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
 
 var seed = 222111840;   // Set the seed
