@@ -7714,7 +7714,22 @@ var vv_vh_ratio = image_sen1
   .rename('VV_VH_ratio')
   .copyProperties(image_sen1, image_sen1.propertyNames())
 
+var vv_vh_diff = image_sen1
+  .expression('VV - VH', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('VV_VH_diff')
+  .copyProperties(image_sen1, image_sen1.propertyNames());
 
+var vv_vh_mean = image_sen1
+  .expression('(VV + VH) / 2', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('VV_VH_mean')
+  .copyProperties(image_sen1, image_sen1.propertyNames());
+  
 image_sen2 = image_sen2.addBands([
   ndvi,
   gndvi,
@@ -7768,9 +7783,11 @@ image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 ima
   ])
   .toFloat() 
 image_sen1 = image_sen1.addBands([
-  vv_vh_ratio
+  vv_vh_ratio,
+  vv_vh_mean,
+  vv_vh_diff
 ])
-image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio']).toFloat()
+image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']).toFloat()
 
 var sen2_bands = [
   'B1',
