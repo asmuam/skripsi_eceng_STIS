@@ -100,7 +100,21 @@ var danau_tondano =
     geometry2 = 
     /* color: #bf04c2 */
     /* shown: false */
-    ee.Geometry.MultiPoint();
+    ee.Geometry.Polygon(
+        [[[107.30742952316542, -6.483820934300463],
+          [107.26932069748183, -6.542832403982252],
+          [107.26829072922011, -6.6202530559962],
+          [107.28545686691542, -6.663903410317513],
+          [107.3166992375209, -6.668336432528023],
+          [107.32699892013808, -6.647875995871645],
+          [107.32356569259902, -6.587853811742368],
+          [107.36373445480605, -6.574211391055033],
+          [107.39806673019667, -6.595356983267239],
+          [107.43171236007949, -6.579327342725666],
+          [107.42209932297011, -6.545902174633193],
+          [107.40252992599746, -6.511589986571398],
+          [107.35858461349746, -6.490440848209482]]]),
+    table = ee.FeatureCollection("projects/ee-222111840/assets/DANAU_AR_25K");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function maskS2clouds(image) {  
   var qa = image.select('QA60');
@@ -150,9 +164,15 @@ function findMatchingDates(sentinel1, sentinel2, range) {
   return nonNullResults;
 }
 
+// Clip the shapefile using the geometry2
+var clippedTable = table.map(function(feature) {
+  return feature.intersection(geometry2, ee.ErrorMargin(1));
+});
+
 // Parameter umum
-var roi = danau_singkarak; // Ganti ROI dengan wilayah yang Anda pilih
+var roi = clippedTable; // Ganti ROI dengan wilayah yang Anda pilih
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
+
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -443,9 +463,9 @@ var sentinel2Image = combinedImage.select([
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
-  description: 'danau_singkarak_image_drive_20230928',
+  description: 'waduk_jatiluhur_image_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_singkarak_image',
+  fileNamePrefix: 'waduk_jatiluhur_image',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -455,9 +475,9 @@ Export.image.toDrive({
 // Ekspor Sentinel-1 saja ke Google Drive
 Export.image.toDrive({
   image: sentinel1Image.clip(roi),
-  description: 'danau_singkarak_sentinel1_drive_20230928',
+  description: 'waduk_jatiluhur_sentinel1_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_singkarak_sentinel1',
+  fileNamePrefix: 'waduk_jatiluhur_sentinel1',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -467,9 +487,9 @@ Export.image.toDrive({
 // Ekspor Sentinel-2 saja ke Google Drive
 Export.image.toDrive({
   image: sentinel2Image.clip(roi),
-  description: 'danau_singkarak_sentinel2_drive_20230928',
+  description: 'waduk_jatiluhur_sentinel2_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_singkarak_sentinel2',
+  fileNamePrefix: 'waduk_jatiluhur_sentinel2',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -479,8 +499,8 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
-  description: 'danau_singkarak_image_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/danau_singkarak_image',
+  description: 'waduk_jatiluhur_image_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image',
   region: roi,
   scale: 10
 });
@@ -488,8 +508,8 @@ Export.image.toAsset({
 // Ekspor Sentinel-1 saja ke Aset
 Export.image.toAsset({
   image: sentinel1Image.clip(roi),
-  description: 'danau_singkarak_sentinel1_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/danau_singkarak_sentinel1',
+  description: 'waduk_jatiluhur_sentinel1_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_sentinel1',
   region: roi,
   scale: 10
 });
@@ -497,8 +517,8 @@ Export.image.toAsset({
 // Ekspor Sentinel-2 saja ke Aset
 Export.image.toAsset({
   image: sentinel2Image.clip(roi),
-  description: 'danau_singkarak_sentinel2_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/danau_singkarak_sentinel2',
+  description: 'waduk_jatiluhur_sentinel2_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_sentinel2',
   region: roi,
   scale: 10
 });
