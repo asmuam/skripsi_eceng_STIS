@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
+var danau_tondano = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[124.91058625445355, 1.2899192526534362],
@@ -71,7 +74,10 @@ var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
             {
               "system:index": "0"
             })]),
-    danau_singkarak = /* color: #00ffff */ee.FeatureCollection(
+    danau_singkarak = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[100.49323020903967, -0.5315602984613461],
@@ -91,7 +97,10 @@ var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
             {
               "system:index": "0"
             })]),
-    geometry2 = /* color: #bf04c2 */ee.Geometry.MultiPoint();
+    geometry2 = 
+    /* color: #bf04c2 */
+    /* shown: false */
+    ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function maskS2clouds(image) {  
   var qa = image.select('QA60');
@@ -178,8 +187,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(0));     
-var image_sen1 = ee.Image(sentinel1List.get(0));     
+var image_sen2 = ee.Image(sentinel2List.get(4));     
+var image_sen1 = ee.Image(sentinel1List.get(556));     
 
 print(sentinel2List)
 print(sentinel1List)
