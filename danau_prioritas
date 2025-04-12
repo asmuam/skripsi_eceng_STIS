@@ -90,17 +90,18 @@ function findMatchingDates(sentinel1, sentinel2) {
     return filteredMatches;
   });
 
-  // Flatten and remove null entries
-  var finalResults = matchingImages.flatten().map(function(pair) {
-    return ee.Algorithms.If(pair, pair, null);
-  });
+  // Flatten the list of matching images
+  var flattenedResults = matchingImages.flatten();
 
-  return finalResults;
+  // Use `.filter()` to remove null values
+  var nonNullResults = flattenedResults.filter(ee.Filter.neq('item', null));
+
+  return nonNullResults;
 }
 
 // Parameter umum
 var roi = danau_limboto; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 5; // Persentase maksimum piksel berawan
+var cloudThreshold = 10; // Persentase maksimum piksel berawan
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -129,11 +130,9 @@ function filterFullCoverage(imageCollection, roiGeom) {
 
 // Koleksi Sentinel-2 dengan filter cakupan penuh
 var sentinel2FullCoverage = filterFullCoverage(sentinel2, roiGeometry);
-print(sentinel2FullCoverage)
 
 // Koleksi Sentinel-1 dengan filter cakupan penuh
 var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
-print(sentinel1FullCoverage)
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
