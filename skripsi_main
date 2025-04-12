@@ -7933,25 +7933,7 @@ Export.table.toAsset({
   description: 'sampel_asset', 
   assetId: 'projects/ee-222111840/assets/sampel',
 })   // Export sample to asset
-Export.image.toDrive({
-  image: combinedImage.clip(rawa_pening_shp), 
-  description: 'rawa_pening_image_drive',
-  fileNamePrefix: 'rawa_pening_image',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp, 
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-})   // Export combined image to drive
-Export.image.toAsset({
-  image: combinedImage.clip(rawa_pening_shp), 
-  description: 'rawa_pening_image_asset', 
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image', 
-  region: rawa_pening_shp, 
-  scale: 10, 
-})   // Export combined image to asset
+
 Export.table.toDrive({
   collection: rawa_pening_shp,
   description: 'export_shapefile',
@@ -7960,23 +7942,71 @@ Export.table.toDrive({
   fileNamePrefix: 'rawa_pening'
 })   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
 
-
-// Map.setCenter(110.41770939127575,-7.291049219363841, 24)
-// Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
-
-// Exclude bands VV and VH
-var filteredImage = combinedImage.select(sen2_bands);
-
-// Export the filtered image to Drive
+// Ekspor rawa_pening_image (semua band)
 Export.image.toDrive({
-  image: filteredImage.clip(rawa_pening_shp), 
-  description: 'rawa_pening_image_s2_drive',
-  fileNamePrefix: 'rawa_pening_image_s2',
+  image: combinedImage.clip(rawa_pening_shp),
+  description: 'rawa_pening_image_drive',
+  fileNamePrefix: 'rawa_pening_image',
   folder: 'GEE_Exports',
-  region: rawa_pening_shp, 
+  region: rawa_pening_shp,
   scale: 10,
   fileFormat: 'GeoTIFF',
   formatOptions: {
     cloudOptimized: true
   }
 });
+Export.image.toAsset({
+  image: combinedImage.clip(rawa_pening_shp),
+  description: 'rawa_pening_image_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image',
+  region: rawa_pening_shp,
+  scale: 10
+});
+
+// Ekspor rawa_pening_image_sentinel1 (hanya band Sentinel-1)
+var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
+Export.image.toDrive({
+  image: sen1Image,
+  description: 'rawa_pening_image_sentinel1_drive',
+  fileNamePrefix: 'rawa_pening_image_sentinel1',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: sen1Image,
+  description: 'rawa_pening_image_sentinel1_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
+  region: rawa_pening_shp,
+  scale: 10
+});
+
+// Ekspor rawa_pening_image_sentinel2 (hanya band Sentinel-2)
+var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
+Export.image.toDrive({
+  image: sen2Image,
+  description: 'rawa_pening_image_sentinel2_drive',
+  fileNamePrefix: 'rawa_pening_image_sentinel2',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: sen2Image,
+  description: 'rawa_pening_image_sentinel2_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
+  region: rawa_pening_shp,
+  scale: 10
+});
+
+// Map.setCenter(110.41770939127575,-7.291049219363841, 24)
+// Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
+
