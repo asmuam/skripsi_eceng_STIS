@@ -284,7 +284,7 @@ combinedImage = combinedImage.toFloat();
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
-  description: 'danau_tondano_image_drive',
+  description: 'danau_tondano_image_drive_20240731',
   folder: 'GEE_Exports',
   fileNamePrefix: 'danau_tondano_image',
   region: roi,
@@ -296,7 +296,7 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
-  description: 'danau_tondano_image_asset',
+  description: 'danau_tondano_image_asset_20240731',
   assetId: 'projects/ee-222111840/assets/danau_tondano_image',
   region: roi,
   scale: 10
