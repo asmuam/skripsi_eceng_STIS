@@ -170,8 +170,8 @@ var clippedTable = table.map(function(feature) {
 });
 
 // Parameter umum
-var roi = clippedTable; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 5; // Persentase maksimum piksel berawan
+var roi = danau_limboto; // Ganti ROI dengan wilayah yang Anda pilih
+var cloudThreshold = 10; // Persentase maksimum piksel berawan
 
 
 //  Sentinel-2 collection
@@ -207,8 +207,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(14));     
-var image_sen1 = ee.Image(sentinel1List.get(365));     
+var image_sen2 = ee.Image(sentinel2List.get(31  ));     
+var image_sen1 = ee.Image(sentinel1List.get(436));     
 
 print(sentinel1List)
 print(sentinel2List)
