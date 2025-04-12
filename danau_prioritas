@@ -59,14 +59,12 @@ function maskS2clouds(image) {
 
 // Parameter umum
 var roi = danau_tondano; // Ganti ROI dengan wilayah yang Anda pilih
-var maxDifferenceDays = 5; // Maksimal perbedaan hari antar citra
-var range = 730; // Rentang pencarian hari untuk Sentinel
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate('2024-07-26', '2024-07-28') 
+  .filterDate('2024-01-01', '2025-04-12') 
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -74,7 +72,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
 //  Sentinel-1 collection
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate('2024-07-26', '2024-07-28') 
+  .filterDate('2024-01-01', '2025-04-12') 
   .sort('system:time_start');
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
