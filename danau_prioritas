@@ -210,8 +210,11 @@ var sentinel1List = sentinel1.toList(sentinel1.size());
 var image_sen2 = ee.Image(sentinel2List.get(14));     
 var image_sen1 = ee.Image(sentinel1List.get(365));     
 
-print(sentinel2List)
 print(sentinel1List)
+print(sentinel2List)
+
+print(image_sen1)
+print(image_sen2)
 
 // Panggil fungsi untuk mencari citra yang cocok
 var matchedDates = findMatchingDates(sentinel1FullCoverage, sentinel2FullCoverage, 1);
