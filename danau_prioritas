@@ -63,7 +63,7 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }                                            // Function for masking Sentinel-2 clouds while preserving initial properties
 
-function findMatchingDates(sentinel1, sentinel2) {
+function findMatchingDates(sentinel1, sentinel2, range) {
   var sentinel1List = sentinel1.toList(sentinel1.size());
   var sentinel2List = sentinel2.toList(sentinel2.size());
 
@@ -75,7 +75,7 @@ function findMatchingDates(sentinel1, sentinel2) {
     var matchedImages = sentinel2List.map(function(s2) {
       var s2Date = ee.Date(ee.Image(s2).get('system:time_start'));
       var diffDays = s1Date.difference(s2Date, 'day').abs(); // Calculate difference in days
-      return ee.Algorithms.If(diffDays.lte(1), {
+      return ee.Algorithms.If(diffDays.lte(range), {
         sentinel1: s1,
         sentinel2: s2
       }, null);
@@ -100,13 +100,13 @@ function findMatchingDates(sentinel1, sentinel2) {
 }
 
 // Parameter umum
-var roi = danau_limboto; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 10; // Persentase maksimum piksel berawan
+var roi = danau_tondano; // Ganti ROI dengan wilayah yang Anda pilih
+var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate('2020-03-28', '2025-12-31') 
+  .filterDate('2017-03-28', '2025-12-31') 
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -114,7 +114,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
 //  Sentinel-1 collection
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate('2022-03-28', '2025-12-31') 
+  .filterDate('2017-03-28', '2025-12-31') 
   .sort('system:time_start');
 
 // Ubah ROI menjadi geometri tunggal (contoh jika ROI adalah FeatureCollection)
@@ -136,14 +136,14 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(16));     
-var image_sen1 = ee.Image(sentinel1List.get(45));     
+var image_sen2 = ee.Image(sentinel2List.get(3));     
+var image_sen1 = ee.Image(sentinel1List.get(182));     
 
 print(sentinel2List)
 print(sentinel1List)
 
 // Panggil fungsi untuk mencari citra yang cocok
-var matchedDates = findMatchingDates(sentinel1FullCoverage, sentinel2FullCoverage);
+var matchedDates = findMatchingDates(sentinel1FullCoverage, sentinel2FullCoverage, 7);
 
 print(matchedDates);
 
