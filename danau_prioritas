@@ -1,8 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var danau_tondano = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.FeatureCollection(
+var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[124.91058625445355, 1.2899192526534362],
@@ -49,7 +46,52 @@ var danau_tondano =
                   [122.94353160816694, 0.5768503127330539]]]),
             {
               "system:index": "0"
-            })]);
+            })]),
+    danau_toba = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[98.70427907564945, 2.8943490253296513],
+                  [98.59304250338383, 2.924522483891105],
+                  [98.51064504244633, 2.908064333864607],
+                  [98.4982854233057, 2.8422293457070307],
+                  [98.5092717514307, 2.780505631591385],
+                  [98.5916692123682, 2.670766655752414],
+                  [98.58892263033695, 2.6350993579135293],
+                  [98.6630803451807, 2.5226035588932603],
+                  [98.7344914779932, 2.4457715407948606],
+                  [98.78667653658695, 2.3579581392677595],
+                  [98.84160817721195, 2.2811168595264517],
+                  [99.11077321627445, 2.316793686897715],
+                  [99.2178899154932, 2.4320510704817093],
+                  [99.04485524752445, 2.5678774529950124],
+                  [98.9377385483057, 2.7270091310813966]]]),
+            {
+              "system:index": "0"
+            })]),
+    danau_singkarak = /* color: #00ffff */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[100.49323020903967, -0.5315602984613461],
+                  [100.47778068511388, -0.5404862994245473],
+                  [100.47675071685217, -0.5597114874310153],
+                  [100.48293052642248, -0.5827129686637675],
+                  [100.49700675933263, -0.6136103322923304],
+                  [100.5224126431217, -0.6541199372831168],
+                  [100.55914817778967, -0.6966889999674252],
+                  [100.58627067534826, -0.7049281296976152],
+                  [100.60584007232092, -0.6935993225951143],
+                  [100.60378013579748, -0.6757478141191375],
+                  [100.58180747954748, -0.6088040872206985],
+                  [100.55743156402013, -0.5562784227037256],
+                  [100.53030906646154, -0.5404862994245473],
+                  [100.50318656890295, -0.5308736824654946]]]),
+            {
+              "system:index": "0"
+            })]),
+    geometry2 = /* color: #bf04c2 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function maskS2clouds(image) {  
   var qa = image.select('QA60');
@@ -100,8 +142,8 @@ function findMatchingDates(sentinel1, sentinel2, range) {
 }
 
 // Parameter umum
-var roi = danau_tondano; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 50; // Persentase maksimum piksel berawan
+var roi = danau_singkarak; // Ganti ROI dengan wilayah yang Anda pilih
+var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -137,7 +179,7 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
 var image_sen2 = ee.Image(sentinel2List.get(0));     
-var image_sen1 = ee.Image(sentinel1List.get(182));     
+var image_sen1 = ee.Image(sentinel1List.get(0));     
 
 print(sentinel2List)
 print(sentinel1List)
