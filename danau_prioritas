@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
+var danau_tondano = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[124.91058625445355, 1.2899192526534362],
@@ -22,7 +25,10 @@ var danau_tondano = /* color: #d63000 */ee.FeatureCollection(
             {
               "system:index": "0"
             })]),
-    danau_limboto = /* color: #0b4a8b */ee.FeatureCollection(
+    danau_limboto = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[122.95580539671738, 0.5620881634284192],
@@ -231,29 +237,29 @@ var ndbsi = combinedImage .expression(
 .copyProperties(combinedImage , combinedImage .propertyNames());
 
 // radar
-var vv_vh_ratio = image_sen1
+var vv_vh_ratio = combinedImage
   .expression('VV / VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
+    VV: combinedImage.select('VV'),
+    VH: combinedImage.select('VH'),
   })
   .rename('VV_VH_ratio')
-  .copyProperties(image_sen1, image_sen1.propertyNames())
+  .copyProperties(combinedImage, combinedImage.propertyNames())
 
-var vv_vh_diff = image_sen1
+var vv_vh_diff = combinedImage
   .expression('VV - VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
+    VV: combinedImage.select('VV'),
+    VH: combinedImage.select('VH'),
   })
   .rename('VV_VH_diff')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
+  .copyProperties(combinedImage, combinedImage.propertyNames());
 
-var vv_vh_mean = image_sen1
+var vv_vh_mean = combinedImage
   .expression('(VV + VH) / 2', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
+    VV: combinedImage.select('VV'),
+    VH: combinedImage.select('VH'),
   })
   .rename('VV_VH_mean')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
+  .copyProperties(combinedImage, combinedImage.propertyNames());
   
 
 combinedImage  = combinedImage.addBands([
