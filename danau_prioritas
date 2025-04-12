@@ -120,14 +120,16 @@ function filterFullCoverage(imageCollection, roiGeom) {
 
 // Koleksi Sentinel-2 dengan filter cakupan penuh
 var sentinel2FullCoverage = filterFullCoverage(sentinel2, roiGeometry);
+print(sentinel2FullCoverage)
 
 // Koleksi Sentinel-1 dengan filter cakupan penuh
 var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
+print(sentinel1FullCoverage)
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(5));     
-var image_sen1 = ee.Image(sentinel1List.get(57));     
+var image_sen2 = ee.Image(sentinel2List.get(0));     
+var image_sen1 = ee.Image(sentinel1List.get(0));     
 
 print(sentinel2List)
 print(sentinel1List)
