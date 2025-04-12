@@ -7964,9 +7964,9 @@ Export.image.toAsset({
 });
 
 //Ekspor rawa_pening_image_raw (semua band dasar)
-var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
+var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
 Export.image.toDrive({
-  image: sen1Image,
+  image: senRawImage,
   description: 'rawa_pening_image_raw_drive',
   fileNamePrefix: 'rawa_pening_image_raw',
   folder: 'GEE_Exports',
@@ -7978,7 +7978,7 @@ Export.image.toDrive({
   }
 });
 Export.image.toAsset({
-  image: sen1Image,
+  image: senRawImage,
   description: 'rawa_pening_image_raw_asset',
   assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
   region: rawa_pening_shp,
