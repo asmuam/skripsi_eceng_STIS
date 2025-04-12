@@ -63,14 +63,40 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }                                            // Function for masking Sentinel-2 clouds while preserving initial properties
 
+// Fungsi untuk mencocokkan citra berdasarkan tanggal yang sama
+function findMatchingDates(sentinel1, sentinel2) {
+  var sentinel1List = sentinel1.toList(sentinel1.size());
+  var sentinel2List = sentinel2.toList(sentinel2.size());
+
+  // Loop setiap citra Sentinel-1
+  var matchingImages = sentinel1List.map(function(s1) {
+    var s1Date = ee.Date(ee.Image(s1).get('system:time_start')).format('YYYY-MM-dd');
+    
+    // Cari kecocokan di Sentinel-2
+    var matchedImage = sentinel2List.map(function(s2) {
+      var s2Date = ee.Date(ee.Image(s2).get('system:time_start')).format('YYYY-MM-dd');
+      
+      return ee.Algorithms.If(s1Date.compareTo(s2Date).eq(0), {
+        sentinel1: s1,
+        sentinel2: s2
+      }, null);
+    }).flatten(); // Gunakan flatten untuk merapikan hasil
+
+    return matchedImage;
+  });
+
+  return matchingImages.flatten(); // Gabungkan daftar hasil
+}
+
+
 // Parameter umum
-var roi = danau_tondano; // Ganti ROI dengan wilayah yang Anda pilih
+var roi = danau_limboto; // Ganti ROI dengan wilayah yang Anda pilih
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
-  .filterDate('2024-07-30', '2024-08-01') 
+  .filterDate('2018-01-01', '2025-12-31') 
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudThreshold))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -78,16 +104,38 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
 //  Sentinel-1 collection
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')
   .filterBounds(roi)
-  .filterDate('2024-07-30', '2024-08-01') 
+  .filterDate('2018-01-01', '2025-12-31') 
   .sort('system:time_start');
+
+// Ubah ROI menjadi geometri tunggal (contoh jika ROI adalah FeatureCollection)
+var roiGeometry = roi.geometry(); // Mengambil geometri tunggal dari ROI
+
+// Fungsi untuk memfilter citra yang sepenuhnya mencakup ROI
+function filterFullCoverage(imageCollection, roiGeom) {
+  return imageCollection.filter(ee.Filter.contains({
+    leftField: '.geo', // Geometri dari citra
+    rightValue: roiGeom // Geometri ROI
+  }));
+}
+
+// Koleksi Sentinel-2 dengan filter cakupan penuh
+var sentinel2FullCoverage = filterFullCoverage(sentinel2, roiGeometry);
+
+// Koleksi Sentinel-1 dengan filter cakupan penuh
+var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(0));     
-var image_sen1 = ee.Image(sentinel1List.get(0));     
+var image_sen2 = ee.Image(sentinel2List.get(5));     
+var image_sen1 = ee.Image(sentinel1List.get(57));     
 
 print(sentinel2List)
 print(sentinel1List)
+
+// Panggil fungsi untuk mencari citra yang cocok
+var matchedDates = findMatchingDates(sentinel1FullCoverage, sentinel2FullCoverage);
+
+print(matchedDates);
 
 // Gabungkan citra Sentinel-1 dan Sentinel-2
 var combinedImage = image_sen2.addBands(image_sen1.select(['VV', 'VH']));
@@ -290,9 +338,9 @@ combinedImage = combinedImage.toFloat();
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
-  description: 'danau_tondano_image_drive_20240731',
+  description: 'danau_limboto_image_drive',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'danau_tondano_image',
+  fileNamePrefix: 'danau_limboto_image',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -302,8 +350,8 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
-  description: 'danau_tondano_image_asset_20240731',
-  assetId: 'projects/ee-222111840/assets/danau_tondano_image',
+  description: 'danau_limboto_image_asset_20240731',
+  assetId: 'projects/ee-222111840/assets/danau_limboto_image',
   region: roi,
   scale: 10
 });
@@ -317,4 +365,4 @@ Map.addLayer(combinedImage.clip(roi), {
   bands: ['VV', 'VH', 'VV_VH_ratio'],
   min: -20, max: 0,
   gamma: 1.4
-}, 'Sentinel-1 Radar danau_tondano_image');
+}, 'Sentinel-1 Radar');
