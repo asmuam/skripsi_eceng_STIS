@@ -101,7 +101,7 @@ function findMatchingDates(sentinel1, sentinel2, range) {
 
 // Parameter umum
 var roi = danau_tondano; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 5; // Persentase maksimum piksel berawan
+var cloudThreshold = 50; // Persentase maksimum piksel berawan
 
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -136,14 +136,14 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(3));     
+var image_sen2 = ee.Image(sentinel2List.get(0));     
 var image_sen1 = ee.Image(sentinel1List.get(182));     
 
 print(sentinel2List)
 print(sentinel1List)
 
 // Panggil fungsi untuk mencari citra yang cocok
-var matchedDates = findMatchingDates(sentinel1FullCoverage, sentinel2FullCoverage, 7);
+var matchedDates = findMatchingDates(sentinel1FullCoverage, sentinel2FullCoverage, 1);
 
 print(matchedDates);
 
