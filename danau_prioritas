@@ -75,7 +75,7 @@ function findMatchingDates(sentinel1, sentinel2) {
     var matchedImages = sentinel2List.map(function(s2) {
       var s2Date = ee.Date(ee.Image(s2).get('system:time_start'));
       var diffDays = s1Date.difference(s2Date, 'day').abs(); // Calculate difference in days
-      return ee.Algorithms.If(diffDays.lte(4), {
+      return ee.Algorithms.If(diffDays.lte(7), {
         sentinel1: s1,
         sentinel2: s2
       }, null);
