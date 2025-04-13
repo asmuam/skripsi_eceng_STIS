@@ -201,7 +201,7 @@ var clippedTable = table.map(function(feature) {
 
 // Parameter umum
 var roi = waduk_cirata; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 10; // Persentase maksimum piksel berawan
+var cloudThreshold = 1; // Persentase maksimum piksel berawan
 
 
 //  Sentinel-2 collection
@@ -237,8 +237,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(39));     
-var image_sen1 = ee.Image(sentinel1List.get(569));     
+var image_sen2 = ee.Image(sentinel2List.get(1));     
+var image_sen1 = ee.Image(sentinel1List.get(214));     
 
 print(sentinel1List)
 print(sentinel2List)
@@ -496,9 +496,9 @@ var sentinel2Image = combinedImage.select([
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
-  description: 'waduk_jatiluhur_image_drive_20230928',
+  description: 'waduk_cirata_image_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'waduk_jatiluhur_image',
+  fileNamePrefix: 'waduk_cirata_image',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -508,9 +508,9 @@ Export.image.toDrive({
 // Ekspor Sentinel-1 saja ke Google Drive
 Export.image.toDrive({
   image: sentinel1Image.clip(roi),
-  description: 'waduk_jatiluhur_sentinel1_drive_20230928',
+  description: 'waduk_cirata_sentinel1_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'waduk_jatiluhur_sentinel1',
+  fileNamePrefix: 'waduk_cirata_sentinel1',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -520,9 +520,9 @@ Export.image.toDrive({
 // Ekspor Sentinel-2 saja ke Google Drive
 Export.image.toDrive({
   image: sentinel2Image.clip(roi),
-  description: 'waduk_jatiluhur_sentinel2_drive_20230928',
+  description: 'waduk_cirata_sentinel2_drive_20230928',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'waduk_jatiluhur_sentinel2',
+  fileNamePrefix: 'waduk_cirata_sentinel2',
   region: roi,
   scale: 10,
   fileFormat: 'GeoTIFF',
@@ -532,8 +532,8 @@ Export.image.toDrive({
 // Ekspor ke Aset
 Export.image.toAsset({
   image: combinedImage.clip(roi),
-  description: 'waduk_jatiluhur_image_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_image',
+  description: 'waduk_cirata_image_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/waduk_cirata_image',
   region: roi,
   scale: 10
 });
@@ -541,8 +541,8 @@ Export.image.toAsset({
 // Ekspor Sentinel-1 saja ke Aset
 Export.image.toAsset({
   image: sentinel1Image.clip(roi),
-  description: 'waduk_jatiluhur_sentinel1_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_sentinel1',
+  description: 'waduk_cirata_sentinel1_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/waduk_cirata_sentinel1',
   region: roi,
   scale: 10
 });
@@ -550,8 +550,8 @@ Export.image.toAsset({
 // Ekspor Sentinel-2 saja ke Aset
 Export.image.toAsset({
   image: sentinel2Image.clip(roi),
-  description: 'waduk_jatiluhur_sentinel2_asset_20230928',
-  assetId: 'projects/ee-222111840/assets/waduk_jatiluhur_sentinel2',
+  description: 'waduk_cirata_sentinel2_asset_20230928',
+  assetId: 'projects/ee-222111840/assets/waduk_cirata_sentinel2',
   region: roi,
   scale: 10
 });
