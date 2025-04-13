@@ -7560,13 +7560,13 @@ function RefinedLee(img) {
     var variance3 = bandImg.reduceNeighborhood(ee.Reducer.variance(), kernel3);
 
     // Use a sample of the 3x3 windows inside a 7x7 windows to determine gradients and directions
-    var sample_weights = ee.List([[0,0,0,0,0,0,0], [0,1,0,1,0,1,0],[0,0,0,0,0,0,0], 
-                                 [0,1,0,1,0,1,0], [0,0,0,0,0,0,0], [0,1,0,1,0,1,0],[0,0,0,0,0,0,0]]);
+    var sample_weights = ee.List([[0,0,0,0,0,0,0], [0,1,0,1,0,1,0], [0,0,0,0,0,0,0], 
+                                 [0,1,0,1,0,1,0], [0,0,0,0,0,0,0], [0,1,0,1,0,1,0], [0,0,0,0,0,0,0]]);
 
     var sample_kernel = ee.Kernel.fixed(7,7, sample_weights, 3,3, false);
 
     // Calculate mean and variance for the sampled windows and store as 9 bands
-    var sample_mean = mean3.neighborhoodToBands(sample-Kernel); 
+    var sample_mean = mean3.neighborhoodToBands(sample_kernel); 
     var sample_var = variance3.neighborhoodToBands(sample_kernel);
 
     // Determine the 4 gradients for the sampled windows
@@ -7581,7 +7581,7 @@ function RefinedLee(img) {
     // Create a mask for band pixels that are the maximum gradient
     var gradmask = gradients.eq(max_gradient);
 
-    // duplicate gradmask bands: each gradient represents 2 directions
+    // Duplicate gradmask bands: each gradient represents 2 directions
     gradmask = gradmask.addBands(gradmask);
 
     // Determine the 8 directions
@@ -7597,7 +7597,7 @@ function RefinedLee(img) {
     // Mask all values that are not 1-8
     directions = directions.updateMask(gradmask);
 
-    // "collapse" the stack into a singe band image
+    // "Collapse" the stack into a single band image
     directions = directions.reduce(ee.Reducer.sum());  
 
     var sample_stats = sample_var.divide(sample_mean.multiply(sample_mean));
@@ -7605,7 +7605,7 @@ function RefinedLee(img) {
     // Calculate localNoiseVariance
     var sigmaV = sample_stats.toArray().arraySort().arraySlice(0,0,5).arrayReduce(ee.Reducer.mean(), [0]);
 
-    // Set up the 7*7 kernels for directional statistics
+    // Set up the 7x7 kernels for directional statistics
     var rect_weights = ee.List.repeat(ee.List.repeat(0,7),3).cat(ee.List.repeat(ee.List.repeat(1,7),4));
     var diag_weights = ee.List([[1,0,0,0,0,0,0], [1,1,0,0,0,0,0], [1,1,1,0,0,0,0], 
                                [1,1,1,1,0,0,0], [1,1,1,1,1,0,0], [1,1,1,1,1,1,0], [1,1,1,1,1,1,1]]);
@@ -7620,19 +7620,19 @@ function RefinedLee(img) {
     dir_mean = dir_mean.addBands(bandImg.reduceNeighborhood(ee.Reducer.mean(), diag_kernel).updateMask(directions.eq(2)));
     dir_var = dir_var.addBands(bandImg.reduceNeighborhood(ee.Reducer.variance(), diag_kernel).updateMask(directions.eq(2)));
 
-    // and add the bands for rotated kernels
-    for (var i=1; i<4; i++) {
+    // Add the bands for rotated kernels
+    for (var i = 1; i < 4; i++) {
       dir_mean = dir_mean.addBands(bandImg.reduceNeighborhood(ee.Reducer.mean(), rect_kernel.rotate(i)).updateMask(directions.eq(2*i+1)));
       dir_var = dir_var.addBands(bandImg.reduceNeighborhood(ee.Reducer.variance(), rect_kernel.rotate(i)).updateMask(directions.eq(2*i+1)));
       dir_mean = dir_mean.addBands(bandImg.reduceNeighborhood(ee.Reducer.mean(), diag_kernel.rotate(i)).updateMask(directions.eq(2*i+2)));
       dir_var = dir_var.addBands(bandImg.reduceNeighborhood(ee.Reducer.variance(), diag_kernel.rotate(i)).updateMask(directions.eq(2*i+2)));
     }
 
-    // "collapse" the stack into a single band image
+    // "Collapse" the stack into a single band image
     dir_mean = dir_mean.reduce(ee.Reducer.sum());
     dir_var = dir_var.reduce(ee.Reducer.sum());
 
-    // Finally generate the filtered value
+    // Generate the filtered value
     var varX = dir_var.subtract(dir_mean.multiply(dir_mean).multiply(sigmaV)).divide(sigmaV.add(1.0));
     var b = varX.divide(dir_var);
     var result = dir_mean.add(b.multiply(bandImg.subtract(dir_mean)));
@@ -7640,9 +7640,13 @@ function RefinedLee(img) {
     return result.rename(bandName);
   };
 
-  // Proses setiap pita dan gabungkan hasil
-  var filteredBands = bandNames.map(processBand);
-  return ee.Image.cat(filteredBands);
+  // Proses setiap pita dan gabungkan hasil ke dalam satu imej
+  var filteredBands = bandNames.map(function(bandName) {
+    return processBand(bandName);
+  });
+  
+  // Gabungkan semua pita yang telah ditapis menjadi satu imej
+  return ee.Image(filteredBands).copyProperties(img, img.propertyNames());
 }
 
 var targetDate = ee.Date('2024-7-15');                                        // Fixed date for image
