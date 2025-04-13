@@ -119,7 +119,32 @@ var danau_tondano =
             {
               "system:index": "0"
             })]),
-    table = ee.FeatureCollection("projects/ee-222111840/assets/DANAU_AR_25K");
+    table = ee.FeatureCollection("projects/ee-222111840/assets/DANAU_AR_25K"),
+    waduk_cirata = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[107.23987264483246, -6.725255654584214],
+                  [107.25909871905121, -6.742473849089169],
+                  [107.25635213701996, -6.76548731196602],
+                  [107.24605245440277, -6.783385914071212],
+                  [107.249571411304, -6.794721421615525],
+                  [107.26545018999848, -6.793442932094825],
+                  [107.2864791828074, -6.794765256986359],
+                  [107.30853804852529, -6.791313859550907],
+                  [107.30180049430108, -6.765382168263042],
+                  [107.32836487451284, -6.773201968669336],
+                  [107.34784765093598, -6.773499149303689],
+                  [107.37428350298676, -6.700535398036693],
+                  [107.32862157671723, -6.679504265715042],
+                  [107.31145543902191, -6.709169702843324],
+                  [107.27849645464691, -6.691609345690066],
+                  [107.2419325813559, -6.7093401886472614]]]),
+            {
+              "system:index": "0"
+            })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function maskS2clouds(image) {  
   var qa = image.select('QA60');
@@ -175,7 +200,7 @@ var clippedTable = table.map(function(feature) {
 });
 
 // Parameter umum
-var roi = waduk_jatiluhur; // Ganti ROI dengan wilayah yang Anda pilih
+var roi = waduk_cirata; // Ganti ROI dengan wilayah yang Anda pilih
 var cloudThreshold = 10; // Persentase maksimum piksel berawan
 
 
