@@ -97,23 +97,25 @@ var danau_tondano =
             {
               "system:index": "0"
             })]),
-    geometry2 = 
-    /* color: #bf04c2 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[107.30742952316542, -6.483820934300463],
-          [107.26932069748183, -6.542832403982252],
-          [107.26829072922011, -6.6202530559962],
-          [107.28545686691542, -6.663903410317513],
-          [107.3166992375209, -6.668336432528023],
-          [107.32699892013808, -6.647875995871645],
-          [107.32356569259902, -6.587853811742368],
-          [107.36373445480605, -6.574211391055033],
-          [107.39806673019667, -6.595356983267239],
-          [107.43171236007949, -6.579327342725666],
-          [107.42209932297011, -6.545902174633193],
-          [107.40252992599746, -6.511589986571398],
-          [107.35858461349746, -6.490440848209482]]]),
+    waduk_jatiluhur = /* color: #bf04c2 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Polygon(
+                [[[107.30742952316542, -6.483820934300463],
+                  [107.26932069748183, -6.542832403982252],
+                  [107.26829072922011, -6.6202530559962],
+                  [107.28545686691542, -6.663903410317513],
+                  [107.3166992375209, -6.668336432528023],
+                  [107.32699892013808, -6.647875995871645],
+                  [107.32356569259902, -6.587853811742368],
+                  [107.36373445480605, -6.574211391055033],
+                  [107.39806673019667, -6.595356983267239],
+                  [107.43171236007949, -6.579327342725666],
+                  [107.42209932297011, -6.545902174633193],
+                  [107.40252992599746, -6.511589986571398],
+                  [107.35858461349746, -6.490440848209482]]]),
+            {
+              "system:index": "0"
+            })]),
     table = ee.FeatureCollection("projects/ee-222111840/assets/DANAU_AR_25K");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function maskS2clouds(image) {  
@@ -166,11 +168,11 @@ function findMatchingDates(sentinel1, sentinel2, range) {
 
 // Clip the shapefile using the geometry2
 var clippedTable = table.map(function(feature) {
-  return feature.intersection(geometry2, ee.ErrorMargin(1));
+  return feature.intersection(waduk_jatiluhur, ee.ErrorMargin(1));
 });
 
 // Parameter umum
-var roi = danau_limboto; // Ganti ROI dengan wilayah yang Anda pilih
+var roi = waduk_jatiluhur; // Ganti ROI dengan wilayah yang Anda pilih
 var cloudThreshold = 10; // Persentase maksimum piksel berawan
 
 
