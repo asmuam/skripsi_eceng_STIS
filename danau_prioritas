@@ -97,7 +97,10 @@ var danau_tondano =
             {
               "system:index": "0"
             })]),
-    waduk_jatiluhur = /* color: #bf04c2 */ee.FeatureCollection(
+    waduk_jatiluhur = 
+    /* color: #bf04c2 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Polygon(
                 [[[107.30742952316542, -6.483820934300463],
@@ -209,8 +212,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(31  ));     
-var image_sen1 = ee.Image(sentinel1List.get(436));     
+var image_sen2 = ee.Image(sentinel2List.get(39));     
+var image_sen1 = ee.Image(sentinel1List.get(569));     
 
 print(sentinel1List)
 print(sentinel2List)
