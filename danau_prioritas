@@ -201,7 +201,7 @@ var clippedTable = table.map(function(feature) {
 
 // Parameter umum
 var roi = waduk_cirata; // Ganti ROI dengan wilayah yang Anda pilih
-var cloudThreshold = 1; // Persentase maksimum piksel berawan
+var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
 
 //  Sentinel-2 collection
@@ -237,8 +237,8 @@ var sentinel1FullCoverage = filterFullCoverage(sentinel1, roiGeometry);
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       
 var sentinel1List = sentinel1.toList(sentinel1.size());                      
-var image_sen2 = ee.Image(sentinel2List.get(1));     
-var image_sen1 = ee.Image(sentinel1List.get(214));     
+var image_sen2 = ee.Image(sentinel2List.get(20));     
+var image_sen1 = ee.Image(sentinel1List.get(568));     
 
 print(sentinel1List)
 print(sentinel2List)
