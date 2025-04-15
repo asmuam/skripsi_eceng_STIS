@@ -8032,7 +8032,7 @@ Map.addLayer(combinedImage.clip(rawa_pening_shp),
     min: [0, 0, 2], // Nilai minimum untuk masing-masing band
     max: [11, 1, 1000], // Nilai maksimum untuk masing-masing band
   }, 
-  'combinedImage S1 clip dengan rentang per band'
+  'combinedImage S1'
 );
 // Map.addLayer(image_sen1_filtered_3.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 3 S1 clip')
 // Map.addLayer(image_sen1_filtered_5.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 5 S1 clip')
