@@ -408,28 +408,28 @@ var dataInfo = {
             opacity: 0.7
         }
     },
-    'cnnjatiluhur': {
-        name: 'Klasifikasi CNN Jatiluhur',
-        desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
-        img: cnnjatiluhur,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    },
-    'cnnjatiluhur_keras': {
-        name: 'Klasifikasi CNN Jatiluhur keras',
-        desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
-        img: cnnjatiluhur,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    }
+    // 'cnnjatiluhur': {
+    //     name: 'Klasifikasi CNN Jatiluhur',
+    //     desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
+    //     img: cnnjatiluhur,
+    //     vis: {
+    //         min: 0,
+    //         max: 5,
+    //         palette: thePalette,
+    //         opacity: 0.7
+    //     }
+    // },
+    // 'cnnjatiluhur_keras': {
+    //     name: 'Klasifikasi CNN Jatiluhur keras',
+    //     desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
+    //     img: cnnjatiluhur,
+    //     vis: {
+    //         min: 0,
+    //         max: 5,
+    //         palette: thePalette,
+    //         opacity: 0.7
+    //     }
+    // }
 };                                 // Define information about each layer that will be used to visualize it and describe it in a selector widget and legend.
 var dataPanel = ui.Panel({
     style: {
