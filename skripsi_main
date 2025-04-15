@@ -5071,7 +5071,10 @@ var roi =
               "landcover": 3,
               "system:index": "199"
             })]),
-    tanah = /* color: #c76029 */ee.FeatureCollection(
+    tanah = 
+    /* color: #c76029 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44472689829931, -7.267834762463424]),
             {
@@ -7844,6 +7847,14 @@ var vv_vh_sum = image_sen1
   })
   .rename('VV_VH_sum')
   .copyProperties(image_sen1, image_sen1.propertyNames());
+
+var swi = image_sen1
+  .expression('0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('SWI')
+  .copyProperties(image_sen1, image_sen1.propertyNames());
   
 image_sen2 = image_sen2.addBands([
   ndvi,
@@ -7902,8 +7913,9 @@ image_sen1 = image_sen1.addBands([
   vv_vh_mean,
   vv_vh_diff,
   vv_vh_sum,
+  swi,
 ])
-image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum']).toFloat()
+image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI']).toFloat()
 
 var sen2_bands = [
   'B1',
@@ -7936,7 +7948,7 @@ var sen2_bands = [
   'NDII',
   'NDBSI',
 ]
-var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum']
+var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI']
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
 
 var seed = 222111840;   // Set the seed
@@ -8078,8 +8090,20 @@ var SWI = combinedImage.expression(
   }
 );
 // Menambahkan layer ke peta
-Map.addLayer(SWI, {min: -2, max: 2}, 'SWI Visualized');
-Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
+// Buat Mask untuk nilai > 0.2
+var SWI_mask = SWI.expression('(SWI > 0.2) ? 1 : 0', {
+  'SWI': SWI
+});
+
+// Visualisasi layer berdasarkan mask
+var SWI_visualized = SWI_mask.visualize({
+  palette: ['red', 'blue'], // Merah untuk 0, Biru untuk 1
+  min: 0,
+  max: 1
+});
+
+// Tambahkan layer ke peta
+Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
 Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
 Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
