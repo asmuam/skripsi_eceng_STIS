@@ -4,7 +4,8 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rf = ee.Image("projects/ee-222111840/assets/rf"),
     cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
     sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    cnnv200 = ee.Image("projects/ee-222111840/assets/cnn1_v200");
+    cnnv200 = ee.Image("projects/ee-222111840/assets/cnn1_v200"),
+    rf_v200 = ee.Image("projects/ee-222111840/assets/rf_v200");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function panelcreate() {
     // Create an intro panel with labels.
