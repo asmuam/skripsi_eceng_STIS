@@ -8034,6 +8034,22 @@ Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], ma
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
+var VV = combinedImage.select('VV'); 
+var calculatedLayer = VV.expression(
+  'Math.log(0.05 / (0.018 + VV * 1.5))', {
+    'VV': VV
+  }
+);
+
+var visualizationParams = {
+  min: calculatedLayer.reduceRegion(ee.Reducer.percentile([1]), rawa_pening_shp, 500).values().get(0),
+  max: calculatedLayer.reduceRegion(ee.Reducer.percentile([98]), rawa_pening_shp, 500).values().get(0),
+  palette: ['blue', 'green', 'yellow', 'red']
+};
+
+// Menambahkan layer ke peta dengan range stretch 98%
+Map.addLayer(calculatedLayer.clip(rawa_pening_shp), visualizationParams, 'Rumus Visualized');
+
 print(combinedImage)
 
 Export.table.toDrive({
