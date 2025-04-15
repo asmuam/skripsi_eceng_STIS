@@ -7855,7 +7855,14 @@ var swi = image_sen1
   })
   .rename('SWI')
   .copyProperties(image_sen1, image_sen1.propertyNames());
-  
+
+var rvi = image_sen1
+  .expression('(4 * VH) / (VV + VH)', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH'),
+  })
+  .rename('SWI')
+  .copyProperties(image_sen1, image_sen1.propertyNames());
 image_sen2 = image_sen2.addBands([
   ndvi,
   gndvi,
@@ -7914,8 +7921,9 @@ image_sen1 = image_sen1.addBands([
   vv_vh_diff,
   vv_vh_sum,
   swi,
+  rvi,
 ])
-image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI']).toFloat()
+image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']).toFloat()
 
 var sen2_bands = [
   'B1',
@@ -7948,7 +7956,7 @@ var sen2_bands = [
   'NDII',
   'NDBSI',
 ]
-var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI']
+var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
 
 var seed = 222111840;   // Set the seed
@@ -8089,6 +8097,13 @@ var SWI = combinedImage.expression(
     'VV': combinedImage.select('VV')
   }
 );
+
+var RVI = combinedImage.expression(
+  '(4 * VH) / (VV + VH)', {
+    'VH': combinedImage.select('VH'),
+    'VV': combinedImage.select('VV')
+  }
+);
 // Menambahkan layer ke peta
 // Buat Mask untuk nilai > 0.2
 var SWI_mask = SWI.expression('(SWI > 0.2) ? 1 : 0', {
@@ -8103,6 +8118,7 @@ var SWI_visualized = SWI_mask.visualize({
 });
 
 // Tambahkan layer ke peta
+Map.addLayer(RVI, {min: -2, max: 2}, 'SWI Conditional Visualized');Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
 Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
 Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
