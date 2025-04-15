@@ -7697,17 +7697,34 @@ var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
 // Combine natural units bands
 var image_natural = vv_natural.addBands(vh_natural);
 
-// Apply Refined Lee filter to VV and VH bands separately
-var vv_filtered = lee_filter(image_natural.select('VV'), 5).rename('VV_lee');
-var vh_filtered = lee_filter(image_natural.select('VH'), 5).rename('VH_lee');
+// Apply Refined Lee filter to VV and VH bands separately for each window size
+var vv_filtered_3 = lee_filter(image_natural.select('VV'), 3).rename('VV_lee');
+var vh_filtered_3 = lee_filter(image_natural.select('VH'), 3).rename('VH_lee');
 
-// Combine the filtered bands into a single image
-var image_sen1_filtered = vv_filtered.addBands(vh_filtered);
+var vv_filtered_5 = lee_filter(image_natural.select('VV'), 5).rename('VV_lee');
+var vh_filtered_5 = lee_filter(image_natural.select('VH'), 5).rename('VH_lee');
 
-// Convert back to dB for visualization
-var vv_filtered_db = toDB(image_sen1_filtered.select('VV_lee')).rename('VV_lee');
-var vh_filtered_db = toDB(image_sen1_filtered.select('VH_lee')).rename('VH_lee');
-image_sen1_filtered = vv_filtered_db.addBands(vh_filtered_db);
+var vv_filtered_7 = lee_filter(image_natural.select('VV'), 7).rename('VV_lee');
+var vh_filtered_7 = lee_filter(image_natural.select('VH'), 7).rename('VH_lee');
+
+// Combine the filtered bands into a single image for each window size
+var image_sen1_filtered_3 = vv_filtered_3.addBands(vh_filtered_3);
+var image_sen1_filtered_5 = vv_filtered_5.addBands(vh_filtered_5);
+var image_sen1_filtered_7 = vv_filtered_7.addBands(vh_filtered_7);
+
+// Convert back to dB for visualization for each window size
+var vv_filtered_db_3 = toDB(image_sen1_filtered_3.select('VV_lee')).rename('VV_lee');
+var vh_filtered_db_3 = toDB(image_sen1_filtered_3.select('VH_lee')).rename('VH_lee');
+image_sen1_filtered_3 = vv_filtered_db_3.addBands(vh_filtered_db_3);
+
+var vv_filtered_db_5 = toDB(image_sen1_filtered_5.select('VV_lee')).rename('VV_lee');
+var vh_filtered_db_5 = toDB(image_sen1_filtered_5.select('VH_lee')).rename('VH_lee');
+image_sen1_filtered_5 = vv_filtered_db_5.addBands(vh_filtered_db_5);
+
+var vv_filtered_db_7 = toDB(image_sen1_filtered_7.select('VV_lee')).rename('VV_lee');
+var vh_filtered_db_7 = toDB(image_sen1_filtered_7.select('VH_lee')).rename('VH_lee');
+image_sen1_filtered_7 = vv_filtered_db_7.addBands(vh_filtered_db_7);
+
 
 print(image_sen2)
 print(image_sen1)
@@ -8080,7 +8097,9 @@ Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH', 'VV'], min: -30, max: 0}, 'combinedImage S1 clip')
-Map.addLayer(image_sen1_filtered.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered S1 clip')
+Map.addLayer(image_sen1_filtered_3.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 3 S1 clip')
+Map.addLayer(image_sen1_filtered_5.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 5 S1 clip')
+Map.addLayer(image_sen1_filtered_7.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 7 S1 clip')
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
