@@ -7642,7 +7642,7 @@ var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
 // Combine natural units bands
 var image_natural = vv_natural.addBands(vh_natural);
 
-// Apply Refined Lee filter to VV and VH bands separately
+// Apply filter to VV and VH bands separately
 var vv_filtered_7 = gammaMap(image_natural.select('VV'), 5).rename('VV');
 var vh_filtered_7 = gammaMap(image_natural.select('VH'), 5).rename('VH');
 
