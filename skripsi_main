@@ -8039,12 +8039,12 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max
 var VV = combinedImage.select('VV'); 
 var VH = combinedImage.select('VH'); 
 var VV_viz = VV.expression(
-  'log(0.05 / (0.018 + VV * 1.5))', {
+  'VV*VV', {
     'VV': VV
   }
 );
 var VH_viz = VH.expression(
-  'log(0.05 / (0.018 + VH * 1.5))', {
+  'VH*VH', {
     'VH': VH
   }
 );
