@@ -2663,7 +2663,10 @@ var roi =
               "landcover": 2,
               "system:index": "199"
             })]),
-    kja = /* color: #fffd02 */ee.FeatureCollection(
+    kja = 
+    /* color: #fffd02 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43916225249428, -7.271351431082463]),
             {
@@ -5068,10 +5071,7 @@ var roi =
               "landcover": 3,
               "system:index": "199"
             })]),
-    tanah = 
-    /* color: #c76029 */
-    /* shown: false */
-    ee.FeatureCollection(
+    tanah = /* color: #c76029 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44472689829931, -7.267834762463424]),
             {
@@ -8039,12 +8039,12 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max
 var VV = combinedImage.select('VV'); 
 var VH = combinedImage.select('VH'); 
 var VV_viz = VV.expression(
-  'VV*VV', {
+  'VV*8', {
     'VV': VV
   }
 );
 var VH_viz = VH.expression(
-  'VH*VH', {
+  'VH*8', {
     'VH': VH
   }
 );
