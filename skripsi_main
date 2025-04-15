@@ -8122,7 +8122,7 @@ var SWI_visualized = SWI_mask.visualize({
 // Tambahkan layer ke peta
 Map.addLayer(RVI, {min: -2, max: 2}, 'RVI');
 Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
-Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
+Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');
 Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
 Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
