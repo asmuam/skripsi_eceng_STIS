@@ -255,10 +255,7 @@ var roi =
         }),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    eceng = 
-    /* color: #61e57d */
-    /* shown: false */
-    ee.FeatureCollection(
+    eceng = /* color: #61e57d */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44841736564798, -7.271096428200712]),
             {
@@ -1430,7 +1427,7 @@ var roi =
               "system:index": "194"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43685873605385, -7.271881219302338]),
+            ee.Geometry.Point([110.43677558757439, -7.271914477240542]),
             {
               "landcover": 0,
               "system:index": "195"
@@ -8026,9 +8023,9 @@ Map.addLayer(rawa_pening_shp, {}, 'lake');
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage, 
   {
-    bands: ['VV', 'VH', 'VV_VH_ratio'], 
-    min: [0, 0, 2], // Nilai minimum untuk masing-masing band
-    max: [11, 1, 1000], // Nilai maksimum untuk masing-masing band
+    bands: ['VV', 'VH', 'VV'], 
+    min: [-30], // Nilai minimum untuk masing-masing band
+    max: [1], // Nilai maksimum untuk masing-masing band
   }, 
   'combinedImage S1'
 );
