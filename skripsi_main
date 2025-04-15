@@ -8024,7 +8024,7 @@ print('Combined Image',combinedImage)
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(combinedImage.clip(rawa_pening_shp), 
+Map.addLayer(combinedImage, 
   {
     bands: ['VV', 'VH', 'VV_VH_ratio'], 
     min: [0, 0, 2], // Nilai minimum untuk masing-masing band
@@ -8053,8 +8053,8 @@ var VH_viz = VH.expression(
 );
 
 // Menambahkan layer ke peta
-Map.addLayer(VV_viz.clip(rawa_pening_shp), {min: -2, max: 2}, 'VV Visualized');
-Map.addLayer(VH_viz.clip(rawa_pening_shp), {min: -2, max: 2}, 'VH Visualized');
+Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
+Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
 
 print(combinedImage)
 
