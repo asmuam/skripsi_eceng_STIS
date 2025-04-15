@@ -8100,8 +8100,7 @@ var SWI = combinedImage.expression(
 );
 
 var RVI = combinedImage.expression(
-  '(VH / VV) * ((VH / VV) + 3) / ((VH / VV + 1) * (VH / VV + 1))', 
-  {
+  '(4 * VH) / (VV + VH)', {
     'VH': combinedImage.select('VH'),
     'VV': combinedImage.select('VV')
   }
