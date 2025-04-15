@@ -8048,8 +8048,15 @@ var VH_viz = VH.expression(
     'VH': VH
   }
 );
+var VV_x_VH = combinedImage.expression(
+  'VH*VV', {
+    'VH': combinedImage.select('VH'),
+    'VV': combinedImage.select('VV')
+  }
+);
 
 // Menambahkan layer ke peta
+Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
 Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
 
