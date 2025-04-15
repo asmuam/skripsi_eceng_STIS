@@ -8215,3 +8215,34 @@ Export.image.toAsset({
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
 // Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
 
+// Mengecek nilai min dan max untuk VV
+var vvStats = image_sen1.select('VV').reduceRegion({
+  reducer: ee.Reducer.minMax(),
+  geometry: rawa_pening_shp, // Area of interest
+  scale: 30, // Resolusi
+  maxPixels: 1e9
+});
+print('VV Min and Max:', vvStats);
+
+// Mengecek nilai min dan max untuk VH
+var vhStats = image_sen1.select('VH').reduceRegion({
+  reducer: ee.Reducer.minMax(),
+  geometry: rawa_pening_shp,
+  scale: 30,
+  maxPixels: 1e9
+});
+print('VH Min and Max:', vhStats);
+
+// Mengecek nilai min dan max untuk VV_VH_ratio
+var vvVhRatioStats = image_sen1.expression(
+  'VV / VH', {
+    VV: image_sen1.select('VV'),
+    VH: image_sen1.select('VH')
+  }
+).reduceRegion({
+  reducer: ee.Reducer.minMax(),
+  geometry: rawa_pening_shp,
+  scale: 30,
+  maxPixels: 1e9
+});
+print('VV/VH Ratio Min and Max:', vvVhRatioStats);
