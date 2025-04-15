@@ -8041,13 +8041,9 @@ var calculatedLayer = VV.expression(
   }
 );
 
-var visualizationParams = {
-  min: -0.2,
-  max: 0.2,
-};
 
 // Menambahkan layer ke peta dengan range stretch 98%
-Map.addLayer(calculatedLayer.clip(rawa_pening_shp), visualizationParams, 'Rumus Visualized');
+Map.addLayer(calculatedLayer.clip(rawa_pening_shp), 'Rumus Visualized');
 
 print(combinedImage)
 
