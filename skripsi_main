@@ -7568,7 +7568,54 @@ function lee_filter(img, size) {
     return output.rename(img.bandNames());
 }
 
+function gammaMap(img, ksize) {
+    // Replace null values with 0, seperti lee_filter
+    var valid = img.mask().not();
+    img = img.unmask(0);
     
+    var enl = 5;
+    var bandNames = img.bandNames();
+    
+    // Convert image from dB to natural values (dipertahankan dari gammaMap asli)
+    var nat_img = toNatural(img);
+    
+    // Square kernel, ksize should be odd (typically 3, 5 or 7)
+    var weights = ee.List.repeat(ee.List.repeat(1, ksize), ksize);
+    
+    // ~~(ksize/2) does integer division in JavaScript
+    var kernel = ee.Kernel.fixed(ksize, ksize, weights, ~~(ksize/2), ~~(ksize/2), false);
+    
+    // Get mean and variance
+    var mean = nat_img.reduceNeighborhood(ee.Reducer.mean(), kernel);
+    var variance = nat_img.reduceNeighborhood(ee.Reducer.variance(), kernel);
+    
+    // "Pure speckle" threshold
+    var ci = variance.sqrt().divide(mean);  // square root of inverse of enl
+    
+    // If ci <= cu, the kernel lies in a "pure speckle" area -> return simple mean
+    var cu = 1.0 / Math.sqrt(enl);
+    
+    // If cu < ci < cmax the kernel lies in the low textured speckle area -> return the filtered value
+    var cmax = Math.sqrt(2.0) * cu;
+    
+    var alpha = ee.Image(1.0 + cu * cu).divide(ci.multiply(ci).subtract(cu * cu));
+    var b = alpha.subtract(enl + 1.0);
+    var d = mean.multiply(mean).multiply(b).multiply(b).add(alpha.multiply(mean).multiply(nat_img).multiply(4.0 * enl));
+    var f = b.multiply(mean).add(d.sqrt()).divide(alpha.multiply(2.0));
+    
+    // Komposisi output sebagai satu ee.Image
+    var result = ee.Image(0).select([]) // Citra kosong sebagai dasar
+        .addBands(
+            mean.updateMask(ci.lte(cu)) // Pure speckle
+                .unmask(f.updateMask(ci.gt(cu).and(ci.lt(cmax)))) // Low textured
+                .unmask(nat_img.updateMask(ci.gte(cmax))) // Highly textured
+        )
+        .rename(bandNames);
+    
+    // Kembalikan satu ee.Image dengan band yang telah difilter
+    return result;
+} 
+
 var targetDate = ee.Date('2024-7-15');                                        // Fixed date for image
 var targetDateS1 = ee.Date('2024-07-25');                                     // Tanggal tetap untuk citra s1
 var targetDateS2 = ee.Date('2024-07-26');                                     // Tanggal tetap untuk citra s2
@@ -7596,8 +7643,8 @@ var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
 var image_natural = vv_natural.addBands(vh_natural);
 
 // Apply Refined Lee filter to VV and VH bands separately
-var vv_filtered_7 = lee_filter(image_natural.select('VV'), 3).rename('VV');
-var vh_filtered_7 = lee_filter(image_natural.select('VH'), 3).rename('VH');
+var vv_filtered_7 = gammaMap(image_natural.select('VV'), 5).rename('VV');
+var vh_filtered_7 = gammaMap(image_natural.select('VH'), 5).rename('VH');
 
 // Combine the filtered bands into a single image 
 var image_sen1_filtered_7 = vv_filtered_7.addBands(vh_filtered_7);
