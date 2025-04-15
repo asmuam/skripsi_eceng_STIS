@@ -8029,8 +8029,8 @@ Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), 
   {
     bands: ['VV', 'VH', 'VV_VH_ratio'], 
-    min: [-30, -30, 0], // Nilai minimum untuk masing-masing band
-    max: [1, 1, 30], // Nilai maksimum untuk masing-masing band
+    min: [0, 0, 2], // Nilai minimum untuk masing-masing band
+    max: [11, 1, 1000], // Nilai maksimum untuk masing-masing band
   }, 
   'combinedImage S1 clip dengan rentang per band'
 );
