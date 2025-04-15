@@ -8100,11 +8100,13 @@ var SWI = combinedImage.expression(
 );
 
 var RVI = combinedImage.expression(
-  '(4 * VH) / (VV + VH)', {
+  '(VH / VV) * ((VH / VV) + 3) / pow((VH / VV) + 1, 2)', 
+  {
     'VH': combinedImage.select('VH'),
     'VV': combinedImage.select('VV')
   }
 );
+
 // Menambahkan layer ke peta
 // Buat Mask untuk nilai > 0.2
 var SWI_mask = SWI.expression('(SWI > 0.2) ? 1 : 0', {
