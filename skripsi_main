@@ -8043,7 +8043,7 @@ var calculatedLayer = VV.expression(
 
 
 // Menambahkan layer ke peta
-Map.addLayer(calculatedLayer.clip(rawa_pening_shp), {bands: ['VV'], min: -2, max: 2}, 'Rumus Visualized');
+Map.addLayer(calculatedLayer.clip(rawa_pening_shp), {min: -2, max: 2}, 'Rumus Visualized');
 
 print(combinedImage)
 
