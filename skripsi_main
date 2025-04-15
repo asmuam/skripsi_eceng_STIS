@@ -8026,7 +8026,14 @@ print('Combined Image',combinedImage)
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['VV', 'VH', 'VV'], min: -30, max: 0}, 'combinedImage S1 clip')
+Map.addLayer(combinedImage.clip(rawa_pening_shp), 
+  {
+    bands: ['VV', 'VH', 'VV_VH_ratio'], 
+    min: [-30, -30, 0], // Nilai minimum untuk masing-masing band
+    max: [1, 1, 1], // Nilai maksimum untuk masing-masing band
+  }, 
+  'combinedImage S1 clip dengan rentang per band'
+);
 // Map.addLayer(image_sen1_filtered_3.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 3 S1 clip')
 // Map.addLayer(image_sen1_filtered_5.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 5 S1 clip')
 // Map.addLayer(image_sen1_filtered_7.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 7 S1 clip')
