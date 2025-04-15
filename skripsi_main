@@ -8036,15 +8036,14 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max
 
 var VV = combinedImage.select('VV'); 
 var calculatedLayer = VV.expression(
-  'Math.log(0.05 / (0.018 + VV * 1.5))', {
+  'log(0.05 / (0.018 + VV * 1.5))', {
     'VV': VV
   }
 );
 
 var visualizationParams = {
-  min: calculatedLayer.reduceRegion(ee.Reducer.percentile([1]), rawa_pening_shp, 500).values().get(0),
-  max: calculatedLayer.reduceRegion(ee.Reducer.percentile([98]), rawa_pening_shp, 500).values().get(0),
-  palette: ['blue', 'green', 'yellow', 'red']
+  min: -0.2,
+  max: 0.2,
 };
 
 // Menambahkan layer ke peta dengan range stretch 98%
