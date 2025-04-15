@@ -7660,8 +7660,6 @@ print(image_sen2)
 print(image_sen1)
 // print(image_sen1_filtered)
 
-// image_sen1 = image_sen1_filtered
-
 // VIs
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
