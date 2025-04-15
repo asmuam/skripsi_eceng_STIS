@@ -8035,15 +8035,21 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'Tr
 Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 
 var VV = combinedImage.select('VV'); 
-var calculatedLayer = VV.expression(
+var VH = combinedImage.select('VH'); 
+var VV_viz = VV.expression(
   'log(25 / (100 + VV * 2))', {
     'VV': VV
   }
 );
-
+var VH_viz = VH.expression(
+  'log(25 / (100 + VH * 2))', {
+    'VH': VH
+  }
+);
 
 // Menambahkan layer ke peta
-Map.addLayer(calculatedLayer.clip(rawa_pening_shp), {min: -2, max: 2}, 'Rumus Visualized');
+Map.addLayer(VV_viz.clip(rawa_pening_shp), {min: -2, max: 2}, 'VV Visualized');
+Map.addLayer(VH_viz.clip(rawa_pening_shp), {min: -2, max: 2}, 'VH Visualized');
 
 print(combinedImage)
 
