@@ -8036,7 +8036,7 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max
 
 var VV = combinedImage.select('VV'); 
 var calculatedLayer = VV.expression(
-  'log(50 / (75 + VV * 1.5))', {
+  'log(25 / (75 + VV * 1.5))', {
     'VV': VV
   }
 );
