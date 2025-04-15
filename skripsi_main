@@ -255,7 +255,10 @@ var roi =
         }),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    eceng = /* color: #61e57d */ee.FeatureCollection(
+    eceng = 
+    /* color: #61e57d */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44841736564798, -7.271096428200712]),
             {
@@ -2660,10 +2663,7 @@ var roi =
               "landcover": 2,
               "system:index": "199"
             })]),
-    kja = 
-    /* color: #fffd02 */
-    /* shown: false */
-    ee.FeatureCollection(
+    kja = /* color: #fffd02 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43916225249428, -7.271351431082463]),
             {
@@ -7651,7 +7651,7 @@ var vv_filtered_db_7 = toDB(image_sen1_filtered_7.select('VV')).rename('VV');
 var vh_filtered_db_7 = toDB(image_sen1_filtered_7.select('VH')).rename('VH');
 image_sen1_filtered_7 = vv_filtered_db_7.addBands(vh_filtered_db_7);
 
-image_sen1 = image_sen1_filtered_7
+// image_sen1 = image_sen1_filtered_7
 
 print(image_sen2)
 print(image_sen1)
