@@ -4,10 +4,7 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rf = ee.Image("projects/ee-222111840/assets/rf"),
     cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
     sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    cnnjatiluhur = ee.Image("projects/ee-222111840/assets/cnn1_jatiluhur"),
-    cnnv200 = ee.Image("projects/ee-222111840/assets/cnn1_v200"),
-    cnnv200_keras = ee.Image("projects/ee-222111840/assets/rawa_pening_image_prediction_cnn1d_c9c23bd96b2741b97626b7af89a58440"),
-    cnnjatiluhur_keras = ee.Image("projects/ee-222111840/assets/waduk_jatiluhur_image_prediction_cnn1d_8b974d099ba38b0664aec0974c6e3eb4");
+    cnnv200 = ee.Image("projects/ee-222111840/assets/cnn1_v200");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function panelcreate() {
     // Create an intro panel with labels.
@@ -375,6 +372,17 @@ var dataInfo = {
             opacity: 0.7
         }
     },
+        'rf_v200': {
+        name: 'Klasifikasi Random Forest v200',
+        desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
+        img: rf_v200,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette,
+            opacity: 0.7
+        }
+    },
     'cnn1d': {
         name: 'Klasifikasi CNN1D',
         desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
@@ -397,17 +405,17 @@ var dataInfo = {
             opacity: 0.7
         }
     },
-            'cnnv200_keras': {
-        name: 'Klasifikasi CNN1D V200 keras',
-        desc: 'Hasil klasifikasi menggunakan CNN versi 200',
-        img: cnnv200,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    },
+    // 'cnnv200_keras': {
+    //     name: 'Klasifikasi CNN1D V200 keras',
+    //     desc: 'Hasil klasifikasi menggunakan CNN versi 200',
+    //     img: cnnv200,
+    //     vis: {
+    //         min: 0,
+    //         max: 5,
+    //         palette: thePalette,
+    //         opacity: 0.7
+    //     }
+    // },
     // 'cnnjatiluhur': {
     //     name: 'Klasifikasi CNN Jatiluhur',
     //     desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
