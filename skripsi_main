@@ -8070,7 +8070,15 @@ var VV_VH_sum = combinedImage.expression(
     'VV': combinedImage.select('VV')
   }
 );
+
+var SWI = combinedImage.expression(
+  '0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
+    'VH': combinedImage.select('VH'),
+    'VV': combinedImage.select('VV')
+  }
+);
 // Menambahkan layer ke peta
+Map.addLayer(SWI, {min: -2, max: 2}, 'SWI Visualized');
 Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
 Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
