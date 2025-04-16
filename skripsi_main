@@ -7654,7 +7654,7 @@ var vv_filtered_db_7 = toDB(image_sen1_filtered_7.select('VV')).rename('VV');
 var vh_filtered_db_7 = toDB(image_sen1_filtered_7.select('VH')).rename('VH');
 image_sen1_filtered_7 = vv_filtered_db_7.addBands(vh_filtered_db_7);
 
-image_sen1 = image_sen1_filtered_7
+// image_sen1 = image_sen1_filtered_7
 
 print(image_sen2)
 print(image_sen1)
