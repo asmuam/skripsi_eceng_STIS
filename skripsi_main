@@ -8126,7 +8126,7 @@ Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');
 Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
 Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
-Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VV ONLY'); 
+Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY'); 
 Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY'); 
 Map.addLayer(vv_filtered_db_7, {min: -1, max: 0}, 'vv_filtered_db_7');
 Map.addLayer(vH_filtered_db_7, {min: -1, max: 0}, 'vH_filtered_db_7');
