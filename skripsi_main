@@ -7643,8 +7643,8 @@ var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
 var image_natural = vv_natural.addBands(vh_natural);
 
 // Apply filter to VV and VH bands separately
-var vv_filtered_7 = gammaMap(image_natural.select('VV'), 5).rename('VV');
-var vh_filtered_7 = gammaMap(image_natural.select('VH'), 5).rename('VH');
+var vv_filtered_7 = lee_filter(image_natural.select('VV'), 3).rename('VV');
+var vh_filtered_7 = lee_filter(image_natural.select('VH'), 3).rename('VH');
 
 // Combine the filtered bands into a single image 
 var image_sen1_filtered_7 = vv_filtered_7.addBands(vh_filtered_7);
@@ -7654,7 +7654,7 @@ var vv_filtered_db_7 = toDB(image_sen1_filtered_7.select('VV')).rename('VV');
 var vh_filtered_db_7 = toDB(image_sen1_filtered_7.select('VH')).rename('VH');
 image_sen1_filtered_7 = vv_filtered_db_7.addBands(vh_filtered_db_7);
 
-// image_sen1 = image_sen1_filtered_7
+image_sen1 = image_sen1_filtered_7
 
 print(image_sen2)
 print(image_sen1)
