@@ -8134,18 +8134,18 @@ Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY');
 
 print(combinedImage)
 
-// Export.table.toDrive({
-//   collection: sampled, 
-//   description: 'csv_sample_drive', 
-//   folder: 'GEE_Exports', 
-//   fileFormat: 'csv',
-//   fileNamePrefix: 'data_sample',
-// })   // Export sample to drive
-// Export.table.toAsset({
-//   collection: sampled, 
-//   description: 'sampel_asset', 
-//   assetId: 'projects/ee-222111840/assets/sampel',
-// })   // Export sample to asset
+Export.table.toDrive({
+  collection: sampled, 
+  description: 'csv_sample_drive', 
+  folder: 'GEE_Exports', 
+  fileFormat: 'csv',
+  fileNamePrefix: 'data_sample',
+})   // Export sample to drive
+Export.table.toAsset({
+  collection: sampled, 
+  description: 'sampel_asset', 
+  assetId: 'projects/ee-222111840/assets/sampel',
+})   // Export sample to asset
 
 // Export.table.toDrive({
 //   collection: rawa_pening_shp,
@@ -8155,19 +8155,19 @@ print(combinedImage)
 //   fileNamePrefix: 'rawa_pening'
 // })   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
 
-// // Ekspor rawa_pening_image (semua band)
-// Export.image.toDrive({
-//   image: combinedImage.clip(rawa_pening_shp),
-//   description: 'rawa_pening_image_drive',
-//   fileNamePrefix: 'rawa_pening_image',
-//   folder: 'GEE_Exports',
-//   region: rawa_pening_shp,
-//   scale: 10,
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// });
+// Ekspor rawa_pening_image (semua band)
+Export.image.toDrive({
+  image: combinedImage.clip(rawa_pening_shp),
+  description: 'rawa_pening_image_drive',
+  fileNamePrefix: 'rawa_pening_image',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
 // Export.image.toAsset({
 //   image: combinedImage.clip(rawa_pening_shp),
 //   description: 'rawa_pening_image_asset',
