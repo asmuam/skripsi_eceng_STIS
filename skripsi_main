@@ -8133,189 +8133,189 @@ Map.addLayer(vH_filtered_db_7, {min: -1, max: 0}, 'vH_filtered_db_7');
 
 print(combinedImage)
 
-Export.table.toDrive({
-  collection: sampled, 
-  description: 'csv_sample_drive', 
-  folder: 'GEE_Exports', 
-  fileFormat: 'csv',
-  fileNamePrefix: 'data_sample',
-})   // Export sample to drive
-Export.table.toAsset({
-  collection: sampled, 
-  description: 'sampel_asset', 
-  assetId: 'projects/ee-222111840/assets/sampel',
-})   // Export sample to asset
+// Export.table.toDrive({
+//   collection: sampled, 
+//   description: 'csv_sample_drive', 
+//   folder: 'GEE_Exports', 
+//   fileFormat: 'csv',
+//   fileNamePrefix: 'data_sample',
+// })   // Export sample to drive
+// Export.table.toAsset({
+//   collection: sampled, 
+//   description: 'sampel_asset', 
+//   assetId: 'projects/ee-222111840/assets/sampel',
+// })   // Export sample to asset
 
-Export.table.toDrive({
-  collection: rawa_pening_shp,
-  description: 'export_shapefile',
-  fileFormat: 'SHP',
-  folder: 'GEE_Exports',
-  fileNamePrefix: 'rawa_pening'
-})   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
+// Export.table.toDrive({
+//   collection: rawa_pening_shp,
+//   description: 'export_shapefile',
+//   fileFormat: 'SHP',
+//   folder: 'GEE_Exports',
+//   fileNamePrefix: 'rawa_pening'
+// })   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
 
-// Ekspor rawa_pening_image (semua band)
-Export.image.toDrive({
-  image: combinedImage.clip(rawa_pening_shp),
-  description: 'rawa_pening_image_drive',
-  fileNamePrefix: 'rawa_pening_image',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-Export.image.toAsset({
-  image: combinedImage.clip(rawa_pening_shp),
-  description: 'rawa_pening_image_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image',
-  region: rawa_pening_shp,
-  scale: 10
-});
+// // Ekspor rawa_pening_image (semua band)
+// Export.image.toDrive({
+//   image: combinedImage.clip(rawa_pening_shp),
+//   description: 'rawa_pening_image_drive',
+//   fileNamePrefix: 'rawa_pening_image',
+//   folder: 'GEE_Exports',
+//   region: rawa_pening_shp,
+//   scale: 10,
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// });
+// Export.image.toAsset({
+//   image: combinedImage.clip(rawa_pening_shp),
+//   description: 'rawa_pening_image_asset',
+//   assetId: 'projects/ee-222111840/assets/rawa_pening_image',
+//   region: rawa_pening_shp,
+//   scale: 10
+// });
 
-//Ekspor rawa_pening_image_raw (semua band dasar)
-var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
-Export.image.toDrive({
-  image: senRawImage,
-  description: 'rawa_pening_image_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_raw',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-Export.image.toAsset({
-  image: senRawImage,
-  description: 'rawa_pening_image_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
-  region: rawa_pening_shp,
-  scale: 10
-});
+// //Ekspor rawa_pening_image_raw (semua band dasar)
+// var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
+// Export.image.toDrive({
+//   image: senRawImage,
+//   description: 'rawa_pening_image_raw_drive',
+//   fileNamePrefix: 'rawa_pening_image_raw',
+//   folder: 'GEE_Exports',
+//   region: rawa_pening_shp,
+//   scale: 10,
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// });
+// Export.image.toAsset({
+//   image: senRawImage,
+//   description: 'rawa_pening_image_raw_asset',
+//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
+//   region: rawa_pening_shp,
+//   scale: 10
+// });
 
-// Ekspor rawa_pening_image_sentinel1 (hanya band Sentinel-1)
-var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
-Export.image.toDrive({
-  image: sen1Image,
-  description: 'rawa_pening_image_sentinel1_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel1',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-Export.image.toAsset({
-  image: sen1Image,
-  description: 'rawa_pening_image_sentinel1_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
-  region: rawa_pening_shp,
-  scale: 10
-});
+// // Ekspor rawa_pening_image_sentinel1 (hanya band Sentinel-1)
+// var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
+// Export.image.toDrive({
+//   image: sen1Image,
+//   description: 'rawa_pening_image_sentinel1_drive',
+//   fileNamePrefix: 'rawa_pening_image_sentinel1',
+//   folder: 'GEE_Exports',
+//   region: rawa_pening_shp,
+//   scale: 10,
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// });
+// Export.image.toAsset({
+//   image: sen1Image,
+//   description: 'rawa_pening_image_sentinel1_asset',
+//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
+//   region: rawa_pening_shp,
+//   scale: 10
+// });
 
-// Ekspor rawa_pening_image_sentinel2 (hanya band Sentinel-2)
-var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
-Export.image.toDrive({
-  image: sen2Image,
-  description: 'rawa_pening_image_sentinel2_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel2',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-Export.image.toAsset({
-  image: sen2Image,
-  description: 'rawa_pening_image_sentinel2_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
-  region: rawa_pening_shp,
-  scale: 10
-});
+// // Ekspor rawa_pening_image_sentinel2 (hanya band Sentinel-2)
+// var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
+// Export.image.toDrive({
+//   image: sen2Image,
+//   description: 'rawa_pening_image_sentinel2_drive',
+//   fileNamePrefix: 'rawa_pening_image_sentinel2',
+//   folder: 'GEE_Exports',
+//   region: rawa_pening_shp,
+//   scale: 10,
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// });
+// Export.image.toAsset({
+//   image: sen2Image,
+//   description: 'rawa_pening_image_sentinel2_asset',
+//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
+//   region: rawa_pening_shp,
+//   scale: 10
+// });
 
-// Ekspor rawa_pening_image_sentinel1_raw (native bands Sentinel-1)
-var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-1
-Export.image.toDrive({
-  image: sen1RawImage,
-  description: 'rawa_pening_image_sentinel1_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel1_raw',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-Export.image.toAsset({
-  image: sen1RawImage,
-  description: 'rawa_pening_image_sentinel1_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw',
-  region: rawa_pening_shp,
-  scale: 10
-});
+// // Ekspor rawa_pening_image_sentinel1_raw (native bands Sentinel-1)
+// var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-1
+// Export.image.toDrive({
+//   image: sen1RawImage,
+//   description: 'rawa_pening_image_sentinel1_raw_drive',
+//   fileNamePrefix: 'rawa_pening_image_sentinel1_raw',
+//   folder: 'GEE_Exports',
+//   region: rawa_pening_shp,
+//   scale: 10,
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// });
+// Export.image.toAsset({
+//   image: sen1RawImage,
+//   description: 'rawa_pening_image_sentinel1_raw_asset',
+//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw',
+//   region: rawa_pening_shp,
+//   scale: 10
+// });
 
-// Ekspor rawa_pening_image_sentinel2_raw (native bands Sentinel-2)
-var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).clip(rawa_pening_shp); // Native bands Sentinel-2
-Export.image.toDrive({
-  image: sen2RawImage,
-  description: 'rawa_pening_image_sentinel2_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel2_raw',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-Export.image.toAsset({
-  image: sen2RawImage,
-  description: 'rawa_pening_image_sentinel2_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw',
-  region: rawa_pening_shp,
-  scale: 10
-});
+// // Ekspor rawa_pening_image_sentinel2_raw (native bands Sentinel-2)
+// var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).clip(rawa_pening_shp); // Native bands Sentinel-2
+// Export.image.toDrive({
+//   image: sen2RawImage,
+//   description: 'rawa_pening_image_sentinel2_raw_drive',
+//   fileNamePrefix: 'rawa_pening_image_sentinel2_raw',
+//   folder: 'GEE_Exports',
+//   region: rawa_pening_shp,
+//   scale: 10,
+//   fileFormat: 'GeoTIFF',
+//   formatOptions: {
+//     cloudOptimized: true
+//   }
+// });
+// Export.image.toAsset({
+//   image: sen2RawImage,
+//   description: 'rawa_pening_image_sentinel2_raw_asset',
+//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw',
+//   region: rawa_pening_shp,
+//   scale: 10
+// });
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
 // Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
 
-// Mengecek nilai min dan max untuk VV
-var vvStats = image_sen1.select('VV').reduceRegion({
-  reducer: ee.Reducer.minMax(),
-  geometry: rawa_pening_shp, // Area of interest
-  scale: 30, // Resolusi
-  maxPixels: 1e9
-});
-print('VV Min and Max:', vvStats);
+// // Mengecek nilai min dan max untuk VV
+// var vvStats = image_sen1.select('VV').reduceRegion({
+//   reducer: ee.Reducer.minMax(),
+//   geometry: rawa_pening_shp, // Area of interest
+//   scale: 30, // Resolusi
+//   maxPixels: 1e9
+// });
+// print('VV Min and Max:', vvStats);
 
-// Mengecek nilai min dan max untuk VH
-var vhStats = image_sen1.select('VH').reduceRegion({
-  reducer: ee.Reducer.minMax(),
-  geometry: rawa_pening_shp,
-  scale: 30,
-  maxPixels: 1e9
-});
-print('VH Min and Max:', vhStats);
+// // Mengecek nilai min dan max untuk VH
+// var vhStats = image_sen1.select('VH').reduceRegion({
+//   reducer: ee.Reducer.minMax(),
+//   geometry: rawa_pening_shp,
+//   scale: 30,
+//   maxPixels: 1e9
+// });
+// print('VH Min and Max:', vhStats);
 
-// Mengecek nilai min dan max untuk VV_VH_ratio
-var vvVhRatioStats = image_sen1.expression(
-  'VV / VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH')
-  }
-).reduceRegion({
-  reducer: ee.Reducer.minMax(),
-  geometry: rawa_pening_shp,
-  scale: 30,
-  maxPixels: 1e9
-});
-print('VV/VH Ratio Min and Max:', vvVhRatioStats);
+// // Mengecek nilai min dan max untuk VV_VH_ratio
+// var vvVhRatioStats = image_sen1.expression(
+//   'VV / VH', {
+//     VV: image_sen1.select('VV'),
+//     VH: image_sen1.select('VH')
+//   }
+// ).reduceRegion({
+//   reducer: ee.Reducer.minMax(),
+//   geometry: rawa_pening_shp,
+//   scale: 30,
+//   maxPixels: 1e9
+// });
+// print('VV/VH Ratio Min and Max:', vvVhRatioStats);
