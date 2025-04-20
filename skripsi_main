@@ -1459,10 +1459,7 @@ var roi =
               "landcover": 0,
               "system:index": "199"
             })]),
-    air = 
-    /* color: #3eceff */
-    /* shown: false */
-    ee.FeatureCollection(
+    air = /* color: #3eceff */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43180357414641, -7.270210837470081]),
             {
@@ -2088,25 +2085,25 @@ var roi =
               "system:index": "103"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44850158819663, -7.2892562720275516]),
+            ee.Geometry.Point([110.44540095457542, -7.2906397465705055]),
             {
               "landcover": 2,
               "system:index": "104"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44905948767173, -7.289772414952943]),
+            ee.Geometry.Point([110.44630754122245, -7.289277556283666]),
             {
               "landcover": 2,
               "system:index": "105"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4485123170327, -7.289708562252141]),
+            ee.Geometry.Point([110.44861424097526, -7.2896766358983305]),
             {
               "landcover": 2,
               "system:index": "106"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44878053793418, -7.2897617728367745]),
+            ee.Geometry.Point([110.44889319071281, -7.289767093894897]),
             {
               "landcover": 2,
               "system:index": "107"
@@ -2304,7 +2301,7 @@ var roi =
               "system:index": "139"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44749241575462, -7.279882962571984]),
+            ee.Geometry.Point([110.44736366972191, -7.279880301984254]),
             {
               "landcover": 2,
               "system:index": "140"
@@ -2490,13 +2487,13 @@ var roi =
               "system:index": "170"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43335123899442, -7.308406672258321]),
+            ee.Geometry.Point([110.43344243410093, -7.308491805632023]),
             {
               "landcover": 2,
               "system:index": "171"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4327718818472, -7.3089972847041915]),
+            ee.Geometry.Point([110.43309911134702, -7.308842980627022]),
             {
               "landcover": 2,
               "system:index": "172"
@@ -2508,13 +2505,13 @@ var roi =
               "system:index": "173"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43210669401151, -7.30787458830517]),
+            ee.Geometry.Point([110.43331368806821, -7.3074435998386]),
             {
               "landcover": 2,
               "system:index": "174"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42708313486447, -7.306569759602345]),
+            ee.Geometry.Point([110.42691013238301, -7.306185327429257]),
             {
               "landcover": 2,
               "system:index": "175"
@@ -2532,7 +2529,7 @@ var roi =
               "system:index": "177"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42893922350278, -7.307341283380843]),
+            ee.Geometry.Point([110.42867904922834, -7.307277433187667]),
             {
               "landcover": 2,
               "system:index": "178"
@@ -2562,25 +2559,25 @@ var roi =
               "system:index": "182"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4271957876431, -7.307735026037143]),
+            ee.Geometry.Point([110.42699193975797, -7.3071976204333735]),
             {
               "landcover": 2,
               "system:index": "183"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42813456079831, -7.308489857234238]),
+            ee.Geometry.Point([110.4280433656918, -7.308292986282086]),
             {
               "landcover": 2,
               "system:index": "184"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42667007467618, -7.30820785287051]),
+            ee.Geometry.Point([110.42580103895536, -7.307031945963506]),
             {
               "landcover": 2,
               "system:index": "185"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42646622679105, -7.307899244117511]),
+            ee.Geometry.Point([110.42636966726651, -7.307846035690287]),
             {
               "landcover": 2,
               "system:index": "186"
@@ -2646,7 +2643,7 @@ var roi =
               "system:index": "196"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42894430260908, -7.308142044671575]),
+            ee.Geometry.Point([110.42926080327284, -7.3077350002632775]),
             {
               "landcover": 2,
               "system:index": "197"
@@ -7841,29 +7838,29 @@ var vv_vh_mean = image_sen1
   .rename('VV_VH_mean')
   .copyProperties(image_sen1, image_sen1.propertyNames());
 
-var vv_vh_sum = image_sen1
-  .expression('(VV + VH)', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('VV_VH_sum')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
+// var vv_vh_sum = image_sen1
+//   .expression('(VV + VH)', {
+//     VV: image_sen1.select('VV'),
+//     VH: image_sen1.select('VH'),
+//   })
+//   .rename('VV_VH_sum')
+//   .copyProperties(image_sen1, image_sen1.propertyNames());
 
-var swi = image_sen1
-  .expression('0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('SWI')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
+// var swi = image_sen1
+//   .expression('0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
+//     VV: image_sen1.select('VV'),
+//     VH: image_sen1.select('VH'),
+//   })
+//   .rename('SWI')
+//   .copyProperties(image_sen1, image_sen1.propertyNames());
 
-var rvi = image_sen1
-  .expression('(4 * VH) / (VV + VH)', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('RVI')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
+// var rvi = image_sen1
+//   .expression('(4 * VH) / (VV + VH)', {
+//     VV: image_sen1.select('VV'),
+//     VH: image_sen1.select('VH'),
+//   })
+//   .rename('RVI')
+//   .copyProperties(image_sen1, image_sen1.propertyNames());
   
 image_sen2 = image_sen2.addBands([
   ndvi,
@@ -7921,11 +7918,12 @@ image_sen1 = image_sen1.addBands([
   vv_vh_ratio,
   vv_vh_mean,
   vv_vh_diff,
-  vv_vh_sum,
-  swi,
-  rvi,
+  // vv_vh_sum,
+  // swi,
+  // rvi,
 ])
-image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']).toFloat()
+// image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']).toFloat()
+image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']).toFloat()
 
 var sen2_bands = [
   'B1',
@@ -7958,7 +7956,8 @@ var sen2_bands = [
   'NDII',
   'NDBSI',
 ]
-var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']
+// var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']
+var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']
 var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
 
 var seed = 222111840;   // Set the seed
@@ -8107,23 +8106,23 @@ var RVI = combinedImage.expression(
   }
 );
 
-// Menambahkan layer ke peta
-// Buat Mask untuk nilai > 0.2
-var SWI_mask = SWI.expression('(SWI > 0.2) ? 1 : 0', {
-  'SWI': SWI
-});
+// // Menambahkan layer ke peta
+// // Buat Mask untuk nilai > 0.2
+// var SWI_mask = SWI.expression('(SWI > 0.2) ? 1 : 0', {
+//   'SWI': SWI
+// });
 
-// Visualisasi layer berdasarkan mask
-var SWI_visualized = SWI_mask.visualize({
-  palette: ['red', 'blue'], // Merah untuk 0, Biru untuk 1
-  min: 0,
-  max: 1
-});
+// // Visualisasi layer berdasarkan mask
+// var SWI_visualized = SWI_mask.visualize({
+//   palette: ['red', 'blue'], // Merah untuk 0, Biru untuk 1
+//   min: 0,
+//   max: 1
+// });
 
 // Tambahkan layer ke peta
-Map.addLayer(RVI, {min: -2, max: 2}, 'RVI');
+// Map.addLayer(RVI, {min: -2, max: 2}, 'RVI');
 Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
-Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');
+// Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');
 Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
 Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
 Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
