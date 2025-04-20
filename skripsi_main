@@ -8170,123 +8170,123 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
-// Export.image.toAsset({
-//   image: combinedImage.clip(rawa_pening_shp),
-//   description: 'rawa_pening_image_asset',
-//   assetId: 'projects/ee-222111840/assets/rawa_pening_image',
-//   region: rawa_pening_shp,
-//   scale: 10
-// });
+Export.image.toAsset({
+  image: combinedImage.clip(rawa_pening_shp),
+  description: 'rawa_pening_image_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image',
+  region: rawa_pening_shp,
+  scale: 10
+});
 
-// //Ekspor rawa_pening_image_raw (semua band dasar)
-// var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
-// Export.image.toDrive({
-//   image: senRawImage,
-//   description: 'rawa_pening_image_raw_drive',
-//   fileNamePrefix: 'rawa_pening_image_raw',
-//   folder: 'GEE_Exports',
-//   region: rawa_pening_shp,
-//   scale: 10,
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// });
-// Export.image.toAsset({
-//   image: senRawImage,
-//   description: 'rawa_pening_image_raw_asset',
-//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
-//   region: rawa_pening_shp,
-//   scale: 10
-// });
+//Ekspor rawa_pening_image_raw (semua band dasar)
+var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
+Export.image.toDrive({
+  image: senRawImage,
+  description: 'rawa_pening_image_raw_drive',
+  fileNamePrefix: 'rawa_pening_image_raw',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: senRawImage,
+  description: 'rawa_pening_image_raw_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
+  region: rawa_pening_shp,
+  scale: 10
+});
 
-// // Ekspor rawa_pening_image_sentinel1 (hanya band Sentinel-1)
-// var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
-// Export.image.toDrive({
-//   image: sen1Image,
-//   description: 'rawa_pening_image_sentinel1_drive',
-//   fileNamePrefix: 'rawa_pening_image_sentinel1',
-//   folder: 'GEE_Exports',
-//   region: rawa_pening_shp,
-//   scale: 10,
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// });
-// Export.image.toAsset({
-//   image: sen1Image,
-//   description: 'rawa_pening_image_sentinel1_asset',
-//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
-//   region: rawa_pening_shp,
-//   scale: 10
-// });
+// Ekspor rawa_pening_image_sentinel1 (hanya band Sentinel-1)
+var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
+Export.image.toDrive({
+  image: sen1Image,
+  description: 'rawa_pening_image_sentinel1_drive',
+  fileNamePrefix: 'rawa_pening_image_sentinel1',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: sen1Image,
+  description: 'rawa_pening_image_sentinel1_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
+  region: rawa_pening_shp,
+  scale: 10
+});
 
-// // Ekspor rawa_pening_image_sentinel2 (hanya band Sentinel-2)
-// var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
-// Export.image.toDrive({
-//   image: sen2Image,
-//   description: 'rawa_pening_image_sentinel2_drive',
-//   fileNamePrefix: 'rawa_pening_image_sentinel2',
-//   folder: 'GEE_Exports',
-//   region: rawa_pening_shp,
-//   scale: 10,
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// });
-// Export.image.toAsset({
-//   image: sen2Image,
-//   description: 'rawa_pening_image_sentinel2_asset',
-//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
-//   region: rawa_pening_shp,
-//   scale: 10
-// });
+// Ekspor rawa_pening_image_sentinel2 (hanya band Sentinel-2)
+var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
+Export.image.toDrive({
+  image: sen2Image,
+  description: 'rawa_pening_image_sentinel2_drive',
+  fileNamePrefix: 'rawa_pening_image_sentinel2',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: sen2Image,
+  description: 'rawa_pening_image_sentinel2_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
+  region: rawa_pening_shp,
+  scale: 10
+});
 
-// // Ekspor rawa_pening_image_sentinel1_raw (native bands Sentinel-1)
-// var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-1
-// Export.image.toDrive({
-//   image: sen1RawImage,
-//   description: 'rawa_pening_image_sentinel1_raw_drive',
-//   fileNamePrefix: 'rawa_pening_image_sentinel1_raw',
-//   folder: 'GEE_Exports',
-//   region: rawa_pening_shp,
-//   scale: 10,
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// });
-// Export.image.toAsset({
-//   image: sen1RawImage,
-//   description: 'rawa_pening_image_sentinel1_raw_asset',
-//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw',
-//   region: rawa_pening_shp,
-//   scale: 10
-// });
+// Ekspor rawa_pening_image_sentinel1_raw (native bands Sentinel-1)
+var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-1
+Export.image.toDrive({
+  image: sen1RawImage,
+  description: 'rawa_pening_image_sentinel1_raw_drive',
+  fileNamePrefix: 'rawa_pening_image_sentinel1_raw',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: sen1RawImage,
+  description: 'rawa_pening_image_sentinel1_raw_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw',
+  region: rawa_pening_shp,
+  scale: 10
+});
 
-// // Ekspor rawa_pening_image_sentinel2_raw (native bands Sentinel-2)
-// var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).clip(rawa_pening_shp); // Native bands Sentinel-2
-// Export.image.toDrive({
-//   image: sen2RawImage,
-//   description: 'rawa_pening_image_sentinel2_raw_drive',
-//   fileNamePrefix: 'rawa_pening_image_sentinel2_raw',
-//   folder: 'GEE_Exports',
-//   region: rawa_pening_shp,
-//   scale: 10,
-//   fileFormat: 'GeoTIFF',
-//   formatOptions: {
-//     cloudOptimized: true
-//   }
-// });
-// Export.image.toAsset({
-//   image: sen2RawImage,
-//   description: 'rawa_pening_image_sentinel2_raw_asset',
-//   assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw',
-//   region: rawa_pening_shp,
-//   scale: 10
-// });
+// Ekspor rawa_pening_image_sentinel2_raw (native bands Sentinel-2)
+var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).clip(rawa_pening_shp); // Native bands Sentinel-2
+Export.image.toDrive({
+  image: sen2RawImage,
+  description: 'rawa_pening_image_sentinel2_raw_drive',
+  fileNamePrefix: 'rawa_pening_image_sentinel2_raw',
+  folder: 'GEE_Exports',
+  region: rawa_pening_shp,
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+Export.image.toAsset({
+  image: sen2RawImage,
+  description: 'rawa_pening_image_sentinel2_raw_asset',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw',
+  region: rawa_pening_shp,
+  scale: 10
+});
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
 // Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
