@@ -39,7 +39,6 @@ var waduk_jatiluhur = /* color: #d6c6c6 */ee.FeatureCollection(
               "system:index": "0"
             })]),
     rawa_pening_image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
-    das = ee.FeatureCollection("projects/ee-222111840/assets/das"),
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     cnn1 = ee.Image("projects/ee-222111840/assets/cnn1_v200"),
     rf = ee.Image("projects/ee-222111840/assets/rf_v200");
@@ -58,21 +57,16 @@ Map.addLayer(
  "s1"
 );
 Map.addLayer(
-  rf.clip(roi),
+  rf,
 {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
   "rf"
 );
 Map.addLayer(
-  cnn1.clip(roi),
+  cnn1,
  {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
  "cnn"
 );
 
-Map.addLayer(
-  das,
-  {},
- "das"
-);
 
 Export.table.toAsset({
   collection: waduk_jatiluhur,
