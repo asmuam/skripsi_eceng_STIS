@@ -7487,7 +7487,20 @@ var roi =
          [110.43143918124096, -7.270461352047681],
          [110.44192381767198, -7.2732645175501744],
          [110.44937980001855, -7.269627416561605],
-         [110.44530629237855, -7.267886130514792]]);
+         [110.44530629237855, -7.267886130514792]]),
+    geometry2 = 
+    /* color: #d4d4d4 */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[110.42094211821991, -7.29114557838041],
+          [110.42094211821991, -7.307065851960413],
+          [110.44420223479706, -7.307065851960413],
+          [110.44420223479706, -7.29114557838041]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function getClosestImage(collection, targetDate) {
   return collection
@@ -8133,6 +8146,9 @@ Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY');
 Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY'); 
 // Map.addLayer(vv_filtered_db_7, {min: -1, max: 0}, 'vv_filtered_db_7');
 // Map.addLayer(vH_filtered_db_7, {min: -1, max: 0}, 'vH_filtered_db_7');
+
+Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
+Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
 print(combinedImage)
 
