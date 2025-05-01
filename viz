@@ -67,9 +67,32 @@ Map.addLayer(
  "cnn"
 );
 
+// Fungsi untuk menghitung luas berdasarkan kelas dalam hektar
+function calculateClassArea(image, classValue, region) {
+  var classMasked = image.eq(classValue); // Masking kelas tertentu
+  var areaImage = classMasked.multiply(ee.Image.pixelArea()).divide(10000); // Konversi ke hektar
+  var areaStats = areaImage.reduceRegion({
+    reducer: ee.Reducer.sum(),
+    geometry: roi,
+    scale: 10, // Resolusi
+    maxPixels: 1e9
+  });
+  return areaStats;
+}
 
-Export.table.toAsset({
-  collection: waduk_jatiluhur,
-  description: 'waduk_jatiluhur',
-  assetId: 'users/222111840/waduk_jatiluhur'
-});
+// Daftar nama kelas
+var classes = ['Eceng', 'KJA', 'Air', 'Vegetasi lain', 'Tanah', 'Lahan terbangun'];
+
+// Hitung luas untuk masing-masing kelas dalam model rf
+print('Luas untuk model rf:');
+for (var i = 0; i < classes.length; i++) {
+  var rfArea = calculateClassArea(rf, i, roi);
+  print('Kelas ' + classes[i] + ' (hektar):', rfArea);
+}
+
+// Hitung luas untuk masing-masing kelas dalam model cnn1
+print('Luas untuk model cnn1:');
+for (var i = 0; i < classes.length; i++) {
+  var cnn1Area = calculateClassArea(cnn1, i, roi);
+  print('Kelas ' + classes[i] + ' (hektar):', cnn1Area);
+}
