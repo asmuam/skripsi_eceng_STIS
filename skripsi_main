@@ -8605,9 +8605,17 @@ Export.image.toAsset({
 // print('VV/VH Ratio Min and Max:', vvVhRatioStats);
 
 // Lakukan ekspor ke CSV
+// Ambil nilai pixel berdasarkan poligon
+var sampled_poly = combinedImage.select(combinedBands).sampleRegions({
+  collection: eceng_poly_25_juli, // FeatureCollection poligon
+  properties: ['landcover'], // Pastikan poligon punya atribut LULC
+  scale: 10, // Sesuaikan dengan resolusi citra
+  geometries: true
+});
+
+// Ekspor hasil sampling ke Google Drive dalam format CSV
 Export.table.toDrive({
-  folder: 'GEE_Exports',
-  collection: eceng_poly_25_juli,
-  description: 'Export_Eceng_Poly_25_Juli',
+  collection: sampled_poly,
+  description: 'Export_Sampled_LULC',
   fileFormat: 'CSV'
 });
