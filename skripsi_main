@@ -8607,7 +8607,7 @@ Export.image.toAsset({
 // Lakukan ekspor ke CSV
 // Ambil nilai pixel berdasarkan poligon
 var sampled_poly = combinedImage.select(combinedBands).sampleRegions({
-  collection: eceng_poly_25_juli, // FeatureCollection poligon
+  collection: eceng, // FeatureCollection poligon
   properties: ['landcover'], // Pastikan poligon punya atribut LULC
   scale: 10, // Sesuaikan dengan resolusi citra
   geometries: true
@@ -8618,5 +8618,5 @@ Export.table.toDrive({
   folder: 'GEE_Exports',
   collection: sampled_poly,
   description: 'Export_Sampled_Polygon',
-  fileFormat: 'csv'
+  fileFormat: 'geojson'
 });
