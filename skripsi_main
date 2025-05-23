@@ -8618,5 +8618,5 @@ Export.table.toDrive({
   folder: 'GEE_Exports',
   collection: sampled_poly,
   description: 'Export_Sampled_Polygon',
-  fileFormat: 'geojson'
+  fileFormat: 'csv'
 });
