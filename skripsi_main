@@ -8615,6 +8615,7 @@ var sampled_poly = combinedImage.select(combinedBands).sampleRegions({
 
 // Ekspor hasil sampling ke Google Drive dalam format CSV
 Export.table.toDrive({
+  folder: 'GEE_Exports',
   collection: sampled_poly,
   description: 'Export_Sampled_Polygon',
   fileFormat: 'CSV'
