@@ -8620,3 +8620,4 @@ Export.table.toDrive({
   description: 'Export_Sampled_Polygon',
   fileFormat: 'geojson'
 });
+
