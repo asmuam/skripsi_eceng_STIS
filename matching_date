@@ -234,5 +234,35 @@ var dji0095 =
              [110.44579, -7.27079]]),
         {
           "system:index": "0"
-        });
+        }),
+    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+function maskS2clouds(image) {
+  var qa = image.select("QA60");
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  var mask = qa
+    .bitwiseAnd(cloudBitMask)
+    .eq(0)
+    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  var maskedImage = image.updateMask(mask).divide(10000);
+  return maskedImage.copyProperties(image, image.propertyNames());
+}
+
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
+  .filterBounds(roi)
+  .filterDate('2024-7-01', '2024-7-31')
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .map(maskS2clouds)
+  .sort('system:time_start');
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
+  .filterBounds(roi)
+  .filterDate('2024-7-01', '2024-7-31');
+
+var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
+var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
+
+print("sentinel 1 :")
+print(sentinel1List)
+print("sentinel 2 :")
+print(sentinel2List)
