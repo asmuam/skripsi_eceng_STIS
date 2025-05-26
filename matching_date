@@ -274,7 +274,7 @@ function clear_percentage(image, roi) {
 
   // Hitung jumlah piksel bersih dan total piksel
   var stats = cloudMask.rename('cloud_mask')
-    .addBanding(ee.Image.constant(1).rename('count'))
+    .addBands(ee.Image.constant(1).rename('count'))
     .reduceRegion({
       reducer: ee.Reducer.sum().combine({
         reducer2: ee.Reducer.count(),
