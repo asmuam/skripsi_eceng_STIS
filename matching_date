@@ -420,9 +420,16 @@ var addAllLayers = function(image) {
 
 
 // Tambahkan layer satu per satu
-for (var i = 0; i < sentinel2.size().getInfo(); i++) {
+var listSize = sentinel2List.size();
+
+for (var i = 0; i < listSize.getInfo(); i++) {
   var image = ee.Image(sentinel2List.get(i));
-  addAllLayers(image);
+  var date = ee.Date(image.get('system:time_start')).format('dd/MM/yyyy');
+
+  date.evaluate(function(dateStr) {
+    var layerName = 'Sentinel-2 ' + dateStr;
+    Map.addLayer(image.clip(roi), rgbVis, layerName);
+  });
 }
 
 
