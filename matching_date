@@ -235,7 +235,7 @@ var dji0095 =
         {
           "system:index": "0"
         }),
-    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
+    roi = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // function maskS2clouds(image) {
 //   var qa = image.select("QA60");
@@ -307,16 +307,17 @@ var dji0095 =
 function clear_percentage(image, roi) {
   // Select SCL band untuk deteksi bayangan awan dari citra Sentinel-2
   var scl = image.select("SCL");
-  var cloudShadowValue = 3; // Nilai SCL untuk bayangan awan
+  // var cloudShadowValue = 3; // Nilai SCL untuk bayangan awan
   
   // Select MSK_CLDPRB band untuk deteksi awan
   var cloudProb = image.select("MSK_CLDPRB");
-  var cloudThreshold = 20; // Ambang batas probabilitas awan (0-100)
+  var cloudThreshold = 10; // Ambang batas probabilitas awan (0-100)
   
   // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
   var cloudMask = cloudProb.lt(cloudThreshold);
-  var shadowMask = scl.neq(cloudShadowValue);
-  var mask = cloudMask.and(shadowMask);
+  // var shadowMask = scl.neq(cloudShadowValue);
+  // var mask = cloudMask.and(shadowMask);
+  var mask = cloudMask;
   
   // 1. Hitung total piksel di ROI menggunakan SCL
   var totalPixels = image.select('SCL')
@@ -347,8 +348,8 @@ function clear_percentage(image, roi) {
   var clearPercentage = ee.Number(1).subtract(cloudShadowRatio);
   
   // Menerapkan mask dan normalisasi
-  // var maskedImage = image.updateMask(mask).divide(10000);
-  var maskedImage = image.divide(10000);
+  var maskedImage = image.updateMask(mask).divide(10000);
+  // var maskedImage = image.divide(10000);
   
   // Menambahkan properti untuk debugging
   return maskedImage
@@ -371,8 +372,8 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   .map(function(image) {
     return clear_percentage(image, roi); // Teruskan roi ke fungsi
   })
-  // .filter(ee.Filter.gt('clear_percentage', 80))
-  // .sort('system:time_start');
+  .filter(ee.Filter.gte('clear_percentage', 1))
+  .sort('system:time_start')
   .sort('CLOUDY_PIXEL_PERCENTAGE');
   
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
