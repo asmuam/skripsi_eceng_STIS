@@ -259,18 +259,21 @@ function maskS2clouds(image) {
     .bitwiseAnd(cloudBitMask).eq(0)
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
-  // Hitung persentase piksel clear dalam ROI
-  var clearStats = qa.reduceRegion({
-  reducer: ee.Reducer.mean(),
+var clearStats = mask.reduceRegion({
+  reducer: ee.Reducer.sum(),
   geometry: roi,
-  scale: 60, // Sesuaikan dengan QA60
+  scale: 60,
   bestEffort: true
 });
-
+var totalPixels = ee.Number(mask.reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: roi,
+  scale: 60,
+  bestEffort: true
+}).get('QA60'));
+var clearPercentage = clearStats.getNumber('QA60').divide(totalPixels).multiply(100);
   
   var maskedImage = image.updateMask(mask).divide(10000);
-
-  var clearPercentage = clearStats.getNumber('QA60').multiply(100); // Konversi ke persen
 
   return maskedImage.copyProperties(image, image.propertyNames())
                     .set('Clear_Percentage_ROI', clearPercentage);
