@@ -423,6 +423,11 @@ function formatDate(date) {
 var listLength = sentinel2List.size();
 sentinel2List.evaluate(function(images) {
   images.forEach(function(imageInfo, index) {
+    var rgbVis = {
+  bands: ['B4', 'B3', 'B2'], // RGB (Red, Green, Blue)
+  min: 0,
+  max: 0.3,
+};
     // Ekstrak informasi citra
     var image = ee.Image(imageInfo.id);
     var sysIndex = imageInfo.properties['system:index'];
