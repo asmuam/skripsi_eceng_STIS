@@ -281,5 +281,11 @@ var count = sentinel2List.size().getInfo(); // Ambil jumlah elemen
 for (var i = 0; i < count; i++) {
   var image = ee.Image(sentinel2List.get(i));
   var index = image.get('system:index'); // Dapatkan indeks citra
-  Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index);
+  
+  // Ambil tanggal akuisisi
+  var date = ee.Date(image.get('system:time_start')).format('YYYY-MM-dd').getInfo();
+  
+  // Tambahkan layer dengan nama yang mencantumkan tanggal
+  Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
 }
+
