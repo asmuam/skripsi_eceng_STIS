@@ -303,10 +303,11 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   .filterDate('2024-1-01', '2024-12-31')
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
-  .map(function(image) {
-    return maskS2clouds(image, roi); // Teruskan roi ke fungsi
-  })
-  .filter(ee.Filter.gt('clear_percentage', 80))
+  .map(maskS2clouds)
+  // .map(function(image) {
+  //   return maskS2clouds(image, roi); // Teruskan roi ke fungsi
+  // })
+  // .filter(ee.Filter.gt('clear_percentage', 80))
   // .sort('system:time_start');
   .sort('CLOUDY_PIXEL_PERCENTAGE');
   
@@ -331,6 +332,8 @@ var rgbVis = {
   max: 0.3,
 };
 
+Map.addLayer(image, rgbVis, 'Sentinel-2 RGB');
+
 var count = sentinel2List.size().getInfo(); // Ambil jumlah elemen
 for (var i = 0; i < count; i++) {
   var image = ee.Image(sentinel2List.get(i));
@@ -343,3 +346,4 @@ for (var i = 0; i < count; i++) {
   Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
 }
 
+Map.addLayer(roi, {color: 'red'}, 'ROI');
