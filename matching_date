@@ -411,31 +411,35 @@ Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 //   Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
 // }
 
-// Fungsi format tanggal dd/mm/yyyy
+// Fungsi format tanggal yang kompatibel dengan EE
 function formatDate(date) {
-  var day = String(date.getDate()).padStart(2, '0');
-  var month = String(date.getMonth() + 1).padStart(2, '0');
-  var year = date.getFullYear();
-  return day + '/' + month + '/' + year;
+  var day = ee.Number(date.get('day')).format('%02d');
+  var month = ee.Number(date.get('month')).format('%02d');
+  var year = ee.Number(date.get('year'));
+  return day.cat('/').cat(month).cat('/').cat(year);
 }
 
 // Konversi koleksi citra ke list dan tambahkan ke peta
+var listLength = sentinel2List.size();
 sentinel2List.evaluate(function(images) {
-  images.forEach(function(imageInfo) {
+  images.forEach(function(imageInfo, index) {
     // Ekstrak informasi citra
     var image = ee.Image(imageInfo.id);
     var sysIndex = imageInfo.properties['system:index'];
     var timestamp = imageInfo.properties['system:time_start'];
     
-    // Format tanggal
-    var date = new Date(timestamp);
+    // Format tanggal menggunakan EE
+    var date = ee.Date(timestamp);
     var formattedDate = formatDate(date);
     
-    // Buat nama layer
-    var layerName = 'Sentinel 2 ' + formattedDate;
-    
-    // Tambahkan ke peta dengan visualisasi RGB
-    Map.addLayer(image, rgbVis, layerName);
+    // Konversi ke client-side string
+    formattedDate.evaluate(function(dateStr) {
+      // Buat nama layer
+      var layerName = 'Sentinel 2 ' + dateStr;
+      
+      // Tambahkan ke peta dengan visualisasi RGB
+      Map.addLayer(image, rgbVis, layerName);
+    });
   });
 });
 
