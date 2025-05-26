@@ -262,22 +262,24 @@ function clear_percentage(image, roi) {
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
   // 1. Hitung total piksel di ROI menggunakan QA60
-  var totalPixels = ee.Image(1)
+  var totalPixels = image.select('QA60')
+    .unmask(1) // Memastikan semua piksel dihitung
     .clip(roi)
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 10,
+      scale: 10, // Menggunakan skala 10 meter untuk akurasi
       maxPixels: 1e9
     }).values().get(0);
   
   // 2. Hitung piksel awan (piksel yang tidak lolos mask)
   var cloudPixels = ee.Image(1)
     .updateMask(mask.not())
+    .clip(roi)
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 10,
+      scale: 10, // Konsisten dengan skala 10 meter
       maxPixels: 1e9
     }).values().get(0);
   
@@ -290,12 +292,16 @@ function clear_percentage(image, roi) {
   // Menerapkan mask dan normalisasi setelah perhitungan rasio
   var maskedImage = image.updateMask(mask).divide(10000);
   
-  // Menambahkan properti clear_percentage ke gambar
+  // Menambahkan properti untuk debugging
   return maskedImage
     .copyProperties(image, image.propertyNames())
-    .set('clear_percentage', clearPercentage);
+    .set({
+      'clear_percentage': clearPercentage,
+      'cloud_pixels': cloudPixels,
+      'total_pixels': totalPixels,
+      'cloud_ratio': cloudRatio
+    });
 }
-
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
