@@ -249,44 +249,55 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }
 
-function maskS2clouds(image) {
-  var qa = image.select("QA60");
+function maskS2clouds(image, roi) {
+  // Seleksi band QA60 untuk masking awan
+  var qa = image.select('QA60');
   var cloudBitMask = 1 << 10;
   var cirrusBitMask = 1 << 11;
-
-  // Masking awan dan cirrus
-  var mask = qa
-    .bitwiseAnd(cloudBitMask).eq(0)
-    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
-var clearStats = mask.reduceRegion({
-  reducer: ee.Reducer.sum(),
-  geometry: roi,
-  scale: 60,
-  bestEffort: true
-});
-var totalPixels = ee.Number(mask.reduceRegion({
-  reducer: ee.Reducer.count(),
-  geometry: roi,
-  scale: 60,
-  bestEffort: true
-}).get('QA60'));
-var clearPercentage = clearStats.getNumber('QA60').divide(totalPixels).multiply(100);
+  // Buat mask untuk piksel yang bebas awan
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
+               .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
+  // Terapkan mask dan normalisasi nilai piksel
   var maskedImage = image.updateMask(mask).divide(10000);
-
-  return maskedImage.copyProperties(image, image.propertyNames())
-                    .set('Clear_Percentage_ROI', clearPercentage);
+  
+  // Hitung statistik piksel dalam ROI
+  var pixelStats = maskedImage.reduceRegion({
+    reducer: ee.Reducer.count(), // Menghitung jumlah piksel yang valid (bebas awan)
+    geometry: roi,
+    scale: 10, // Skala Sentinel-2 (meter per piksel)
+    maxPixels: 1e9
+  });
+  
+  var totalPixelStats = image.reduceRegion({
+    reducer: ee.Reducer.count(), // Menghitung total piksel (termasuk yang termaskir)
+    geometry: roi,
+    scale: 10,
+    maxPixels: 1e9
+  });
+  
+  // Ambil jumlah piksel bebas awan dan total piksel
+  var clearPixels = ee.Number(pixelStats.get('B1')); // Ambil dari band pertama (misalnya B1)
+  var totalPixels = ee.Number(totalPixelStats.get('B1'));
+  
+  // Hitung persentase piksel bebas awan
+  var clearPercentage = clearPixels.divide(totalPixels).multiply(100);
+  
+  // Tambahkan properti clear_percentage ke gambar
+  return maskedImage.set('clear_percentage', clearPercentage)
+                   .copyProperties(image, image.propertyNames());
 }
-
 
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
-  .map(maskS2clouds)
-  // .filter(ee.Filter.gt('Clear_Percentage_ROI', 80))
+  .map(function(image) {
+    return maskS2clouds(image, roi); // Teruskan roi ke fungsi
+  })
+  .filter(ee.Filter.gt('clear_percentage', 80))
   // .sort('system:time_start');
   .sort('CLOUDY_PIXEL_PERCENTAGE');
   
