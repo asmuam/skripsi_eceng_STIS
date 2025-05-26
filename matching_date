@@ -252,7 +252,7 @@ function maskS2clouds(image) {
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(maskS2clouds)
   // .sort('system:time_start');
@@ -269,7 +269,7 @@ print(sentinel1List)
 print("sentinel 2 :")
 print(sentinel2List)
 
-var sentinel2Imagedesc = ee.Image(sentinel2List.get(24)); // Get first Sentinel-2 image
+var sentinel2Imagedesc = ee.Image(sentinel2List.get(18)); // Get first Sentinel-2 image
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
   min: 0,
@@ -285,3 +285,22 @@ var rgbVis = {
 };
 
 Map.addLayer(sentinel2Imageasc, rgbVis, 'Sentinel-2 RGB asc');
+
+// Fungsi NDWI
+function calculateNDWI(image) {
+  var ndwi = image.normalizedDifference(['B3', 'B8']).rename('NDWI');
+  return ndwi;
+}
+
+// Hitung NDWI untuk kedua citra
+var ndwiDesc = calculateNDWI(sentinel2Imagedesc);
+
+// Visualisasi NDWI
+var ndwiVis = {
+  min: -1,
+  max: 1,
+  palette: ['red', 'yellow', 'green', 'blue']
+};
+
+// Tambahkan NDWI ke peta
+Map.addLayer(ndwiDesc, ndwiVis, 'NDWI Descending');
