@@ -255,7 +255,8 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(maskS2clouds)
-  .sort('system:time_start');
+  // .sort('system:time_start');
+  .sort('CLOUDY_PIXEL_PERCENTAGE');
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
@@ -268,7 +269,7 @@ print(sentinel1List)
 print("sentinel 2 :")
 print(sentinel2List)
 
-var sentinel2Imagedesc = ee.Image(sentinel2List.get(0)); // Get first Sentinel-2 image
+var sentinel2Imagedesc = ee.Image(sentinel2List.get(24)); // Get first Sentinel-2 image
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
   min: 0,
