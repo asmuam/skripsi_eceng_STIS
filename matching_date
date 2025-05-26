@@ -269,7 +269,7 @@ print(sentinel1List)
 print("sentinel 2 :")
 print(sentinel2List)
 
-var sentinel2Imagedesc = ee.Image(sentinel2List.get(25)); // Get first Sentinel-2 image
+var sentinel2Imagedesc = ee.Image(sentinel2List.get(24)); // Get first Sentinel-2 image
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
   min: 0,
