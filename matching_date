@@ -338,16 +338,16 @@ var rgbVis = {
 
 Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 
-var count = sentinel2List.size().getInfo(); // Ambil jumlah elemen
-for (var i = 0; i < count; i++) {
-  var image = ee.Image(sentinel2List.get(i));
-  var index = image.get('system:index'); // Dapatkan indeks citra
+// var count = sentinel2List.size().getInfo(); // Ambil jumlah elemen
+// for (var i = 0; i < count; i++) {
+//   var image = ee.Image(sentinel2List.get(i));
+//   var index = image.get('system:index'); // Dapatkan indeks citra
   
-  // Ambil tanggal akuisisi
-  var date = ee.Date(image.get('system:time_start')).format('YYYY-MM-dd').getInfo();
+//   // Ambil tanggal akuisisi
+//   var date = ee.Date(image.get('system:time_start')).format('YYYY-MM-dd').getInfo();
   
-  // Tambahkan layer dengan nama yang mencantumkan tanggal
-  Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
-}
+//   // Tambahkan layer dengan nama yang mencantumkan tanggal
+//   Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
+// }
 
 Map.addLayer(roi, {color: 'red'}, 'ROI');
