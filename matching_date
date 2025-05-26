@@ -307,15 +307,15 @@ var dji0095 =
 function clear_percentage(image, roi) {
   // Select SCL band untuk deteksi bayangan awan dari citra Sentinel-2
   var scl = image.select("SCL");
-  // var cloudShadowValue = 3; // Nilai SCL untuk bayangan awan
+  var cloudShadowValue = 3; // Nilai SCL untuk bayangan awan
   
   // Select MSK_CLDPRB band untuk deteksi awan
   var cloudProb = image.select("MSK_CLDPRB");
-  var cloudThreshold = 10; // Ambang batas probabilitas awan (0-100)
+  var cloudThreshold = 5; // Ambang batas probabilitas awan (0-100)
   
   // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
   var cloudMask = cloudProb.lt(cloudThreshold);
-  // var shadowMask = scl.neq(cloudShadowValue);
+  var shadowMask = scl.neq(cloudShadowValue);
   // var mask = cloudMask.and(shadowMask);
   var mask = cloudMask;
   
@@ -348,8 +348,8 @@ function clear_percentage(image, roi) {
   var clearPercentage = ee.Number(1).subtract(cloudShadowRatio);
   
   // Menerapkan mask dan normalisasi
-  // var maskedImage = image.updateMask(mask).divide(10000);
-  var maskedImage = image.divide(10000);
+  var maskedImage = image.updateMask(mask).divide(10000);
+  // var maskedImage = image.divide(10000);
   
   // Menambahkan properti untuk debugging
   return maskedImage
@@ -389,7 +389,7 @@ print(sentinel1List)
 print("sentinel 2 :")
 print(sentinel2List)
 
-var sentinel2Imagedesc = ee.Image(sentinel2List.get(24)); 
+var sentinel2Imagedesc = ee.Image(sentinel2List.get(11)); 
 
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB (Red, Green, Blue)
@@ -410,5 +410,33 @@ Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 //   // Tambahkan layer dengan nama yang mencantumkan tanggal
 //   Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
 // }
+
+// Fungsi format tanggal dd/mm/yyyy
+function formatDate(date) {
+  var day = String(date.getDate()).padStart(2, '0');
+  var month = String(date.getMonth() + 1).padStart(2, '0');
+  var year = date.getFullYear();
+  return day + '/' + month + '/' + year;
+}
+
+// Konversi koleksi citra ke list dan tambahkan ke peta
+sentinel2List.evaluate(function(images) {
+  images.forEach(function(imageInfo) {
+    // Ekstrak informasi citra
+    var image = ee.Image(imageInfo.id);
+    var sysIndex = imageInfo.properties['system:index'];
+    var timestamp = imageInfo.properties['system:time_start'];
+    
+    // Format tanggal
+    var date = new Date(timestamp);
+    var formattedDate = formatDate(date);
+    
+    // Buat nama layer
+    var layerName = 'Sentinel 2 ' + formattedDate;
+    
+    // Tambahkan ke peta dengan visualisasi RGB
+    Map.addLayer(image, rgbVis, layerName);
+  });
+});
 
 Map.addLayer(roi, {color: 'red'}, 'ROI');
