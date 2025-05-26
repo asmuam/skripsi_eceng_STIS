@@ -411,19 +411,36 @@ Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 //   Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index + ' (' + date + ')');
 // }
 
-// Fungsi format tanggal yang kompatibel dengan EE
-function formatDate(date) {
-  var day = ee.Number(date.get('day')).format('%02d');
-  var month = ee.Number(date.get('month')).format('%02d');
-  var year = ee.Number(date.get('year'));
-  return day.cat('/').cat(month).cat('/').cat(year);
-}
 
 // Konversi koleksi citra ke list dan tambahkan ke peta
 // Tambahkan semua layer
+// Fungsi untuk menambahkan layer dengan nama yang benar
 var addAllLayers = function(image) {
-  var date = ee.Date(image.get('system:time_start')).format('dd/MM/yyyy');
-  Map.addLayer(image.clip(roi), rgbVis, date);
+  // Dapatkan tanggal sebagai EE String
+  var eeDateStr = ee.Date(image.get('system:time_start')).format('dd/MM/yyyy');
+  
+  // Konversi ke client-side string
+  eeDateStr.evaluate(function(dateStr) {
+    // Buat nama layer
+    var layerName = 'Sentinel-2 ' + dateStr;
+    
+    // Tambahkan ke peta
+    Map.addLayer(
+      image.clip(roi), 
+      rgbVis,
+      layerName
+    );
+  });
 };
-sentinel2.map(addAllLayers);
+
+// Konversi ImageCollection ke List
+var imageList = sentinel2.toList(sentinel2.size());
+
+// Tambahkan layer satu per satu
+imageList.evaluate(function(images) {
+  images.forEach(function(imageInfo) {
+    var image = ee.Image(imageInfo.id);
+    addAllLayers(image);
+  });
+});
 Map.addLayer(roi, {color: 'red'}, 'ROI');
