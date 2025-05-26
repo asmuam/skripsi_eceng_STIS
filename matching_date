@@ -394,7 +394,7 @@ var sentinel2Imagedesc = ee.Image(sentinel2List.get(11));
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB (Red, Green, Blue)
   min: 0,
-  max: 30000,
+  max: 0.3,
 };
 
 Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
@@ -418,11 +418,9 @@ var addAllLayers = function(image) {
   });
 };
 
-// Konversi ImageCollection ke List
-var imageList = sentinel2.toList(sentinel2.size());
 
 // Tambahkan layer satu per satu
-imageList.evaluate(function(images) {
+sentinel2List.evaluate(function(images) {
   images.forEach(function(imageInfo) {
     var image = ee.Image(imageInfo.id);
     addAllLayers(image);
