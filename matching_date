@@ -420,28 +420,10 @@ function formatDate(date) {
 }
 
 // Konversi koleksi citra ke list dan tambahkan ke peta
-var listLength = sentinel2List.size();
-sentinel2List.evaluate(function(images) {
-  images.forEach(function(imageInfo, index) {
-
-    // Ekstrak informasi citra
-    var image = ee.Image(imageInfo.id);
-    var sysIndex = imageInfo.properties['system:index'];
-    var timestamp = imageInfo.properties['system:time_start'];
-    
-    // Format tanggal menggunakan EE
-    var date = ee.Date(timestamp);
-    var formattedDate = formatDate(date);
-    print(image)
-    // Konversi ke client-side string
-    formattedDate.evaluate(function(dateStr) {
-      // Buat nama layer
-      var layerName = 'Sentinel 2 ' + dateStr;
-      
-      // Tambahkan ke peta dengan visualisasi RGB
-      Map.addLayer(image, rgbVis, layerName);
-    });
-  });
-});
-
+// Tambahkan semua layer
+var addAllLayers = function(image) {
+  var date = ee.Date(image.get('system:time_start')).format('dd/MM/yyyy');
+  Map.addLayer(image.clip(roi), rgbVis, date);
+};
+sentinel2.map(addAllLayers);
 Map.addLayer(roi, {color: 'red'}, 'ROI');
