@@ -277,13 +277,9 @@ var rgbVis = {
   max: 0.3,
 };
 
-// Fungsi untuk menambahkan layer setiap citra ke peta
-var addLayer = function(image, previous) {
-  image = ee.Image(image);
+var count = sentinel2List.size().getInfo(); // Ambil jumlah elemen
+for (var i = 0; i < count; i++) {
+  var image = ee.Image(sentinel2List.get(i));
   var index = image.get('system:index'); // Dapatkan indeks citra
   Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index);
-  return previous;
-};
-
-// Iterasi melalui semua gambar dalam `sentinel2List`
-sentinel2List.iterate(addLayer, null);
+}
