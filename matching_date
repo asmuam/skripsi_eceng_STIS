@@ -411,7 +411,7 @@ var addAllLayers = function(image) {
     
     // Tambahkan ke peta
     Map.addLayer(
-      image.clip(roi), 
+      image, 
       rgbVis,
       layerName
     );
