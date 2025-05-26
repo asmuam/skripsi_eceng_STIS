@@ -261,13 +261,13 @@ function clear_percentage(image, roi) {
     .eq(0)
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
-  // 1. Hitung total piksel di ROI
+  // 1. Hitung total piksel di ROI menggunakan QA60
   var totalPixels = ee.Image(1)
-    .updateMask(image.select('QA60').mask())
+    .clip(roi)
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 60,
+      scale: 10,
       maxPixels: 1e9
     }).values().get(0);
   
@@ -277,7 +277,7 @@ function clear_percentage(image, roi) {
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 60,
+      scale: 10,
       maxPixels: 1e9
     }).values().get(0);
   
