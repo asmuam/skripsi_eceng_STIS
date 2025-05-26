@@ -270,37 +270,20 @@ print("sentinel 2 :")
 print(sentinel2List)
 
 var sentinel2Imagedesc = ee.Image(sentinel2List.get(18)); // Get first Sentinel-2 image
+
 var rgbVis = {
-  bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
+  bands: ['B4', 'B3', 'B2'], // RGB (Red, Green, Blue)
   min: 0,
   max: 0.3,
 };
 
-Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB desc');
-var sentinel2Imageasc = ee.Image(sentinel2List.get(1)); // Get first Sentinel-2 image
-var rgbVis = {
-  bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
-  min: 0,
-  max: 0.3,
+// Fungsi untuk menambahkan layer setiap citra ke peta
+var addLayer = function(image, previous) {
+  image = ee.Image(image);
+  var index = image.get('system:index'); // Dapatkan indeks citra
+  Map.addLayer(image, rgbVis, 'Sentinel-2 RGB ' + index);
+  return previous;
 };
 
-Map.addLayer(sentinel2Imageasc, rgbVis, 'Sentinel-2 RGB asc');
-
-// Fungsi NDWI
-function calculateNDWI(image) {
-  var ndwi = image.normalizedDifference(['B3', 'B8']).rename('NDWI');
-  return ndwi;
-}
-
-// Hitung NDWI untuk kedua citra
-var ndwiDesc = calculateNDWI(sentinel2Imagedesc);
-
-// Visualisasi NDWI
-var ndwiVis = {
-  min: -1,
-  max: 1,
-  palette: ['red', 'green', 'blue']
-};
-
-// Tambahkan NDWI ke peta
-Map.addLayer(ndwiDesc, ndwiVis, 'NDWI Descending');
+// Iterasi melalui semua gambar dalam `sentinel2List`
+sentinel2List.iterate(addLayer, null);
