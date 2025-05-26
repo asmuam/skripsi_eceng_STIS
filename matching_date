@@ -249,47 +249,104 @@ var dji0095 =
 //   return maskedImage.copyProperties(image, image.propertyNames());
 // }
 
+// function clear_percentage(image, roi) {
+//   // Select QA60 band untuk deteksi awan
+//   var qa = image.select("QA60");
+//   var cloudBitMask = 1 << 10;
+//   var cirrusBitMask = 1 << 11;
+  
+//   // Membuat mask untuk piksel yang bukan awan
+//   var mask = qa
+//     .bitwiseAnd(cloudBitMask)
+//     .eq(0)
+//     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  
+//   // 1. Hitung total piksel di ROI menggunakan QA60
+//   var totalPixels = image.select('QA60')
+//     .unmask(1) // Memastikan semua piksel dihitung
+//     .clip(roi)
+//     .reduceRegion({
+//       reducer: ee.Reducer.count(),
+//       geometry: roi,
+//       scale: 10, // Menggunakan skala 10 meter untuk akurasi
+//       maxPixels: 1e9
+//     }).values().get(0);
+  
+//   // 2. Hitung piksel awan (piksel yang tidak lolos mask)
+//   var cloudPixels = ee.Image(1)
+//     .updateMask(mask.not())
+//     .clip(roi)
+//     .reduceRegion({
+//       reducer: ee.Reducer.count(),
+//       geometry: roi,
+//       scale: 10, // Konsisten dengan skala 10 meter
+//       maxPixels: 1e9
+//     }).values().get(0);
+  
+//   // 3. Hitung rasio piksel awan
+//   var cloudRatio = ee.Number(cloudPixels).divide(ee.Number(totalPixels));
+  
+//   // 4. Hitung persentase piksel clear (1 - rasio awan)
+//   var clearPercentage = ee.Number(1).subtract(cloudRatio);
+  
+//   // Menerapkan mask dan normalisasi setelah perhitungan rasio
+//   // var maskedImage = image.updateMask(mask).divide(10000);
+//   var maskedImage = image.divide(10000);
+  
+//   // Menambahkan properti untuk debugging
+//   return maskedImage
+//     .copyProperties(image, image.propertyNames())
+//     .set({
+//       'clear_percentage': clearPercentage,
+//       'cloud_pixels': cloudPixels,
+//       'total_pixels': totalPixels,
+//       'cloud_ratio': cloudRatio
+//     });
+// } // QA60
+
 function clear_percentage(image, roi) {
-  // Select QA60 band untuk deteksi awan
-  var qa = image.select("QA60");
-  var cloudBitMask = 1 << 10;
-  var cirrusBitMask = 1 << 11;
+  // Select SCL band untuk deteksi bayangan awan dari citra Sentinel-2
+  var scl = image.select("SCL");
+  var cloudShadowValue = 3; // Nilai SCL untuk bayangan awan
   
-  // Membuat mask untuk piksel yang bukan awan
-  var mask = qa
-    .bitwiseAnd(cloudBitMask)
-    .eq(0)
-    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  // Select MSK_CLDPRB band untuk deteksi awan
+  var cloudProb = image.select("MSK_CLDPRB");
+  var cloudThreshold = 20; // Ambang batas probabilitas awan (0-100)
   
-  // 1. Hitung total piksel di ROI menggunakan QA60
-  var totalPixels = image.select('QA60')
+  // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
+  var cloudMask = cloudProb.lt(cloudThreshold);
+  var shadowMask = scl.neq(cloudShadowValue);
+  var mask = cloudMask.and(shadowMask);
+  
+  // 1. Hitung total piksel di ROI menggunakan SCL
+  var totalPixels = image.select('SCL')
     .unmask(1) // Memastikan semua piksel dihitung
     .clip(roi)
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 10, // Menggunakan skala 10 meter untuk akurasi
+      scale: 20, // Skala 20 meter sesuai SCL dan MSK_CLDPRB
       maxPixels: 1e9
     }).values().get(0);
   
-  // 2. Hitung piksel awan (piksel yang tidak lolos mask)
-  var cloudPixels = ee.Image(1)
-    .updateMask(mask.not())
+  // 2. Hitung piksel awan dan bayangan awan (piksel yang tidak lolos mask)
+  var cloudShadowPixels = ee.Image(1)
+    .updateMask(mask.not()) // Piksel yang dianggap awan atau bayangan awan
     .clip(roi)
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 10, // Konsisten dengan skala 10 meter
+      scale: 20, // Konsisten dengan skala 20 meter
       maxPixels: 1e9
     }).values().get(0);
   
-  // 3. Hitung rasio piksel awan
-  var cloudRatio = ee.Number(cloudPixels).divide(ee.Number(totalPixels));
+  // 3. Hitung rasio piksel awan dan bayangan awan
+  var cloudShadowRatio = ee.Number(cloudShadowPixels).divide(ee.Number(totalPixels));
   
-  // 4. Hitung persentase piksel clear (1 - rasio awan)
-  var clearPercentage = ee.Number(1).subtract(cloudRatio);
+  // 4. Hitung persentase piksel clear (1 - rasio awan dan bayangan)
+  var clearPercentage = ee.Number(1).subtract(cloudShadowRatio);
   
-  // Menerapkan mask dan normalisasi setelah perhitungan rasio
+  // Menerapkan mask dan normalisasi
   var maskedImage = image.updateMask(mask).divide(10000);
   
   // Menambahkan properti untuk debugging
@@ -297,15 +354,17 @@ function clear_percentage(image, roi) {
     .copyProperties(image, image.propertyNames())
     .set({
       'clear_percentage': clearPercentage,
-      'cloud_pixels': cloudPixels,
+      'cloud_shadow_pixels': cloudShadowPixels,
       'total_pixels': totalPixels,
-      'cloud_ratio': cloudRatio
+      'cloud_shadow_ratio': cloudShadowRatio,
+      'cloud_threshold': cloudThreshold
     });
-}
+} // MSK_CLDPRB & SCL
+
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   // .map(maskS2clouds)
   .map(function(image) {
@@ -328,7 +387,7 @@ print(sentinel1List)
 print("sentinel 2 :")
 print(sentinel2List)
 
-var sentinel2Imagedesc = ee.Image(sentinel2List.get(18)); // Get first Sentinel-2 image
+var sentinel2Imagedesc = ee.Image(sentinel2List.get(24)); 
 
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB (Red, Green, Blue)
