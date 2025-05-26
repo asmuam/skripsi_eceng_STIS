@@ -249,14 +249,38 @@ function maskS2clouds(image) {
   return maskedImage.copyProperties(image, image.propertyNames());
 }
 
+function filterCloudsByROI_QA60(image) {
+  var qa = image.select('QA60'); // Mask awan dari QA60
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  // Piksel yang bebas awan memiliki bit ke-10 & 11 bernilai 0
+  var clearMask = qa.bitwiseAnd(cloudBitMask).eq(0)
+                   .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+
+  // Hitung persentase piksel yang clear dalam ROI
+  var clearStats = clearMask.reduceRegion({
+    reducer: ee.Reducer.mean(),
+    geometry: roi,
+    scale: 20, // Sesuaikan resolusi dengan Sentinel-2
+    bestEffort: true
+  });
+
+  var clearPercentage = clearStats.getNumber('QA60').multiply(100); // Konversi ke persen
+  return image.set('Clear_Percentage_ROI', clearPercentage);
+}
+
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
+  .map(filterCloudsByROI_QA60)
   .map(maskS2clouds)
+  .filter(ee.Filter.lt('Clear_Percentage_ROI', 90))
   // .sort('system:time_start');
   .sort('CLOUDY_PIXEL_PERCENTAGE');
+  
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
