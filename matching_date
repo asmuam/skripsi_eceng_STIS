@@ -348,8 +348,8 @@ function clear_percentage(image, roi) {
   var clearPercentage = ee.Number(1).subtract(cloudShadowRatio);
   
   // Menerapkan mask dan normalisasi
-  var maskedImage = image.updateMask(mask).divide(10000);
-  // var maskedImage = image.divide(10000);
+  // var maskedImage = image.updateMask(mask).divide(10000);
+  var maskedImage = image.divide(10000);
   
   // Menambahkan properti untuk debugging
   return maskedImage
