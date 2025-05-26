@@ -237,17 +237,17 @@ var dji0095 =
         }),
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-function maskS2clouds(image) {
-  var qa = image.select("QA60");
-  var cloudBitMask = 1 << 10;
-  var cirrusBitMask = 1 << 11;
-  var mask = qa
-    .bitwiseAnd(cloudBitMask)
-    .eq(0)
-    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
-  var maskedImage = image.updateMask(mask).divide(10000);
-  return maskedImage.copyProperties(image, image.propertyNames());
-}
+// function maskS2clouds(image) {
+//   var qa = image.select("QA60");
+//   var cloudBitMask = 1 << 10;
+//   var cirrusBitMask = 1 << 11;
+//   var mask = qa
+//     .bitwiseAnd(cloudBitMask)
+//     .eq(0)
+//     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+//   var maskedImage = image.updateMask(mask).divide(10000);
+//   return maskedImage.copyProperties(image, image.propertyNames());
+// }
 
 function maskS2clouds(image, roi) {
   // Seleksi band QA60 untuk masking awan
@@ -278,8 +278,8 @@ function maskS2clouds(image, roi) {
   });
   
   // Ambil jumlah piksel bebas awan dan total piksel
-  var clearPixels = ee.Number(pixelStats.get('B1')); // Ambil dari band pertama (misalnya B1)
-  var totalPixels = ee.Number(totalPixelStats.get('B1'));
+  var clearPixels = ee.Number(pixelStats.get('B2')); // Ambil dari band pertama (misalnya B1)
+  var totalPixels = ee.Number(totalPixelStats.get('B2'));
   
   // Hitung persentase piksel bebas awan
   var clearPercentage = clearPixels.divide(totalPixels).multiply(100);
