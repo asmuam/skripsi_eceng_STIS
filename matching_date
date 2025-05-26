@@ -249,52 +249,56 @@ var dji0095 =
 //   return maskedImage.copyProperties(image, image.propertyNames());
 // }
 
-function maskS2clouds(image, roi) {
-  var qa = image.select('QA60');
-  var scl = image.select('SCL');
-  var cloudBitMask = 1 << 10;
-  var cirrusBitMask = 1 << 11;
+function clear_percentage(image, roi) {
+  // Fungsi untuk menghitung persentase area tidak berawan dalam ROI
+  var cloudMask;
+  var scale;
   
-  // Mask QA60 untuk awan dan cirrus
-  var maskQA60 = qa.bitwiseAnd(cloudBitMask).eq(0)
-                   .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  // Cek ketersediaan band dan tentukan metode masking awan
+  if (image.bandNames().contains('SCL')) {
+    // Menggunakan Scene Classification Layer (SCL) 20m
+    var scl = image.select('SCL');
+    var cloudValues = [3, 8, 9, 10]; // Kelas awan dan bayangan awan
+    cloudMask = scl.eq(3).or(scl.eq(8)).or(scl.eq(9)).or(scl.eq(10)).not();
+    scale = 20;
+  } else if (image.bandNames().contains('QA60')) {
+    // Menggunakan Quality Assessment Band (QA60) 60m
+    var qa60 = image.select('QA60');
+    var cloudBitMask = 1 << 10; // Bit 10: Opaque clouds
+    var cirrusBitMask = 1 << 11; // Bit 11: Cirrus clouds
+    cloudMask = qa60.bitwiseAnd(cloudBitMask.or(cirrusBitMask)).not();
+    scale = 60;
+  } else {
+    throw new Error('Tidak ada band SCL atau QA60 yang tersedia');
+  }
+
+  // Hitung jumlah piksel bersih dan total piksel
+  var stats = cloudMask.rename('cloud_mask')
+    .addBanding(ee.Image.constant(1).rename('count'))
+    .reduceRegion({
+      reducer: ee.Reducer.sum().combine({
+        reducer2: ee.Reducer.count(),
+        sharedInputs: true
+      }),
+      geometry: roi,
+      scale: scale,
+      maxPixels: 1e13
+    });
+
+  // Ekstrak hasil perhitungan
+  var clearPixels = ee.Number(stats.get('cloud_mask')).default(0);
+  var totalPixels = ee.Number(stats.get('count')).default(0);
   
-  // Mask SCL untuk awan tebal (9), awan tipis (8), dan bayangan awan (3)
-  var maskSCL = scl.neq(8).and(scl.neq(9)).and(scl.neq(3));
-  
-  // Gabungkan mask
-  var mask = maskQA60.and(maskSCL);
-  
-  // Terapkan mask dan normalisasi
-  var maskedImage = image.updateMask(mask).divide(10000);
-  
-  // Hitung statistik piksel
-  var pixelStats = maskedImage.reduceRegion({
-    reducer: ee.Reducer.count(),
-    geometry: roi,
-    scale: 10,
-    maxPixels: 1e9
-  });
-  
-  var totalPixelStats = image.select('B2').reduceRegion({
-    reducer: ee.Reducer.count(),
-    geometry: roi,
-    scale: 10,
-    maxPixels: 1e9
-  });
-  
-  var clearPixels = ee.Number(pixelStats.get('B2')).max(0);
-  var totalPixels = ee.Number(totalPixelStats.get('B2')).max(1);
-  
-  var clearPercentage = ee.Number(
-    ee.Algorithms.If(
-      totalPixels.gt(0),
-      clearPixels.divide(totalPixels).multiply(100),
-      0
-    )
-  );
-  
-  return maskedImage.set('clear_percentage', clearPercentage)
+  // Hitung persentase bersih
+  var clearRatio = clearPixels.divide(totalPixels)
+    .multiply(100)
+    .default(0); // Hindari NaN jika tidak ada piksel
+
+  // Terapkan mask awan ke citra
+  var maskedImage = image.updateMask(cloudMask);
+
+  // Kembalikan citra dengan properti persentase bersih
+  return maskedImage.set("clear_percentage", clearRatio)
                    .copyProperties(image, image.propertyNames());
 }
 
@@ -303,10 +307,10 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   .filterDate('2024-1-01', '2024-12-31')
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
-  .map(maskS2clouds)
-  // .map(function(image) {
-  //   return maskS2clouds(image, roi); // Teruskan roi ke fungsi
-  // })
+  // .map(maskS2clouds)
+  .map(function(image) {
+    return clear_percentage(image, roi); // Teruskan roi ke fungsi
+  })
   // .filter(ee.Filter.gt('clear_percentage', 80))
   // .sort('system:time_start');
   .sort('CLOUDY_PIXEL_PERCENTAGE');
