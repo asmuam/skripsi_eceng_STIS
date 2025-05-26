@@ -436,7 +436,7 @@ sentinel2List.evaluate(function(images) {
     // Format tanggal menggunakan EE
     var date = ee.Date(timestamp);
     var formattedDate = formatDate(date);
-    
+    print(image)
     // Konversi ke client-side string
     formattedDate.evaluate(function(dateStr) {
       // Buat nama layer
