@@ -252,13 +252,14 @@ function maskS2clouds(image) {
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'))
   .map(maskS2clouds)
   .sort('system:time_start');
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
-  .filterDate('2024-1-01', '2024-12-31');
-
+  .filterDate('2024-1-01', '2024-12-31')
+  .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
 var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
 
