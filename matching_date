@@ -252,7 +252,7 @@ function maskS2clouds(image) {
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate('2024-1-01', '2024-12-31')
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   // .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'))
   .map(maskS2clouds)
   .sort('system:time_start');
@@ -268,7 +268,7 @@ print(sentinel1List)
 print("sentinel 2 :")
 print(sentinel2List)
 
-var sentinel2Imagedesc = ee.Image(sentinel2List.get(5)); // Get first Sentinel-2 image
+var sentinel2Imagedesc = ee.Image(sentinel2List.get(0)); // Get first Sentinel-2 image
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
   min: 0,
@@ -276,7 +276,7 @@ var rgbVis = {
 };
 
 Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB desc');
-var sentinel2Imageasc = ee.Image(sentinel2List.get(6)); // Get first Sentinel-2 image
+var sentinel2Imageasc = ee.Image(sentinel2List.get(1)); // Get first Sentinel-2 image
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB bands (Red, Green, Blue)
   min: 0,
