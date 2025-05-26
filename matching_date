@@ -260,12 +260,13 @@ function maskS2clouds(image) {
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
   // Hitung persentase piksel clear dalam ROI
-  var clearStats = mask.reduceRegion({
-    reducer: ee.Reducer.mean(),
-    geometry: roi,
-    scale: 60, // Sesuaikan dengan resolusi Sentinel-2
-    bestEffort: true
-  });
+  var clearStats = qa.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: roi,
+  scale: 60, // Sesuaikan dengan QA60
+  bestEffort: true
+});
+
   
   var maskedImage = image.updateMask(mask).divide(10000);
 
