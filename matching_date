@@ -259,8 +259,6 @@ function maskS2clouds(image) {
     .bitwiseAnd(cloudBitMask).eq(0)
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
-  var maskedImage = image.updateMask(mask).divide(10000);
-
   // Hitung persentase piksel clear dalam ROI
   var clearStats = mask.reduceRegion({
     reducer: ee.Reducer.mean(),
@@ -268,6 +266,8 @@ function maskS2clouds(image) {
     scale: 60, // Sesuaikan dengan resolusi Sentinel-2
     bestEffort: true
   });
+  
+  var maskedImage = image.updateMask(mask).divide(10000);
 
   var clearPercentage = clearStats.getNumber('QA60').multiply(100); // Konversi ke persen
 
@@ -282,7 +282,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 5))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(maskS2clouds)
-  .filter(ee.Filter.lt('Clear_Percentage_ROI', 80))
+  // .filter(ee.Filter.gt('Clear_Percentage_ROI', 80))
   // .sort('system:time_start');
   .sort('CLOUDY_PIXEL_PERCENTAGE');
   
