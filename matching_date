@@ -250,41 +250,50 @@ var dji0095 =
 // }
 
 function maskS2clouds(image, roi) {
-  // Seleksi band QA60 untuk masking awan
   var qa = image.select('QA60');
+  var scl = image.select('SCL');
   var cloudBitMask = 1 << 10;
   var cirrusBitMask = 1 << 11;
   
-  // Buat mask untuk piksel yang bebas awan
-  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
-               .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  // Mask QA60 untuk awan dan cirrus
+  var maskQA60 = qa.bitwiseAnd(cloudBitMask).eq(0)
+                   .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
   
-  // Terapkan mask dan normalisasi nilai piksel
+  // Mask SCL untuk awan tebal (9), awan tipis (8), dan bayangan awan (3)
+  var maskSCL = scl.neq(8).and(scl.neq(9)).and(scl.neq(3));
+  
+  // Gabungkan mask
+  var mask = maskQA60.and(maskSCL);
+  
+  // Terapkan mask dan normalisasi
   var maskedImage = image.updateMask(mask).divide(10000);
   
-  // Hitung statistik piksel dalam ROI
+  // Hitung statistik piksel
   var pixelStats = maskedImage.reduceRegion({
-    reducer: ee.Reducer.count(), // Menghitung jumlah piksel yang valid (bebas awan)
-    geometry: roi,
-    scale: 10, // Skala Sentinel-2 (meter per piksel)
-    maxPixels: 1e9
-  });
-  
-  var totalPixelStats = image.reduceRegion({
-    reducer: ee.Reducer.count(), // Menghitung total piksel (termasuk yang termaskir)
+    reducer: ee.Reducer.count(),
     geometry: roi,
     scale: 10,
     maxPixels: 1e9
   });
   
-  // Ambil jumlah piksel bebas awan dan total piksel
-  var clearPixels = ee.Number(pixelStats.get('B2')); // Ambil dari band pertama (misalnya B1)
-  var totalPixels = ee.Number(totalPixelStats.get('B2'));
+  var totalPixelStats = image.select('B2').reduceRegion({
+    reducer: ee.Reducer.count(),
+    geometry: roi,
+    scale: 10,
+    maxPixels: 1e9
+  });
   
-  // Hitung persentase piksel bebas awan
-  var clearPercentage = clearPixels.divide(totalPixels).multiply(100);
+  var clearPixels = ee.Number(pixelStats.get('B2')).max(0);
+  var totalPixels = ee.Number(totalPixelStats.get('B2')).max(1);
   
-  // Tambahkan properti clear_percentage ke gambar
+  var clearPercentage = ee.Number(
+    ee.Algorithms.If(
+      totalPixels.gt(0),
+      clearPixels.divide(totalPixels).multiply(100),
+      0
+    )
+  );
+  
   return maskedImage.set('clear_percentage', clearPercentage)
                    .copyProperties(image, image.propertyNames());
 }
