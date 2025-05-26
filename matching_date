@@ -286,13 +286,12 @@ function clear_percentage(image, roi) {
     });
 
   // Ekstrak hasil perhitungan
-  var clearPixels = ee.Number(stats.get('cloud_mask')).default(0);
-  var totalPixels = ee.Number(stats.get('count')).default(0);
+  var clearPixels = ee.Number(stats.get('cloud_mask'));
+  var totalPixels = ee.Number(stats.get('count'));
   
   // Hitung persentase bersih
   var clearRatio = clearPixels.divide(totalPixels)
     .multiply(100)
-    .default(0); // Hindari NaN jika tidak ada piksel
 
   // Terapkan mask awan ke citra
   var maskedImage = image.updateMask(cloudMask);
@@ -336,7 +335,7 @@ var rgbVis = {
   max: 0.3,
 };
 
-Map.addLayer(image, rgbVis, 'Sentinel-2 RGB');
+Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 
 var count = sentinel2List.size().getInfo(); // Ambil jumlah elemen
 for (var i = 0; i < count; i++) {
