@@ -263,11 +263,11 @@ function clear_percentage(image, roi) {
   
   // 1. Hitung total piksel di ROI
   var totalPixels = ee.Image(1)
-    .updateMask(image.select('B1').mask())
+    .updateMask(image.select('QA60').mask())
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 10,
+      scale: 60,
       maxPixels: 1e9
     }).values().get(0);
   
@@ -277,7 +277,7 @@ function clear_percentage(image, roi) {
     .reduceRegion({
       reducer: ee.Reducer.count(),
       geometry: roi,
-      scale: 10,
+      scale: 60,
       maxPixels: 1e9
     }).values().get(0);
   
