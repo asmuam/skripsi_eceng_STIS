@@ -400,7 +400,7 @@ function displayCloudLayers(col, index) {
     // Gabungkan koleksi citra menjadi satu mosaik.
     // Konversi koleksi ke daftar dan ambil gambar berdasarkan indeks
     var imageList = col.toList(col.size());
-    var selectedImage = ee.Image(imageList.get(index)); // Ambil gambar ke-6 (indeks dimulai dari 0)
+    var img = ee.Image(imageList.get(index)); // Ambil gambar ke-6 (indeks dimulai dari 0)
     
     // Pilih layer yang akan ditampilkan.
     var clouds = img.select('clouds').selfMask();
