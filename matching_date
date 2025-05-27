@@ -310,7 +310,13 @@ function clear_percentage(image, roi) {
   var cloudShadowValue = 3; // Nilai SCL untuk bayangan awan
   
   // Select MSK_CLDPRB band untuk deteksi awan
-  var cloudProb = image.select("MSK_CLDPRB");
+  // Cek apakah band "MSK_CLDPRB" ada dalam image
+  var bandNames = image.bandNames();
+  if (bandNames.contains("MSK_CLDPRB")) {
+      var cloudProb = image.select("MSK_CLDPRB");
+  } else {
+      print("Band MSK_CLDPRB tidak ditemukan dalam image:", image);
+  }
   var cloudThreshold = 25; // Ambang batas probabilitas awan (0-100)
   
   // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
