@@ -403,6 +403,9 @@ var rgbVis = {
   max: 0.3,
 };
 
+var projection = sentinel2Imagedesc.projection();
+print(projection);
+
 Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 
 // Tambahkan semua layer
