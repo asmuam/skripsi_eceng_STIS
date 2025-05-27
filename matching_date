@@ -403,7 +403,8 @@ var rgbVis = {
   max: 0.3,
 };
 
-var projection = sentinel2Imagedesc.projection();
+var msiBands = sentinel2Imagedesc.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B10', 'B11', 'B12']);
+var projection = msiBands.projection();
 print(projection);
 
 Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
