@@ -304,8 +304,8 @@ var dji0095 =
 //     });
 // } // QA60
 
-var CLOUD_FILTER = 60
-var CLD_PRB_THRESH = 50
+var CLOUD_FILTER = 10
+var CLD_PRB_THRESH = 25
 var NIR_DRK_THRESH = 0.15
 var CLD_PRJ_DIST = 1
 var BUFFER = 50
@@ -326,7 +326,7 @@ function getS2SrCldCol(aoi, startDate, endDate) {
         .filterDate(startDate, endDate);
 
     // Gabungkan koleksi s2Cloudless ke koleksi Sentinel-2 berdasarkan properti 'system:index'.
-    return ee.ImageCollection(ee.Join.saveFirst('s2cloudless').apply({
+    var joinedCollection = ee.ImageCollection(ee.Join.saveFirst('s2cloudless').apply({
         primary: s2SrCol,
         secondary: s2CloudlessCol,
         condition: ee.Filter.equals({
@@ -334,6 +334,9 @@ function getS2SrCldCol(aoi, startDate, endDate) {
             rightField: 'system:index'
         })
     }));
+
+    // Urutkan berdasarkan tanggal pengambilan citra
+    return joinedCollection.sort('system:time_start');
 }
 
 // Fungsi untuk menambahkan probabilitas awan dan mask awan ke citra Sentinel-2.
