@@ -436,4 +436,4 @@ var addAllLayers = function(image) {
 
 
 Map.addLayer(roi, {color: 'red'}, 'ROI');
-Map.centerObject(roi, 10);
+Map.centerObject(roi, 14);
