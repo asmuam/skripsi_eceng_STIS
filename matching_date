@@ -427,3 +427,4 @@ for (var i = 0; i < sentinel2.size().getInfo(); i++) {
 
 
 Map.addLayer(roi, {color: 'red'}, 'ROI');
+Map.centerObject(roi, 10);
