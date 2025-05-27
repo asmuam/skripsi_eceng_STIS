@@ -519,7 +519,7 @@ var rgbVis = {
   max: 0.3,
 };
 
-Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
+// Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 
 // // Dapatkan daftar band MSI
 // var bandNames = sentinel2Imagedesc.bandNames();
