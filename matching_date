@@ -574,4 +574,4 @@ print('daftar image yang di mask')
 print(image_ids.getInfo())
 
 var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
-displayCloudLayers(s2_sr_cld_col_eval_disp, 1)
+displayCloudLayers(s2_sr_cld_col_eval_disp, 0)
