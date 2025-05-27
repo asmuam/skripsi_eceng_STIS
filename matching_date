@@ -605,5 +605,5 @@ var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
 displayCloudLayers(s2_sr_cld_col_eval_disp, 0)
 
 var imageList = s2_sr_cld_col_eval_disp.toList(s2_sr_cld_col_eval_disp);
-var img = ee.Image(imageList.get(index));
+var img = ee.Image(imageList.get(0));
 print(img)
