@@ -111,5 +111,5 @@ var masked = ee.ImageCollection(withS2L1C.map(maskImage));
 var median = masked.reduce(ee.Reducer.median(), 8);
 
 // Display the results.
-var viz = {bands: ['B4_median', 'B3_median', 'B2_median'], min: 0, max: 3000};
+var viz = {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000};
 Map.addLayer(median, viz, 'median');
