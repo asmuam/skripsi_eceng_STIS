@@ -309,8 +309,8 @@ var CLD_PRB_THRESH = 50
 var NIR_DRK_THRESH = 0.15
 var CLD_PRJ_DIST = 1
 var BUFFER = 50
-var START_DATE = '2024-07-25'
-var END_DATE = '2024-07-28'
+var START_DATE = '2024-01-01'
+var END_DATE = '2024-12-31'
 
 // Fungsi untuk mengambil koleksi Sentinel-2 dengan cloud probability dataset.
 function getS2SrCldCol(aoi, startDate, endDate) {
