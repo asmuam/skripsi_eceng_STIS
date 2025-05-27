@@ -603,3 +603,4 @@ print(image_ids.getInfo())
 
 var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
 displayMaskedLayers(s2_sr_cld_col_eval_disp)
+displayCloudLayers(s2_sr_cld_col_eval_disp, 24)
