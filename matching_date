@@ -400,7 +400,7 @@ function displayCloudLayers(col, index) {
     // Gabungkan koleksi citra menjadi satu mosaik.
     // Konversi koleksi ke daftar dan ambil gambar berdasarkan indeks
     var imageList = col.toList(col.size());
-    var img = ee.Image(imageList.get(index)); // Ambil gambar ke-6 (indeks dimulai dari 0)
+    var img = ee.Image(imageList.get(index)); 
     
     // Pilih layer yang akan ditampilkan.
     var clouds = img.select('clouds').selfMask();
@@ -570,6 +570,7 @@ var s2_sr_cld_col_eval = getS2SrCldCol(roi, START_DATE, END_DATE)
 var image_ids = s2_sr_cld_col_eval.aggregate_array('system:index')
 
 // Cetak daftar ID gambar
+print('daftar image yang di mask')
 print(image_ids.getInfo())
 
 var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
