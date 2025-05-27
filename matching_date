@@ -305,7 +305,7 @@ var dji0095 =
 // } // QA60
 
 var CLOUD_FILTER = 10
-var CLD_PRB_THRESH = 25
+var CLD_PRB_THRESH = 40
 var NIR_DRK_THRESH = 0.10
 var CLD_PRJ_DIST = 1
 var BUFFER = 50
@@ -398,6 +398,14 @@ function addCloudShadowMask(img) {
     return imgCloudShadow.addBands(isCloudShadow);
 }
 
+function applyCloudShadowMask(img) {
+    // Ambil band cloudmask dan buat mask yang membuang piksel awan/bayangan
+    var notCloudShadow = img.select('cloudmask').not();
+
+    // Terapkan mask ke seluruh band reflektansi (B.*, yaitu semua band spektral)
+    return img.select('B.*').updateMask(notCloudShadow);
+}
+
 // Fungsi untuk menampilkan layer awan dan bayangan awan dalam Google Earth Engine.
 function displayCloudLayers(col, index) {
     // Gabungkan koleksi citra menjadi satu mosaik.
@@ -421,6 +429,23 @@ function displayCloudLayers(col, index) {
     Map.addLayer(darkPixels, {palette: 'orange'}, 'Dark Pixels');
     Map.addLayer(shadows, {palette: 'yellow'}, 'Shadows');
     Map.addLayer(cloudMask, {palette: 'orange'}, 'Cloud Mask');
+}
+
+function displayMaskedLayers(col) {
+    // Konversi koleksi ke daftar
+    var imageList = col.toList(col.size());
+
+    // Iterasi setiap gambar dalam koleksi
+    var count = imageList.size();
+    for (var i = 0; i < count; i++) {
+        var img = ee.Image(imageList.get(i));
+
+        // Terapkan masking awan dan bayangan ke citra
+        var maskedImg = applyCloudShadowMask(img);
+
+        // Tambahkan layer ke peta dengan nama unik berdasarkan indeks
+        Map.addLayer(maskedImg, {bands: ['B4', 'B3', 'B2'], min: 0, max: 2500, gamma: 1.1}, 'Masked Image ' + i);
+    }
 }
 
 function clear_percentage(image, roi) {
@@ -577,4 +602,4 @@ print('daftar image yang di mask')
 print(image_ids.getInfo())
 
 var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
-displayCloudLayers(s2_sr_cld_col_eval_disp, 0)
+displayMaskedLayers(s2_sr_cld_col_eval_disp)
