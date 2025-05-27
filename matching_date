@@ -564,7 +564,7 @@ var addAllLayers = function(image) {
 Map.addLayer(roi, {color: 'red'}, 'ROI');
 Map.centerObject(roi, 14);
 
-s2_sr_cld_col_eval = get_s2_sr_cld_col(roi, START_DATE, END_DATE)
+s2_sr_cld_col_eval = getS2SrCldCol(roi, START_DATE, END_DATE)
 
 // Ambil daftar ID gambar dari koleksi
 image_ids = s2_sr_cld_col_eval.aggregate_array('system:index')
@@ -572,5 +572,5 @@ image_ids = s2_sr_cld_col_eval.aggregate_array('system:index')
 // Cetak daftar ID gambar
 print(image_ids.getInfo())
 
-s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(add_cld_shdw_mask)
+s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
 display_cloud_layers(s2_sr_cld_col_eval_disp, 1)
