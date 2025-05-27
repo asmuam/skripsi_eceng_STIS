@@ -573,4 +573,4 @@ var image_ids = s2_sr_cld_col_eval.aggregate_array('system:index')
 print(image_ids.getInfo())
 
 var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
-display_cloud_layers(s2_sr_cld_col_eval_disp, 1)
+displayCloudLayers(s2_sr_cld_col_eval_disp, 1)
