@@ -318,7 +318,6 @@ function getS2SrCldCol(aoi, startDate, endDate) {
     var s2SrCol = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
         .filterBounds(aoi)
         .filterDate(startDate, endDate)
-        .filter(ee.Filter.lte('CLOUDY_PIXEL_PERCENTAGE', CLOUD_FILTER));
 
     // Import dan filter dataset probabilitas awan S2Cloudless.
     var s2CloudlessCol = ee.ImageCollection('COPERNICUS/S2_CLOUD_PROBABILITY')
@@ -602,5 +601,5 @@ print('daftar image yang di mask')
 print(image_ids.getInfo())
 
 var s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(addCloudShadowMask)
-displayMaskedLayers(s2_sr_cld_col_eval_disp)
-displayCloudLayers(s2_sr_cld_col_eval_disp, 24)
+// displayMaskedLayers(s2_sr_cld_col_eval_disp)
+displayCloudLayers(s2_sr_cld_col_eval_disp, 0)
