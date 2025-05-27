@@ -322,8 +322,8 @@ function clear_percentage(image, roi) {
   // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
   var cloudMask = cloudProb.lt(cloudThreshold);
   var shadowMask = scl.neq(cloudShadowValue);
-  var mask = cloudMask.and(shadowMask);
-  // var mask = cloudMask;
+  // var mask = cloudMask.and(shadowMask);
+  var mask = cloudMask;
   
   // 1. Hitung total piksel di ROI menggunakan SCL
   var totalPixels = image.select('SCL')
@@ -403,6 +403,8 @@ var rgbVis = {
   max: 0.3,
 };
 
+Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
+
 // Dapatkan daftar band MSI
 var bandNames = sentinel2Imagedesc.bandNames();
 
@@ -415,9 +417,6 @@ var getProjection = function(band) {
 // Iterasi setiap band dan cetak proyeksinya
 var projections = bandNames.map(getProjection);
 print("Proyeksi setiap band MSI:", projections);
-
-
-Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 
 // Tambahkan semua layer
 var addAllLayers = function(image) {
