@@ -304,6 +304,122 @@ var dji0095 =
 //     });
 // } // QA60
 
+var CLOUD_FILTER = 60
+var CLD_PRB_THRESH = 50
+var NIR_DRK_THRESH = 0.15
+var CLD_PRJ_DIST = 1
+var BUFFER = 50
+START_DATE = '2024-07-25'
+END_DATE = '2024-07-28'
+
+// Fungsi untuk mengambil koleksi Sentinel-2 dengan cloud probability dataset.
+function getS2SrCldCol(aoi, startDate, endDate) {
+    // Import dan filter Sentinel-2 Surface Reflectance.
+    var s2SrCol = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+        .filterBounds(aoi)
+        .filterDate(startDate, endDate)
+        .filter(ee.Filter.lte('CLOUDY_PIXEL_PERCENTAGE', CLOUD_FILTER));
+
+    // Import dan filter dataset probabilitas awan S2Cloudless.
+    var s2CloudlessCol = ee.ImageCollection('COPERNICUS/S2_CLOUD_PROBABILITY')
+        .filterBounds(aoi)
+        .filterDate(startDate, endDate);
+
+    // Gabungkan koleksi s2Cloudless ke koleksi Sentinel-2 berdasarkan properti 'system:index'.
+    return ee.ImageCollection(ee.Join.saveFirst('s2cloudless').apply({
+        primary: s2SrCol,
+        secondary: s2CloudlessCol,
+        condition: ee.Filter.equals({
+            leftField: 'system:index',
+            rightField: 'system:index'
+        })
+    }));
+}
+
+// Fungsi untuk menambahkan probabilitas awan dan mask awan ke citra Sentinel-2.
+function addCloudBands(img) {
+    // Ambil citra s2cloudless dan subset band probabilitas awan.
+    var cldPrb = ee.Image(img.get('s2cloudless')).select('probability');
+
+    // Buat mask awan berdasarkan threshold probabilitas.
+    var isCloud = cldPrb.gt(CLD_PRB_THRESH).rename('clouds');
+
+    // Tambahkan band probabilitas awan dan mask awan ke citra.
+    return img.addBands(ee.Image([cldPrb, isCloud]));
+}
+
+// Fungsi untuk menambahkan bayangan awan ke citra Sentinel-2.
+function addShadowBands(img) {
+    // Identifikasi piksel air dari band SCL.
+    var notWater = img.select('SCL').neq(6);
+
+    // Identifikasi piksel gelap di NIR yang bukan air (potensi bayangan awan).
+    var SR_BAND_SCALE = 1e4;
+    var darkPixels = img.select('B8').lt(NIR_DRK_THRESH * SR_BAND_SCALE)
+        .multiply(notWater).rename('dark_pixels');
+
+    // Tentukan arah proyeksi bayangan awan berdasarkan sudut matahari.
+    var shadowAzimuth = ee.Number(90).subtract(ee.Number(img.get('MEAN_SOLAR_AZIMUTH_ANGLE')));
+
+    // Proyeksikan bayangan awan dengan directionalDistanceTransform().
+    var cldProj = img.select('clouds').directionalDistanceTransform(shadowAzimuth, CLD_PRJ_DIST * 10)
+        .reproject({crs: img.select(0).projection(), scale: 100})
+        .select('distance')
+        .mask()
+        .rename('cloud_transform');
+
+    // Identifikasi piksel yang merupakan bayangan awan.
+    var shadows = cldProj.multiply(darkPixels).rename('shadows');
+
+    // Tambahkan band bayangan awan ke citra.
+    return img.addBands(ee.Image([darkPixels, cldProj, shadows]));
+}
+
+// Fungsi untuk menggabungkan mask awan dan bayangan awan.
+function addCloudShadowMask(img) {
+    // Tambahkan komponen awan.
+    var imgCloud = addCloudBands(img);
+
+    // Tambahkan komponen bayangan awan.
+    var imgCloudShadow = addShadowBands(imgCloud);
+
+    // Gabungkan mask awan dan bayangan awan.
+    var isCloudShadow = imgCloudShadow.select('clouds').add(imgCloudShadow.select('shadows')).gt(0);
+
+    // Hilangkan patch kecil dan perluas area awan/bayangan dengan BUFFER.
+    isCloudShadow = isCloudShadow.focalMin(2).focalMax(BUFFER * 2 / 20)
+        .reproject({crs: img.select([0]).projection(), scale: 20})
+        .rename('cloudmask');
+
+    // Tambahkan mask awan dan bayangan ke citra.
+    return imgCloudShadow.addBands(isCloudShadow);
+}
+
+// Fungsi untuk menampilkan layer awan dan bayangan awan dalam Google Earth Engine.
+function displayCloudLayers(col, index) {
+    // Gabungkan koleksi citra menjadi satu mosaik.
+    // Konversi koleksi ke daftar dan ambil gambar berdasarkan indeks
+    var imageList = col.toList(col.size());
+    var selectedImage = ee.Image(imageList.get(index)); // Ambil gambar ke-6 (indeks dimulai dari 0)
+    
+    // Pilih layer yang akan ditampilkan.
+    var clouds = img.select('clouds').selfMask();
+    var shadows = img.select('shadows').selfMask();
+    var darkPixels = img.select('dark_pixels').selfMask();
+    var probability = img.select('probability');
+    var cloudMask = img.select('cloudmask').selfMask();
+    var cloudTransform = img.select('cloud_transform');
+
+    // Tambahkan layer ke peta.
+    Map.addLayer(img, {bands: ['B4', 'B3', 'B2'], min: 0, max: 2500, gamma: 1.1}, 'S2 Image');
+    Map.addLayer(probability, {min: 0, max: 100}, 'Probability (Cloud)');
+    Map.addLayer(clouds, {palette: 'e056fd'}, 'Clouds');
+    Map.addLayer(cloudTransform, {min: 0, max: 1, palette: ['white', 'black']}, 'Cloud Transform');
+    Map.addLayer(darkPixels, {palette: 'orange'}, 'Dark Pixels');
+    Map.addLayer(shadows, {palette: 'yellow'}, 'Shadows');
+    Map.addLayer(cloudMask, {palette: 'orange'}, 'Cloud Mask');
+}
+
 function clear_percentage(image, roi) {
   // Select SCL band untuk deteksi bayangan awan dari citra Sentinel-2
   var scl = image.select("SCL");
@@ -447,3 +563,14 @@ var addAllLayers = function(image) {
 
 Map.addLayer(roi, {color: 'red'}, 'ROI');
 Map.centerObject(roi, 14);
+
+s2_sr_cld_col_eval = get_s2_sr_cld_col(roi, START_DATE, END_DATE)
+
+// Ambil daftar ID gambar dari koleksi
+image_ids = s2_sr_cld_col_eval.aggregate_array('system:index')
+
+// Cetak daftar ID gambar
+print(image_ids.getInfo())
+
+s2_sr_cld_col_eval_disp = s2_sr_cld_col_eval.map(add_cld_shdw_mask)
+display_cloud_layers(s2_sr_cld_col_eval_disp, 1)
