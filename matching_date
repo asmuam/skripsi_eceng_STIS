@@ -543,7 +543,7 @@ var sentinel2Imagedesc = ee.Image(sentinel2List.get(13));
 var rgbVis = {
   bands: ['B4', 'B3', 'B2'], // RGB (Red, Green, Blue)
   min: 0,
-  max: 0.3,
+  max: 2500,
 };
 
 // Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
@@ -607,3 +607,5 @@ displayCloudLayers(s2_sr_cld_col_eval_disp, 0)
 var imageList = s2_sr_cld_col_eval_disp.toList(s2_sr_cld_col_eval_disp.size());
 var img = ee.Image(imageList.get(0));
 print(img)
+
+Map.addLayer(applyCloudShadowMask(img), rgbVis, 'Sentinel-2 RGB masked');
