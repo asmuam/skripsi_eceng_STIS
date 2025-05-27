@@ -316,8 +316,8 @@ function clear_percentage(image, roi) {
   // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
   var cloudMask = cloudProb.lt(cloudThreshold);
   var shadowMask = scl.neq(cloudShadowValue);
-  // var mask = cloudMask.and(shadowMask);
-  var mask = cloudMask;
+  var mask = cloudMask.and(shadowMask);
+  // var mask = cloudMask;
   
   // 1. Hitung total piksel di ROI menggunakan SCL
   var totalPixels = image.select('SCL')
