@@ -311,7 +311,7 @@ function clear_percentage(image, roi) {
   
   // Select MSK_CLDPRB band untuk deteksi awan
   var cloudProb = image.select("MSK_CLDPRB");
-  var cloudThreshold = 5; // Ambang batas probabilitas awan (0-100)
+  var cloudThreshold = 25; // Ambang batas probabilitas awan (0-100)
   
   // Membuat mask untuk piksel yang bukan awan (MSK_CLDPRB < threshold) dan bukan bayangan awan (SCL != 3)
   var cloudMask = cloudProb.lt(cloudThreshold);
