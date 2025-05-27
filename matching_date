@@ -403,9 +403,19 @@ var rgbVis = {
   max: 0.3,
 };
 
-var msiBands = sentinel2Imagedesc.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']);
-var projection = msiBands.projection();
-print(projection);
+// Dapatkan daftar band MSI
+var bandNames = sentinel2Imagedesc.bandNames();
+
+// Fungsi untuk mendapatkan proyeksi setiap band
+var getProjection = function(band) {
+  var projection = sentinel2Imagedesc.select([band]).projection();
+  return ee.Dictionary({band: projection});
+};
+
+// Iterasi setiap band dan cetak proyeksinya
+var projections = bandNames.map(getProjection);
+print("Proyeksi setiap band MSI:", projections);
+
 
 Map.addLayer(sentinel2Imagedesc, rgbVis, 'Sentinel-2 RGB');
 
