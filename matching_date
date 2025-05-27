@@ -429,10 +429,10 @@ var addAllLayers = function(image) {
 
 
 // Tambahkan layer satu per satu
-for (var i = 0; i < sentinel2.size().getInfo(); i++) {
-  var image = ee.Image(sentinel2List.get(i));
-  addAllLayers(image);
-}
+// for (var i = 0; i < sentinel2.size().getInfo(); i++) {
+//   var image = ee.Image(sentinel2List.get(i));
+//   addAllLayers(image);
+// }
 
 
 Map.addLayer(roi, {color: 'red'}, 'ROI');
