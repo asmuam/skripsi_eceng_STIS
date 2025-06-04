@@ -159,7 +159,7 @@ function gammaMap(img, ksize) {
 
 var targetDateS1 = ee.Date('2024-08-30');                                     // Tanggal tetap untuk citra s1
 var targetDateS2 = ee.Date('2024-08-30');                                     // Tanggal tetap untuk citra s2
-var range = 1;
+var range = 30;
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
@@ -180,7 +180,7 @@ var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       //
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
 var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
-var image_sen2 = ee.Image(sentinel2List.get(0));                              // 7/26/2024
+var image_sen2 = ee.Image(sentinel2List.get(3));                              // 7/26/2024
 var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
 
 print("S1")
