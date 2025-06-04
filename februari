@@ -157,13 +157,13 @@ function gammaMap(img, ksize) {
     return result;
 } 
 
-var targetDateS1 = ee.Date('2024-05-14');                                     // Tanggal tetap untuk citra s1
-var targetDateS2 = ee.Date('2024-05-07');                                     // Tanggal tetap untuk citra s2
+var targetDateS1 = ee.Date('2024-06-23');                                     // Tanggal tetap untuk citra s1
+var targetDateS2 = ee.Date('2024-06-21');                                     // Tanggal tetap untuk citra s2
 var range = 1;
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
-  // .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
-  .filterDate('2024-3-01', '2024-12-31')
+  .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
+  // .filterDate('2024-3-01', '2024-12-31')
   // .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   // .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(function(image) {
@@ -174,8 +174,8 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
-  // .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
-  .filterDate('2024-3-01', '2024-12-31')
+  .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
+  // .filterDate('2024-3-01', '2024-12-31')
   // .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
