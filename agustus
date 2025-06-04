@@ -157,9 +157,9 @@ function gammaMap(img, ksize) {
     return result;
 } 
 
-var targetDateS1 = ee.Date('2024-08-30');                                     // Tanggal tetap untuk citra s1
-var targetDateS2 = ee.Date('2024-08-30');                                     // Tanggal tetap untuk citra s2
-var range = 30;
+var targetDateS1 = ee.Date('2024-08-18');                                     // Tanggal tetap untuk citra s1
+var targetDateS2 = ee.Date('2024-08-20');                                     // Tanggal tetap untuk citra s2
+var range = 1;
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
