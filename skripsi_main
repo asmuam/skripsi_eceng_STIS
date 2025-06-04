@@ -255,7 +255,10 @@ var roi =
         }),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    eceng = /* color: #61e57d */ee.FeatureCollection(
+    eceng = 
+    /* color: #61e57d */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44841736564798, -7.271096428200712]),
             {
@@ -1456,7 +1459,10 @@ var roi =
               "landcover": 0,
               "system:index": "199"
             })]),
-    air = /* color: #3eceff */ee.FeatureCollection(
+    air = 
+    /* color: #3eceff */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43180357414641, -7.270210837470081]),
             {
@@ -2657,7 +2663,10 @@ var roi =
               "landcover": 2,
               "system:index": "199"
             })]),
-    kja = /* color: #fffd02 */ee.FeatureCollection(
+    kja = 
+    /* color: #fffd02 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43916225249428, -7.271351431082463]),
             {
@@ -3858,7 +3867,10 @@ var roi =
               "landcover": 1,
               "system:index": "199"
             })]),
-    vegetasi_lain = /* color: #0a7400 */ee.FeatureCollection(
+    vegetasi_lain = 
+    /* color: #0a7400 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44646227440764, -7.267200644578212]),
             {
@@ -5059,7 +5071,10 @@ var roi =
               "landcover": 3,
               "system:index": "199"
             })]),
-    tanah = /* color: #c76029 */ee.FeatureCollection(
+    tanah = 
+    /* color: #c76029 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44453646145925, -7.267605945720329]),
             {
@@ -6260,7 +6275,10 @@ var roi =
               "landcover": 4,
               "system:index": "199"
             })]),
-    lainnya = /* color: #909090 */ee.FeatureCollection(
+    lainnya = 
+    /* color: #909090 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44824641847644, -7.267512076516082]),
             {
