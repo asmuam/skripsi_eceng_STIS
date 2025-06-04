@@ -169,7 +169,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   .map(function(image) {
     return maskS2clouds(image, roi);  // Pastikan fungsi ini menambahkan properti 'clear_pixel_percentage'
   })
-  .filter(ee.Filter.eq('clear_pixel_percentage', 100))  // Hanya memilih citra dengan 100% piksel clear
+  .filter(ee.Filter.eq('clear_pixel_percentage', 90))  // Hanya memilih citra dengan 100% piksel clear
   .sort('system:time_start');
   
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
