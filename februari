@@ -50,7 +50,7 @@ function toNatural(img) {
 function toDB(img) {
   return ee.Image(img).log10().multiply(10.0);
 }
-s
+
 // defining a function to apply lee filtering on S1 image
 function lee_filter(img, size) {
     // Replace null values with 0
@@ -136,18 +136,26 @@ var range = 1;
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   // .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
-  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
-  .map(maskS2clouds)
+  .filterDate('2024-1-01', '2024-12-31')
+  // .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))  .map(maskS2clouds)
   .sort('system:time_start');
+  
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
   // .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'));
+  .filterDate('2024-1-01', '2024-12-31')
+  .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
 var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
 var image_sen2 = ee.Image(sentinel2List.get(0));                              // 7/26/2024
 var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
 
+print("S1")
+print(sentinel1List)
+print("S2")
+print(sentinel2List)
 // // Convert VV and VH bands from dB to natural units
 // var vv_natural = toNatural(image_sen1.select('VV')).rename('VV');
 // var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
