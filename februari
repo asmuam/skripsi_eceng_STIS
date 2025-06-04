@@ -31,7 +31,7 @@ function maskS2clouds(image, roi) {
   var totalPixels = image.reduceRegion({
     reducer: ee.Reducer.count(),
     geometry: roi.geometry(),  
-    scale: 30,
+    scale: 10,
     maxPixels: 1e13
   }).getNumber('QA60'); 
 
@@ -39,7 +39,7 @@ function maskS2clouds(image, roi) {
   var clearPixels = maskedImage.reduceRegion({
     reducer: ee.Reducer.count(),
     geometry: roi.geometry(),
-    scale: 30,
+    scale: 10,
     maxPixels: 1e13
   }).getNumber('QA60');
 
@@ -163,7 +163,7 @@ var range = 1;
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
   // .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
-  .filterDate('2024-1-01', '2024-12-31')
+  .filterDate('2024-3-01', '2024-12-31')
   // .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(function(image) {
@@ -175,7 +175,7 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
   // .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
-  .filterDate('2024-1-01', '2024-12-31')
+  .filterDate('2024-3-01', '2024-12-31')
   .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
