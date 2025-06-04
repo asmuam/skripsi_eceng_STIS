@@ -50,7 +50,7 @@ function toNatural(img) {
 function toDB(img) {
   return ee.Image(img).log10().multiply(10.0);
 }
-
+s
 // defining a function to apply lee filtering on S1 image
 function lee_filter(img, size) {
     // Replace null values with 0
@@ -559,7 +559,7 @@ var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 // print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 // print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 17 feb 2024:', image_sen2)
-print('Sentinel-1 VV 0 feb 2024:', image_sen1)
+print('Sentinel-1 VV 20 feb 2024:', image_sen1)
 // print('Full Sample',sampled)
 print('Combined Image',combinedImage)
 
