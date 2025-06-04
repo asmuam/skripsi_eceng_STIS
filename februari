@@ -500,12 +500,12 @@ var seed = 222111840;   // Set the seed
 // Merge Sentinel-1 and Sentinel-2 imagery
 var combinedImage = image_sen2.addBands(image_sen1);
 
-var sampled = combinedImage.select(combinedBands).sampleRegions({
-  collection: classNames,
-  properties: ['landcover'], 
-  scale: 10, 
-  geometries: true, 
-});
+// var sampled = combinedImage.select(combinedBands).sampleRegions({
+//   collection: classNames,
+//   properties: ['landcover'], 
+//   scale: 10, 
+//   geometries: true, 
+// });
 
 // // count the number of pixels in the area
 // var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
@@ -650,18 +650,18 @@ Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3
 
 print(combinedImage)
 
-Export.table.toDrive({
-  collection: sampled, 
-  description: 'csv_sample_drive', 
-  folder: 'GEE_Exports', 
-  fileFormat: 'csv',
-  fileNamePrefix: 'data_sample',
-})   // Export sample to drive
-Export.table.toAsset({
-  collection: sampled, 
-  description: 'sampel_asset', 
-  assetId: 'projects/ee-222111840/assets/sampel',
-})   // Export sample to asset
+// Export.table.toDrive({
+//   collection: sampled, 
+//   description: 'csv_sample_drive', 
+//   folder: 'GEE_Exports', 
+//   fileFormat: 'csv',
+//   fileNamePrefix: 'data_sample',
+// })   // Export sample to drive
+// Export.table.toAsset({
+//   collection: sampled, 
+//   description: 'sampel_asset', 
+//   assetId: 'projects/ee-222111840/assets/sampel',
+// })   // Export sample to asset
 
 // Export.table.toDrive({
 //   collection: rawa_pening_shp,
