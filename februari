@@ -27,15 +27,15 @@ function maskS2clouds(image, roi) {
   // Menerapkan mask pada citra
   var maskedImage = image.updateMask(mask).divide(10000);
 
-  // Menghitung total piksel dalam ROI
-  var totalPixels = maskedImage.reduceRegion({
+  // Menghitung total piksel dalam ROI dari citra asli (sebelum mask diterapkan)
+  var totalPixels = image.reduceRegion({
     reducer: ee.Reducer.count(),
-    geometry: roi.geometry(),  // Gunakan .geometry() dari FeatureCollection
+    geometry: roi.geometry(),  
     scale: 30,
     maxPixels: 1e13
   }).getNumber('QA60'); 
 
-  // Menghitung piksel yang tidak ter-mask dalam ROI
+  // Menghitung piksel yang tidak ter-mask dalam ROI dari citra yang sudah di-mask
   var clearPixels = maskedImage.reduceRegion({
     reducer: ee.Reducer.count(),
     geometry: roi.geometry(),
