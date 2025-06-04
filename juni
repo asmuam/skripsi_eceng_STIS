@@ -597,8 +597,8 @@ var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 // print('Persentase piksel no-data:', noDataPixelPercentage);
 // print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
 // print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
-print('Sentinel-2 (RGB) 17 feb 2024:', image_sen2)
-print('Sentinel-1 VV 20 feb 2024:', image_sen1)
+print('Sentinel-2 (RGB) 21 juni 2024:', image_sen2)
+print('Sentinel-1 VV 23 juni 2024:', image_sen1)
 // print('Full Sample',sampled)
 print('Combined Image',combinedImage)
 
