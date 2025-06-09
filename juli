@@ -6275,7 +6275,7 @@ var roi =
               "landcover": 4,
               "system:index": "199"
             })]),
-    lainnya = 
+    lahan_terbangun = 
     /* color: #909090 */
     /* shown: false */
     ee.FeatureCollection(
@@ -8223,7 +8223,7 @@ var kjaRandom = kja.randomColumn('random', seed);
 var airRandom = air.randomColumn('random', seed);
 var tanahRandom = tanah.randomColumn('random', seed);
 var vegetasiLainRandom = vegetasi_lain.randomColumn('random', seed);
-var lainnyaRandom = lainnya.randomColumn('random', seed);
+var lainnyaRandom = lahan_terbangun.randomColumn('random', seed);
 
 // Limit each feature collection to x random items
 var x = 200
