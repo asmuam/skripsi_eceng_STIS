@@ -5,8 +5,9 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
     eceng = /* color: #21d649 */ee.FeatureCollection([]),
     kja = /* color: #e3ff2d */ee.FeatureCollection([]),
     air = /* color: #1488ff */ee.FeatureCollection([]),
-    vegetasi = /* color: #237617 */ee.FeatureCollection([]),
-    tanah = /* color: #ad7e2e */ee.FeatureCollection([]);
+    vegetasi_lain = /* color: #237617 */ee.FeatureCollection([]),
+    tanah = /* color: #ad7e2e */ee.FeatureCollection([]),
+    lahan_terbangun = /* color: #959595 */ee.FeatureCollection([]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Function to get the image with the closest date or according to targetDate
 function getClosestImage(collection, targetDate) {
