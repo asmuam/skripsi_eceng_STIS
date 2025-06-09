@@ -2,12 +2,48 @@
 var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
-    eceng = /* color: #21d649 */ee.FeatureCollection([]),
-    kja = /* color: #e3ff2d */ee.FeatureCollection([]),
-    air = /* color: #1488ff */ee.FeatureCollection([]),
-    vegetasi_lain = /* color: #237617 */ee.FeatureCollection([]),
-    tanah = /* color: #ad7e2e */ee.FeatureCollection([]),
-    lahan_terbangun = /* color: #959595 */ee.FeatureCollection([]);
+    eceng = /* color: #21d649 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44227159622245, -7.273135064553922]),
+            {
+              "landcover": 0,
+              "system:index": "0"
+            })]),
+    kja = /* color: #e3ff2d */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.4283736249888, -7.3069026653344125]),
+            {
+              "landcover": 1,
+              "system:index": "0"
+            })]),
+    air = /* color: #1488ff */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.42618494243264, -7.305620337614403]),
+            {
+              "landcover": 2,
+              "system:index": "0"
+            })]),
+    vegetasi_lain = /* color: #237617 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.42261760444283, -7.306455713351846]),
+            {
+              "landcover": 3,
+              "system:index": "0"
+            })]),
+    tanah = /* color: #ad7e2e */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.45690737910253, -7.298619871940022]),
+            {
+              "landcover": 4,
+              "system:index": "0"
+            })]),
+    lahan_terbangun = /* color: #959595 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44602240419995, -7.2678995661180785]),
+            {
+              "landcover": 5,
+              "system:index": "0"
+            })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Function to get the image with the closest date or according to targetDate
 function getClosestImage(collection, targetDate) {
