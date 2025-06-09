@@ -586,9 +586,9 @@ Export.image.toAsset({
 // VIZ
 // Menampilkan Layer RGB (Band 4, 3, 2 untuk RGB di Sentinel-2)
 Map.centerObject(roi, 10);
-Map.addLayer(combinedImage.clip(roi), { bands: ['B4', 'B3', 'B2'], max: 0.3 }, 'Sentinel-2 RGB');
+Map.addLayer(combinedImage, { bands: ['B4', 'B3', 'B2'], max: 0.3 }, 'Sentinel-2 RGB');
 // Menampilkan Layer Radar (VV, VH, dan rasio VV/VH)
-Map.addLayer(combinedImage.clip(roi), {
+Map.addLayer(combinedImage, {
   bands: ['VV', 'VH', 'VV_VH_ratio'],
   min: -20, max: 0,
   gamma: 1.4
