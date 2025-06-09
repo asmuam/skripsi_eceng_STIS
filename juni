@@ -2,7 +2,48 @@
 var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    eceng = /* color: #08ff27 */ee.FeatureCollection([]);
+    eceng = /* color: #08ff27 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44700188142443, -7.269379893604566]),
+            {
+              "landcover": 0,
+              "system:index": "0"
+            })]),
+    kja = /* color: #fff913 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.43988866311693, -7.2710188509982165]),
+            {
+              "landcover": 1,
+              "system:index": "0"
+            })]),
+    air = /* color: #23feff */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.43355864984179, -7.2707208591897015]),
+            {
+              "landcover": 2,
+              "system:index": "0"
+            })]),
+    vegetasi_lain = /* color: #156c24 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44676702526172, -7.266782527766464]),
+            {
+              "landcover": 3,
+              "system:index": "0"
+            })]),
+    tanah = /* color: #866d0f */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44308895817818, -7.262226017018466]),
+            {
+              "landcover": 4,
+              "system:index": "0"
+            })]),
+    lahan_terbangun = /* color: #808080 */ee.FeatureCollection(
+        [ee.Feature(
+            ee.Geometry.Point([110.44604537870325, -7.267889467391586]),
+            {
+              "landcover": 5,
+              "system:index": "0"
+            })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function getClosestImage(collection, targetDate) {
   return collection
