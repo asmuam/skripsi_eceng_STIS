@@ -7881,63 +7881,63 @@ var classValues = classNames.aggregate_array('landcover').distinct();
 // Merge Sentinel-1 and Sentinel-2 imagery
 var combinedImage = image_sen2.addBands(image_sen1);
 
-// var sampled = combinedImage.select(combinedBands).sampleRegions({
-//   collection: classNames,
-//   properties: ['landcover'], 
-//   scale: 10, 
-//   geometries: true, 
-// });
+var sampled = combinedImage.select(combinedBands).sampleRegions({
+  collection: classNames,
+  properties: ['landcover'], 
+  scale: 10, 
+  geometries: true, 
+});
 
 // // count the number of pixels in the area
-// var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
+var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 
 // Memotong citra Sentinel-2 dan Sentinel-1 dengan shapefile rawa_pening_shp
 var clippedImageS2 = image_sen2.clip(rawa_pening_shp);
 var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 
-// // Area
-// var areaImageS2 = image_sen2.unmask().reduceRegion({
-//   reducer: ee.Reducer.count(),
-//   geometry: rawa_pening_shp,
-//   scale:10
-//   });
-// var areaImageS1 = image_sen1.unmask().reduceRegion({
-//   reducer: ee.Reducer.count(),
-//   geometry: rawa_pening_shp
-//   });
+// Area
+var areaImageS2 = image_sen2.unmask().reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp,
+  scale:10
+  });
+var areaImageS1 = image_sen1.unmask().reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp
+  });
   
-// var validPixelCount = clippedImageS2.mask().reduceRegion({
-//   reducer: ee.Reducer.count(),
-//   geometry: rawa_pening_shp.geometry(),
-//   scale: 10,
-//   maxPixels: 1e10
-// }).values().get(0);  // Calculate the number of valid pixels
+var validPixelCount = clippedImageS2.mask().reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp.geometry(),
+  scale: 10,
+  maxPixels: 1e10
+}).values().get(0);  // Calculate the number of valid pixels
 
-// // Calculate the total number of pixels in the clipped image
-// var totalPixelCount = clippedImageS2.select(0).reduceRegion({
-//   reducer: ee.Reducer.count(),
-//   geometry: rawa_pening_shp.geometry(),
-//   scale: 10,
-//   maxPixels: 1e10
-// }).values().get(0);
+// Calculate the total number of pixels in the clipped image
+var totalPixelCount = clippedImageS2.select(0).reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: rawa_pening_shp.geometry(),
+  scale: 10,
+  maxPixels: 1e10
+}).values().get(0);
 
-// // Calculate the number of no-data pixels
-// var noDataPixelCount = ee.Number(totalPixelCount).subtract(validPixelCount);
+// Calculate the number of no-data pixels
+var noDataPixelCount = ee.Number(totalPixelCount).subtract(validPixelCount);
 
-// // Calculate the percentage of no-data pixels
-// var noDataPixelPercentage = noDataPixelCount.divide(totalPixelCount).multiply(100);
+// Calculate the percentage of no-data pixels
+var noDataPixelPercentage = noDataPixelCount.divide(totalPixelCount).multiply(100);
 
-// // Count the number of pixels in the sample
-// var pixelCount = sampled.size();
+// Count the number of pixels in the sample
+var pixelCount = sampled.size();
 
 // LOG
-// print('Area SHP hektar:', pixelCountSHP);
-// print('Area untuk semua band Sentinel-2:', areaImageS2);
-// print('Area untuk semua band Sentinel-1:', areaImageS1);
-// print('Jumlah Piksel dalam Sampel:', pixelCount);
-// print('Persentase piksel no-data:', noDataPixelPercentage);
-// print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
-// print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
+print('Area SHP hektar:', pixelCountSHP);
+print('Area untuk semua band Sentinel-2:', areaImageS2);
+print('Area untuk semua band Sentinel-1:', areaImageS1);
+print('Jumlah Piksel dalam Sampel:', pixelCount);
+print('Persentase piksel no-data:', noDataPixelPercentage);
+print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
+print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
 print('Sentinel-2 (RGB) 17 ags 2024:', image_sen2)
 print('Sentinel-1 VV 20 ags 2024:', image_sen1)
 // print('Full Sample',sampled)
@@ -7959,26 +7959,26 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
 // EXPORT
-// Export.table.toDrive({
-//   collection: sampled, 
-//   description: 'csv_sample_drive', 
-//   folder: 'GEE_Exports', 
-//   fileFormat: 'csv',
-//   fileNamePrefix: 'data_sample',
-// })   // Export sample to drive
-// Export.table.toAsset({
-//   collection: sampled, 
-//   description: 'sampel_asset', 
-//   assetId: 'projects/ee-222111840/assets/sampel',
-// })   // Export sample to asset
+Export.table.toDrive({
+  collection: sampled, 
+  description: 'csv_sample_drive', 
+  folder: 'GEE_Exports', 
+  fileFormat: 'csv',
+  fileNamePrefix: 'data_sample',
+})   // Export sample to drive
+Export.table.toAsset({
+  collection: sampled, 
+  description: 'sampel_asset', 
+  assetId: 'projects/ee-222111840/assets/sampel',
+})   // Export sample to asset
 
-// Export.table.toDrive({
-//   collection: rawa_pening_shp,
-//   description: 'export_shapefile',
-//   fileFormat: 'SHP',
-//   folder: 'GEE_Exports',
-//   fileNamePrefix: 'rawa_pening'
-// })   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
+Export.table.toDrive({
+  collection: rawa_pening_shp,
+  description: 'export_shapefile',
+  fileFormat: 'SHP',
+  folder: 'GEE_Exports',
+  fileNamePrefix: 'rawa_pening'
+})   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
 
 // Ekspor rawa_pening_image (semua band)
 Export.image.toDrive({
@@ -8117,53 +8117,3 @@ Export.image.toAsset({
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
 // Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
-
-// // Mengecek nilai min dan max untuk VV
-// var vvStats = image_sen1.select('VV').reduceRegion({
-//   reducer: ee.Reducer.minMax(),
-//   geometry: rawa_pening_shp, // Area of interest
-//   scale: 30, // Resolusi
-//   maxPixels: 1e9
-// });
-// print('VV Min and Max:', vvStats);
-
-// // Mengecek nilai min dan max untuk VH
-// var vhStats = image_sen1.select('VH').reduceRegion({
-//   reducer: ee.Reducer.minMax(),
-//   geometry: rawa_pening_shp,
-//   scale: 30,
-//   maxPixels: 1e9
-// });
-// print('VH Min and Max:', vhStats);
-
-// // Mengecek nilai min dan max untuk VV_VH_ratio
-// var vvVhRatioStats = image_sen1.expression(
-//   'VV / VH', {
-//     VV: image_sen1.select('VV'),
-//     VH: image_sen1.select('VH')
-//   }
-// ).reduceRegion({
-//   reducer: ee.Reducer.minMax(),
-//   geometry: rawa_pening_shp,
-//   scale: 30,
-//   maxPixels: 1e9
-// });
-// print('VV/VH Ratio Min and Max:', vvVhRatioStats);
-
-// Lakukan ekspor ke CSV
-// Ambil nilai pixel berdasarkan poligon
-// var sampled_poly = combinedImage.select(combinedBands).sampleRegions({
-//   collection: eceng, // FeatureCollection poligon
-//   properties: ['landcover'], // Pastikan poligon punya atribut LULC
-//   scale: 10, // Sesuaikan dengan resolusi citra
-//   geometries: true
-// });
-
-// Ekspor hasil sampling ke Google Drive dalam format CSV
-// Export.table.toDrive({
-//   folder: 'GEE_Exports',
-//   collection: sampled_poly,
-//   description: 'Export_Sampled_Polygon',
-//   fileFormat: 'geojson'
-// });
-
