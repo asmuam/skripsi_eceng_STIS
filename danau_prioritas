@@ -229,7 +229,6 @@ var clippedTable = table.map(function(feature) {
 var roi = waduk_cirata; // Ganti ROI dengan wilayah yang Anda pilih
 var cloudThreshold = 5; // Persentase maksimum piksel berawan
 
-
 //  Sentinel-2 collection
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
   .filterBounds(roi)
@@ -269,9 +268,9 @@ var sentinel1List = sentinel1.toList(sentinel1.size());
 var image_sen2 = ee.Image(sentinel2List.get(20));     
 var image_sen1 = ee.Image(sentinel1List.get(568));     
 
+// LOG
 print(sentinel1List)
 print(sentinel2List)
-
 print(image_sen1)
 print(image_sen2)
 
@@ -399,6 +398,7 @@ var nbi = combinedImage
   })
   .rename('NBI')
   .copyProperties(combinedImage , combinedImage .propertyNames()); 
+
 // Soil indices
 var bsi = combinedImage 
   .expression(
@@ -435,7 +435,6 @@ var vv_vh_ratio = combinedImage
   })
   .rename('VV_VH_ratio')
   .copyProperties(combinedImage, combinedImage.propertyNames())
-
 var vv_vh_diff = combinedImage
   .expression('VV - VH', {
     VV: combinedImage.select('VV'),
@@ -443,7 +442,6 @@ var vv_vh_diff = combinedImage
   })
   .rename('VV_VH_diff')
   .copyProperties(combinedImage, combinedImage.propertyNames());
-
 var vv_vh_mean = combinedImage
   .expression('(VV + VH) / 2', {
     VV: combinedImage.select('VV'),
@@ -452,7 +450,6 @@ var vv_vh_mean = combinedImage
   .rename('VV_VH_mean')
   .copyProperties(combinedImage, combinedImage.propertyNames());
   
-
 combinedImage  = combinedImage.addBands([
   ndvi,
   gndvi,
@@ -522,6 +519,7 @@ var sentinel2Image = combinedImage.select([
   'BSI', 'NDII', 'NDBSI'
 ]);
 
+// EXPORT
 // Ekspor ke Google Drive
 Export.image.toDrive({
   image: combinedImage.clip(roi),
@@ -585,10 +583,10 @@ Export.image.toAsset({
   scale: 10
 });
 
+// VIZ
 // Menampilkan Layer RGB (Band 4, 3, 2 untuk RGB di Sentinel-2)
 Map.centerObject(roi, 10);
 Map.addLayer(combinedImage.clip(roi), { bands: ['B4', 'B3', 'B2'], max: 0.3 }, 'Sentinel-2 RGB');
-
 // Menampilkan Layer Radar (VV, VH, dan rasio VV/VH)
 Map.addLayer(combinedImage.clip(roi), {
   bands: ['VV', 'VH', 'VV_VH_ratio'],
