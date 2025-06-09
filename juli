@@ -8322,16 +8322,16 @@ Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY');
 // EXPORT
 Export.table.toDrive({
   collection: sampled, 
-  description: 'csv_sample_drive', 
+  description: 'csv_sample_drive_jul', 
   folder: 'GEE_Exports', 
   fileFormat: 'csv',
-  fileNamePrefix: 'data_sample',
+  fileNamePrefix: 'data_sample_jul',
 })   // Export sample to drive
 
 Export.table.toAsset({
   collection: sampled, 
-  description: 'sampel_asset', 
-  assetId: 'projects/ee-222111840/assets/sampel',
+  description: 'sampel_asset_jul', 
+  assetId: 'projects/ee-222111840/assets/sampel_jul',
 })   // Export sample to asset
 
 // Export.table.toDrive({
@@ -8345,8 +8345,8 @@ Export.table.toAsset({
 // Ekspor rawa_pening_image (semua band)
 Export.image.toDrive({
   image: combinedImage.clip(rawa_pening_shp),
-  description: 'rawa_pening_image_drive',
-  fileNamePrefix: 'rawa_pening_image',
+  description: 'rawa_pening_image_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8358,8 +8358,8 @@ Export.image.toDrive({
 
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp),
-  description: 'rawa_pening_image_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image',
+  description: 'rawa_pening_image_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_jul',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8368,8 +8368,8 @@ Export.image.toAsset({
 var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
 Export.image.toDrive({
   image: senRawImage,
-  description: 'rawa_pening_image_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_raw',
+  description: 'rawa_pening_image_raw_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_raw_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8381,8 +8381,8 @@ Export.image.toDrive({
 
 Export.image.toAsset({
   image: senRawImage,
-  description: 'rawa_pening_image_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
+  description: 'rawa_pening_image_raw_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw_jul',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8391,8 +8391,8 @@ Export.image.toAsset({
 var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
 Export.image.toDrive({
   image: sen1Image,
-  description: 'rawa_pening_image_sentinel1_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel1',
+  description: 'rawa_pening_image_sentinel1_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_sentinel1_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8404,8 +8404,8 @@ Export.image.toDrive({
 
 Export.image.toAsset({
   image: sen1Image,
-  description: 'rawa_pening_image_sentinel1_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
+  description: 'rawa_pening_image_sentinel1_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_jul',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8414,8 +8414,8 @@ Export.image.toAsset({
 var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
 Export.image.toDrive({
   image: sen2Image,
-  description: 'rawa_pening_image_sentinel2_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel2',
+  description: 'rawa_pening_image_sentinel2_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_sentinel2_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8427,8 +8427,8 @@ Export.image.toDrive({
 
 Export.image.toAsset({
   image: sen2Image,
-  description: 'rawa_pening_image_sentinel2_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
+  description: 'rawa_pening_image_sentinel2_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_jul',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8437,8 +8437,8 @@ Export.image.toAsset({
 var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-1
 Export.image.toDrive({
   image: sen1RawImage,
-  description: 'rawa_pening_image_sentinel1_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel1_raw',
+  description: 'rawa_pening_image_sentinel1_raw_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_sentinel1_raw_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8450,8 +8450,8 @@ Export.image.toDrive({
 
 Export.image.toAsset({
   image: sen1RawImage,
-  description: 'rawa_pening_image_sentinel1_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw',
+  description: 'rawa_pening_image_sentinel1_raw_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw_jul',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8460,8 +8460,8 @@ Export.image.toAsset({
 var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).clip(rawa_pening_shp); // Native bands Sentinel-2
 Export.image.toDrive({
   image: sen2RawImage,
-  description: 'rawa_pening_image_sentinel2_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel2_raw',
+  description: 'rawa_pening_image_sentinel2_raw_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_sentinel2_raw_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8473,61 +8473,11 @@ Export.image.toDrive({
 
 Export.image.toAsset({
   image: sen2RawImage,
-  description: 'rawa_pening_image_sentinel2_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw',
+  description: 'rawa_pening_image_sentinel2_raw_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw_jul',
   region: rawa_pening_shp,
   scale: 10
 });
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
 // Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
-
-// // Mengecek nilai min dan max untuk VV
-// var vvStats = image_sen1.select('VV').reduceRegion({
-//   reducer: ee.Reducer.minMax(),
-//   geometry: rawa_pening_shp, // Area of interest
-//   scale: 30, // Resolusi
-//   maxPixels: 1e9
-// });
-// print('VV Min and Max:', vvStats);
-
-// // Mengecek nilai min dan max untuk VH
-// var vhStats = image_sen1.select('VH').reduceRegion({
-//   reducer: ee.Reducer.minMax(),
-//   geometry: rawa_pening_shp,
-//   scale: 30,
-//   maxPixels: 1e9
-// });
-// print('VH Min and Max:', vhStats);
-
-// // Mengecek nilai min dan max untuk VV_VH_ratio
-// var vvVhRatioStats = image_sen1.expression(
-//   'VV / VH', {
-//     VV: image_sen1.select('VV'),
-//     VH: image_sen1.select('VH')
-//   }
-// ).reduceRegion({
-//   reducer: ee.Reducer.minMax(),
-//   geometry: rawa_pening_shp,
-//   scale: 30,
-//   maxPixels: 1e9
-// });
-// print('VV/VH Ratio Min and Max:', vvVhRatioStats);
-
-// Lakukan ekspor ke CSV
-// Ambil nilai pixel berdasarkan poligon
-var sampled_poly = combinedImage.select(combinedBands).sampleRegions({
-  collection: eceng, // FeatureCollection poligon
-  properties: ['landcover'], // Pastikan poligon punya atribut LULC
-  scale: 10, // Sesuaikan dengan resolusi citra
-  geometries: true
-});
-
-// Ekspor hasil sampling ke Google Drive dalam format CSV
-Export.table.toDrive({
-  folder: 'GEE_Exports',
-  collection: sampled_poly,
-  description: 'Export_Sampled_Polygon',
-  fileFormat: 'geojson'
-});
-
