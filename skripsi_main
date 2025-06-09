@@ -8307,91 +8307,19 @@ print('Combined Image',combinedImage)
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(combinedImage, 
-  {
-    bands: ['VV', 'VH', 'VV'], 
-    min: [-30], // Nilai minimum untuk masing-masing band
-    max: [1], // Nilai maksimum untuk masing-masing band
-  }, 
-  'combinedImage S1'
-);
+Map.addLayer(combinedImage, {bands: ['VV', 'VH', 'VV'], min: [-30],max: [1], }, 'combinedImage S1');
 // Map.addLayer(image_sen1_filtered_3.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 3 S1 clip')
 // Map.addLayer(image_sen1_filtered_5.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 5 S1 clip')
 // Map.addLayer(image_sen1_filtered_7.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 7 S1 clip')
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
-Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
-Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
-
-var VV = combinedImage.select('VV'); 
-var VH = combinedImage.select('VH'); 
-var VV_viz = VV.expression(
-  'VV*8', {
-    'VV': VV
-  }
-);
-var VH_viz = VH.expression(
-  'VH*8', {
-    'VH': VH
-  }
-);
-var VV_x_VH = combinedImage.expression(
-  'VH*VV', {
-    'VH': combinedImage.select('VH'),
-    'VV': combinedImage.select('VV')
-  }
-);
-
-var VV_VH_sum = combinedImage.expression(
-  'VH+VV', {
-    'VH': combinedImage.select('VH'),
-    'VV': combinedImage.select('VV')
-  }
-);
-
-var SWI = combinedImage.expression(
-  '0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
-    'VH': combinedImage.select('VH'),
-    'VV': combinedImage.select('VV')
-  }
-);
-
-var RVI = combinedImage.expression(
-  '(4 * VH) / (VV + VH)', {
-    'VH': combinedImage.select('VH'),
-    'VV': combinedImage.select('VV')
-  }
-);
-
-// // Menambahkan layer ke peta
-// // Buat Mask untuk nilai > 0.2
-// var SWI_mask = SWI.expression('(SWI > 0.2) ? 1 : 0', {
-//   'SWI': SWI
-// });
-
-// // Visualisasi layer berdasarkan mask
-// var SWI_visualized = SWI_mask.visualize({
-//   palette: ['red', 'blue'], // Merah untuk 0, Biru untuk 1
-//   min: 0,
-//   max: 1
-// });
-
-// Tambahkan layer ke peta
-// Map.addLayer(RVI, {min: -2, max: 2}, 'RVI');
-Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
-// Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');
-Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
-Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
-Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
+Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
+Map.addLayer(combinedImage, {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY'); 
 Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY'); 
-// Map.addLayer(vv_filtered_db_7, {min: -1, max: 0}, 'vv_filtered_db_7');
-// Map.addLayer(vH_filtered_db_7, {min: -1, max: 0}, 'vH_filtered_db_7');
-
 Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
 Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
-print(combinedImage)
-
+// EXPORT
 Export.table.toDrive({
   collection: sampled, 
   description: 'csv_sample_drive', 
@@ -8399,6 +8327,7 @@ Export.table.toDrive({
   fileFormat: 'csv',
   fileNamePrefix: 'data_sample',
 })   // Export sample to drive
+
 Export.table.toAsset({
   collection: sampled, 
   description: 'sampel_asset', 
@@ -8426,6 +8355,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp),
   description: 'rawa_pening_image_asset',
@@ -8448,6 +8378,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: senRawImage,
   description: 'rawa_pening_image_raw_asset',
@@ -8470,6 +8401,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen1Image,
   description: 'rawa_pening_image_sentinel1_asset',
@@ -8492,6 +8424,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen2Image,
   description: 'rawa_pening_image_sentinel2_asset',
@@ -8514,6 +8447,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen1RawImage,
   description: 'rawa_pening_image_sentinel1_raw_asset',
@@ -8536,6 +8470,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen2RawImage,
   description: 'rawa_pening_image_sentinel2_raw_asset',
