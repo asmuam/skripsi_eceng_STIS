@@ -166,8 +166,8 @@ var targetDateS2 = ee.Date('2024-08-20');
 var range = 1;
 var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
   .filterBounds(roi)
-  // .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
-  .filterDate('2024-3-01', '2024-12-31')
+  .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
+  // .filterDate('2024-3-01', '2024-12-31')
   // .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
   // .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(function(image) {
@@ -178,14 +178,14 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
-  // .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
-  .filterDate('2024-3-01', '2024-12-31')
+  .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
+  // .filterDate('2024-3-01', '2024-12-31')
   // .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
 
 var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
 var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
-var image_sen2 = ee.Image(sentinel2List.get(0));                              // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
+var image_sen2 = ee.Image(sentinel2List.get(33));                              // 7/26/2024
+var image_sen1 = ee.Image(sentinel1List.get(33));                              // 7/25/2024
 
 // VIs
 var ndvi = image_sen2
@@ -591,7 +591,7 @@ Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage, {bands: ['VV', 'VH', 'VV'], min: -30, max: 1}, 'combinedImage S1');
-Map.addLayer(combinedImage.clip(roi), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
+Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
