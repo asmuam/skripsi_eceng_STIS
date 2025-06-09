@@ -1,7 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
+    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
+    eceng = /* color: #21d649 */ee.FeatureCollection([]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Function to get the image with the closest date or according to targetDate
 function getClosestImage(collection, targetDate) {
