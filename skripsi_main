@@ -7768,6 +7768,7 @@ var roi =
               "system:index": "19"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Function to get the image with the closest date or according to targetDate
 function getClosestImage(collection, targetDate) {
   return collection
     .map(function (image) {
@@ -7777,7 +7778,8 @@ function getClosestImage(collection, targetDate) {
     })
     .sort('date_diff')
     .first(); // Citra dengan selisih waktu terkecil
-}                        // Function to get the image with the closest date or according to targetDate
+}   
+
 function maskS2clouds(image) {  
   var qa = image.select('QA60');
   var cloudBitMask = 1 << 10;
@@ -7789,6 +7791,7 @@ function maskS2clouds(image) {
   var maskedImage = image.updateMask(mask).divide(10000);
   return maskedImage.copyProperties(image, image.propertyNames());
 }                                            // Function for masking Sentinel-2 clouds while preserving initial properties
+
 function findMatchingDates(s1Collection, s2Collection) {
   var s1Dates = s1Collection.aggregate_array('system:time_start');
   var s2Dates = s2Collection.aggregate_array('system:time_start');
@@ -7913,32 +7916,6 @@ var sentinel2List = sentinel2.toList(sentinel2.size());                       //
 var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
 var image_sen2 = ee.Image(sentinel2List.get(1));                              // 7/26/2024
 var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
-
-// // Convert VV and VH bands from dB to natural units
-// var vv_natural = toNatural(image_sen1.select('VV')).rename('VV');
-// var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
-
-// // Combine natural units bands
-// var image_natural = vv_natural.addBands(vh_natural);
-
-// // Apply filter to VV and VH bands separately
-// var vv_filtered_7 = lee_filter(image_natural.select('VV'), 3).rename('VV');
-// var vh_filtered_7 = lee_filter(image_natural.select('VH'), 3).rename('VH');
-
-// // Combine the filtered bands into a single image 
-// var image_sen1_filtered_7 = vv_filtered_7.addBands(vh_filtered_7);
-
-// // Convert back to dB for visualization 
-// var vv_filtered_db_7 = toDB(image_sen1_filtered_7.select('VV')).rename('VV');
-// var vh_filtered_db_7 = toDB(image_sen1_filtered_7.select('VH')).rename('VH');
-// image_sen1_filtered_7 = vv_filtered_db_7.addBands(vh_filtered_db_7);
-
-// image_sen1 = image_sen1_filtered_7
-
-print(image_sen2)
-print(image_sen1)
-// print(vv_filtered_db_7)
-// print(image_sen1_filtered)
 
 // VIs
 var ndvi = image_sen2
@@ -8067,6 +8044,7 @@ var nbi = image_sen2
   })
   .rename('NBI')
   .copyProperties(image_sen2, image_sen2.propertyNames()); 
+
 // Soil indices
 var bsi = image_sen2
   .expression(
@@ -8103,7 +8081,6 @@ var vv_vh_ratio = image_sen1
   })
   .rename('VV_VH_ratio')
   .copyProperties(image_sen1, image_sen1.propertyNames())
-
 var vv_vh_diff = image_sen1
   .expression('VV - VH', {
     VV: image_sen1.select('VV'),
@@ -8111,7 +8088,6 @@ var vv_vh_diff = image_sen1
   })
   .rename('VV_VH_diff')
   .copyProperties(image_sen1, image_sen1.propertyNames());
-
 var vv_vh_mean = image_sen1
   .expression('(VV + VH) / 2', {
     VV: image_sen1.select('VV'),
@@ -8119,15 +8095,13 @@ var vv_vh_mean = image_sen1
   })
   .rename('VV_VH_mean')
   .copyProperties(image_sen1, image_sen1.propertyNames());
-
 // var vv_vh_sum = image_sen1
 //   .expression('(VV + VH)', {
 //     VV: image_sen1.select('VV'),
 //     VH: image_sen1.select('VH'),
 //   })
 //   .rename('VV_VH_sum')
-//   .copyProperties(image_sen1, image_sen1.propertyNames());
-
+//  .copyProperties(image_sen1, image_sen1.propertyNames());
 // var swi = image_sen1
 //   .expression('0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
 //     VV: image_sen1.select('VV'),
@@ -8135,7 +8109,6 @@ var vv_vh_mean = image_sen1
 //   })
 //   .rename('SWI')
 //   .copyProperties(image_sen1, image_sen1.propertyNames());
-
 // var rvi = image_sen1
 //   .expression('(4 * VH) / (VV + VH)', {
 //     VV: image_sen1.select('VV'),
@@ -8317,6 +8290,7 @@ var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 // // Count the number of pixels in the sample
 // var pixelCount = sampled.size();
 
+// LOG
 // print('Area SHP hektar:', pixelCountSHP);
 // print('Area untuk semua band Sentinel-2:', areaImageS2);
 // print('Area untuk semua band Sentinel-1:', areaImageS1);
@@ -8329,7 +8303,7 @@ print('Sentinel-1 VV 26 Juli 2024:', image_sen1)
 // print('Full Sample',sampled)
 print('Combined Image',combinedImage)
 
-// Viz
+// VIZ
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
