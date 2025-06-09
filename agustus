@@ -7959,32 +7959,35 @@ Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
 // EXPORT
+// Export sample to drive
 Export.table.toDrive({
   collection: sampled, 
   description: 'csv_sample_drive', 
   folder: 'GEE_Exports', 
   fileFormat: 'csv',
-  fileNamePrefix: 'data_sample',
-})   // Export sample to drive
+  fileNamePrefix: 'data_sample_ags',
+})   
+
 Export.table.toAsset({
   collection: sampled, 
   description: 'sampel_asset', 
-  assetId: 'projects/ee-222111840/assets/sampel',
+  assetId: 'projects/ee-222111840/assets/sampel_ags',
 })   // Export sample to asset
 
-Export.table.toDrive({
-  collection: rawa_pening_shp,
-  description: 'export_shapefile',
-  fileFormat: 'SHP',
-  folder: 'GEE_Exports',
-  fileNamePrefix: 'rawa_pening'
-})   // Ekspor FeatureCollection ke Google Drive sebagai shapefile
+// // Ekspor FeatureCollection ke Google Drive sebagai shapefile
+// Export.table.toDrive({
+//   collection: rawa_pening_shp,
+//   description: 'export_shapefile',
+//   fileFormat: 'SHP',
+//   folder: 'GEE_Exports',
+//   fileNamePrefix: 'rawa_pening'
+// })   
 
 // Ekspor rawa_pening_image (semua band)
 Export.image.toDrive({
   image: combinedImage.clip(rawa_pening_shp),
   description: 'rawa_pening_image_drive',
-  fileNamePrefix: 'rawa_pening_image',
+  fileNamePrefix: 'rawa_pening_image_ags',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -7997,7 +8000,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp),
   description: 'rawa_pening_image_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_ags',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8007,7 +8010,7 @@ var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'
 Export.image.toDrive({
   image: senRawImage,
   description: 'rawa_pening_image_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_raw',
+  fileNamePrefix: 'rawa_pening_image_raw_ags',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8019,7 +8022,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: senRawImage,
   description: 'rawa_pening_image_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw_ags',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8029,7 +8032,7 @@ var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
 Export.image.toDrive({
   image: sen1Image,
   description: 'rawa_pening_image_sentinel1_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel1',
+  fileNamePrefix: 'rawa_pening_image_sentinel1_ags',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8041,7 +8044,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: sen1Image,
   description: 'rawa_pening_image_sentinel1_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_ags',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8051,7 +8054,7 @@ var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
 Export.image.toDrive({
   image: sen2Image,
   description: 'rawa_pening_image_sentinel2_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel2',
+  fileNamePrefix: 'rawa_pening_image_sentinel2_ags',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8064,7 +8067,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: sen2Image,
   description: 'rawa_pening_image_sentinel2_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_ags',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8074,7 +8077,7 @@ var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // 
 Export.image.toDrive({
   image: sen1RawImage,
   description: 'rawa_pening_image_sentinel1_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel1_raw',
+  fileNamePrefix: 'rawa_pening_image_sentinel1_raw_ags',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8087,7 +8090,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: sen1RawImage,
   description: 'rawa_pening_image_sentinel1_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw_ags',
   region: rawa_pening_shp,
   scale: 10
 });
@@ -8097,7 +8100,7 @@ var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7
 Export.image.toDrive({
   image: sen2RawImage,
   description: 'rawa_pening_image_sentinel2_raw_drive',
-  fileNamePrefix: 'rawa_pening_image_sentinel2_raw',
+  fileNamePrefix: 'rawa_pening_image_sentinel2_raw_ags',
   folder: 'GEE_Exports',
   region: rawa_pening_shp,
   scale: 10,
@@ -8110,7 +8113,7 @@ Export.image.toDrive({
 Export.image.toAsset({
   image: sen2RawImage,
   description: 'rawa_pening_image_sentinel2_raw_asset',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw_ags',
   region: rawa_pening_shp,
   scale: 10
 });
