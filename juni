@@ -1254,7 +1254,10 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
               "landcover": 0,
               "system:index": "207"
             })]),
-    kja = /* color: #fff913 */ee.FeatureCollection(
+    kja = 
+    /* color: #fff913 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.43988866311693, -7.2710188509982165]),
             {
