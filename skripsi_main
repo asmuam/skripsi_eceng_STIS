@@ -8316,8 +8316,8 @@ Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color')
 Map.addLayer(combinedImage, {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
 Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY'); 
 Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY'); 
-Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
-Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
+// Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
+// Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
 // EXPORT
 Export.table.toDrive({
