@@ -13,6 +13,7 @@ function getClosestImage(collection, targetDate) {
     .sort('date_diff')
     .first(); // Citra dengan selisih waktu terkecil
 }                        // Function to get the image with the closest date or according to targetDate
+
 function maskS2clouds(image, roi) {  
   var qa = image.select('QA60');
   var cloudBitMask = 1 << 10;
@@ -171,7 +172,6 @@ var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             //
   })
   .filter(ee.Filter.gte('clear_pixel_percentage', 90))  // Hanya memilih citra dengan 100% piksel clear
   .sort('system:time_start');
-  
 var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
   .filterBounds(roi)
   .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
@@ -182,36 +182,6 @@ var sentinel2List = sentinel2.toList(sentinel2.size());                       //
 var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
 var image_sen2 = ee.Image(sentinel2List.get(1));                              // 7/26/2024
 var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
-
-print("S1")
-print(sentinel1List)
-print("S2")
-print(sentinel2List)
-// // Convert VV and VH bands from dB to natural units
-// var vv_natural = toNatural(image_sen1.select('VV')).rename('VV');
-// var vh_natural = toNatural(image_sen1.select('VH')).rename('VH');
-
-// // Combine natural units bands
-// var image_natural = vv_natural.addBands(vh_natural);
-
-// // Apply filter to VV and VH bands separately
-// var vv_filtered_7 = lee_filter(image_natural.select('VV'), 3).rename('VV');
-// var vh_filtered_7 = lee_filter(image_natural.select('VH'), 3).rename('VH');
-
-// // Combine the filtered bands into a single image 
-// var image_sen1_filtered_7 = vv_filtered_7.addBands(vh_filtered_7);
-
-// // Convert back to dB for visualization 
-// var vv_filtered_db_7 = toDB(image_sen1_filtered_7.select('VV')).rename('VV');
-// var vh_filtered_db_7 = toDB(image_sen1_filtered_7.select('VH')).rename('VH');
-// image_sen1_filtered_7 = vv_filtered_db_7.addBands(vh_filtered_db_7);
-
-// image_sen1 = image_sen1_filtered_7
-
-print(image_sen2)
-print(image_sen1)
-// print(vv_filtered_db_7)
-// print(image_sen1_filtered)
 
 // VIs
 var ndvi = image_sen2
@@ -436,6 +406,7 @@ image_sen2 = image_sen2.addBands([
   bsi,
   ndbsi,
 ]);    // Merge all indices into a Sentinel-2 image
+
 image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 imagery, including the composite index band
   .select([
     'B1',
@@ -469,6 +440,7 @@ image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 ima
     'NDBSI',
   ])
   .toFloat() 
+
 image_sen1 = image_sen1.addBands([
   vv_vh_ratio,
   vv_vh_mean,
@@ -590,6 +562,11 @@ var clippedImageS1 = image_sen1.clip(rawa_pening_shp);
 // // Count the number of pixels in the sample
 // var pixelCount = sampled.size();
 
+// LOG
+print("S1")
+print(sentinel1List)
+print("S2")
+print(sentinel2List)
 // print('Area SHP hektar:', pixelCountSHP);
 // print('Area untuk semua band Sentinel-2:', areaImageS2);
 // print('Area untuk semua band Sentinel-1:', areaImageS1);
@@ -602,18 +579,11 @@ print('Sentinel-1 VV 23 juni 2024:', image_sen1)
 // print('Full Sample',sampled)
 print('Combined Image',combinedImage)
 
-// Viz
+// VIZ
 Map.centerObject(roi, 14)
 Map.addLayer(rawa_pening_shp, {}, 'lake'); 
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
-Map.addLayer(combinedImage, 
-  {
-    bands: ['VV', 'VH', 'VV'], 
-    min: [-30], // Nilai minimum untuk masing-masing band
-    max: [1], // Nilai maksimum untuk masing-masing band
-  }, 
-  'combinedImage S1'
-);
+Map.addLayer(combinedImage, {bands: ['VV', 'VH', 'VV'], min: [-30], max: [1],}, 'combinedImage S1');
 // Map.addLayer(image_sen1_filtered_3.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 3 S1 clip')
 // Map.addLayer(image_sen1_filtered_5.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 5 S1 clip')
 // Map.addLayer(image_sen1_filtered_7.clip(rawa_pening_shp), {bands: ['VV_lee', 'VH_lee', 'VV_lee'], min: -30, max: 0}, 'filtered 7 S1 clip')
@@ -676,11 +646,7 @@ var RVI = combinedImage.expression(
 
 // Tambahkan layer ke peta
 // Map.addLayer(RVI, {min: -2, max: 2}, 'RVI');
-Map.addLayer(VV_x_VH, {min: -2, max: 2}, 'VVxVH Visualized');
 // Map.addLayer(SWI_visualized, {}, 'SWI Conditional Visualized');
-Map.addLayer(VV_VH_sum, {min: -2, max: 2}, 'VV VH sum Visualized');
-Map.addLayer(VV_viz, {min: -2, max: 2}, 'VV Visualized');
-Map.addLayer(VH_viz, {min: -2, max: 2}, 'VH Visualized');
 Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY'); 
 Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY'); 
 // Map.addLayer(vv_filtered_db_7, {min: -1, max: 0}, 'vv_filtered_db_7');
@@ -689,8 +655,7 @@ Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY');
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
-print(combinedImage)
-
+// EXPORT
 // Export.table.toDrive({
 //   collection: sampled, 
 //   description: 'csv_sample_drive', 
@@ -698,6 +663,7 @@ print(combinedImage)
 //   fileFormat: 'csv',
 //   fileNamePrefix: 'data_sample',
 // })   // Export sample to drive
+
 // Export.table.toAsset({
 //   collection: sampled, 
 //   description: 'sampel_asset', 
@@ -725,6 +691,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp),
   description: 'rawa_pening_image_asset',
@@ -747,6 +714,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: senRawImage,
   description: 'rawa_pening_image_raw_asset',
@@ -769,6 +737,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen1Image,
   description: 'rawa_pening_image_sentinel1_asset',
@@ -791,6 +760,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen2Image,
   description: 'rawa_pening_image_sentinel2_asset',
@@ -813,6 +783,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen1RawImage,
   description: 'rawa_pening_image_sentinel1_raw_asset',
@@ -835,6 +806,7 @@ Export.image.toDrive({
     cloudOptimized: true
   }
 });
+
 Export.image.toAsset({
   image: sen2RawImage,
   description: 'rawa_pening_image_sentinel2_raw_asset',
