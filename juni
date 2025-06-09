@@ -495,7 +495,7 @@ var seed = 222111840;   // Set the seed
 // var airRandom = air.randomColumn('random', seed);
 // var tanahRandom = tanah.randomColumn('random', seed);
 // var vegetasiLainRandom = vegetasi_lain.randomColumn('random', seed);
-// var lainnyaRandom = lainnya.randomColumn('random', seed);
+// var lahanTerbangunRandom = lahan_terbangun.randomColumn('random', seed);
 
 // // Limit each feature collection to x random items
 // var x = 200
@@ -504,10 +504,10 @@ var seed = 222111840;   // Set the seed
 // var airSampled = airRandom.limit(x, 'random');
 // var tanahSampled = tanahRandom.limit(x, 'random');
 // var vegetasiLainSampled = vegetasiLainRandom.limit(x, 'random');
-// var lainnyaSampled = lainnyaRandom.limit(x, 'random');
+// var lahanTerbangunSampled = lahanTerbangunRandom.limit(x, 'random');
 
 // // Merge the sampled feature collections
-// var classNames = ecengSampled.merge(kjaSampled).merge(airSampled).merge(tanahSampled).merge(vegetasiLainSampled).merge(lainnyaSampled);
+// var classNames = ecengSampled.merge(kjaSampled).merge(airSampled).merge(tanahSampled).merge(vegetasiLainSampled).merge(lahanTerbangunSampled);
 // var classValues = classNames.aggregate_array('landcover').distinct();
 
 // Merge Sentinel-1 and Sentinel-2 imagery
