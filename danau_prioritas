@@ -146,17 +146,43 @@ var danau_tondano =
               "system:index": "0"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-function maskS2clouds(image) {  
+function maskS2clouds(image, roi) {  
   var qa = image.select('QA60');
   var cloudBitMask = 1 << 10;
   var cirrusBitMask = 1 << 11;
+
+  // Membuat mask berdasarkan cloud dan cirrus
   var mask = qa
     .bitwiseAnd(cloudBitMask)
     .eq(0)
     .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+
+  // Menerapkan mask pada citra
   var maskedImage = image.updateMask(mask).divide(10000);
-  return maskedImage.copyProperties(image, image.propertyNames());
-}                                            // Function for masking Sentinel-2 clouds while preserving initial properties
+
+  // Menghitung total piksel dalam ROI dari citra asli (sebelum mask diterapkan)
+  var totalPixels = image.reduceRegion({
+    reducer: ee.Reducer.count(),
+    geometry: roi.geometry(),  
+    scale: 10,
+    maxPixels: 1e13
+  }).getNumber('QA60'); 
+
+  // Menghitung piksel yang tidak ter-mask dalam ROI dari citra yang sudah di-mask
+  var clearPixels = maskedImage.reduceRegion({
+    reducer: ee.Reducer.count(),
+    geometry: roi.geometry(),
+    scale: 10,
+    maxPixels: 1e13
+  }).getNumber('QA60');
+
+  // Menghitung persentase piksel yang tidak ter-mask
+  var clearPixelPercentage = clearPixels.divide(totalPixels).multiply(100);
+
+  // Menambahkan properti "clear_pixel_percentage"
+  return maskedImage.set('clear_pixel_percentage', clearPixelPercentage)
+                    .copyProperties(image, image.propertyNames());
+}   
 
 function findMatchingDates(sentinel1, sentinel2, range) {
   var sentinel1List = sentinel1.toList(sentinel1.size());
