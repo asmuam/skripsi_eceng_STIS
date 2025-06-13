@@ -3677,7 +3677,10 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
               "landcover": 2,
               "system:index": "199"
             })]),
-    vegetasi_lain = /* color: #156c24 */ee.FeatureCollection(
+    vegetasi_lain = 
+    /* color: #156c24 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44676702526172, -7.266782527766464]),
             {
@@ -4902,7 +4905,10 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
               "landcover": 3,
               "system:index": "203"
             })]),
-    tanah = /* color: #866d0f */ee.FeatureCollection(
+    tanah = 
+    /* color: #866d0f */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44308895817818, -7.262226017018466]),
             {
@@ -6163,7 +6169,10 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
               "landcover": 4,
               "system:index": "209"
             })]),
-    lahan_terbangun = /* color: #808080 */ee.FeatureCollection(
+    lahan_terbangun = 
+    /* color: #808080 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44604537870325, -7.267889467391586]),
             {
@@ -7966,7 +7975,7 @@ Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage, {bands: ['VV', 'VH', 'VV'], min: [-30], max: [1],}, 'combinedImage S1');
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
 Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
-Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
+Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -0.5, max: 0.5}, 'helper'); 
 
 // Tambahkan layer ke peta
 Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY'); 
