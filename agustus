@@ -2,10 +2,7 @@
 var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
-    eceng = 
-    /* color: #21d649 */
-    /* shown: false */
-    ee.FeatureCollection(
+    eceng = /* color: #21d649 */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44227159622245, -7.273135064553922]),
             {
@@ -1254,10 +1251,7 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "landcover": 0,
               "system:index": "207"
             })]),
-    kja = 
-    /* color: #e3ff2d */
-    /* shown: false */
-    ee.FeatureCollection(
+    kja = /* color: #e3ff2d */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.4283736249888, -7.3069026653344125]),
             {
@@ -1733,13 +1727,13 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "78"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43919548716917, -7.302888301195868]),
+            ee.Geometry.Point([110.43927595343962, -7.302989398323639]),
             {
               "landcover": 1,
               "system:index": "79"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4390935632266, -7.30362790597092]),
+            ee.Geometry.Point([110.43912574973479, -7.30372368203936]),
             {
               "landcover": 1,
               "system:index": "80"
@@ -2117,109 +2111,109 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "142"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43288933756263, -7.3078441436349335]),
+            ee.Geometry.Point([110.43273645164878, -7.3078095581536875]),
             {
               "landcover": 1,
               "system:index": "143"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43284105780036, -7.309089219176592]),
+            ee.Geometry.Point([110.43300199034125, -7.309169031592972]),
             {
               "landcover": 1,
               "system:index": "144"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4329376173249, -7.308801894359605]),
+            ee.Geometry.Point([110.4334418726197, -7.308966840110478]),
             {
               "landcover": 1,
               "system:index": "145"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4341821623078, -7.309004085916752]),
+            ee.Geometry.Point([110.43419020893485, -7.309051973377416]),
             {
               "landcover": 1,
               "system:index": "146"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43417143347175, -7.308370906787585]),
+            ee.Geometry.Point([110.43435918810279, -7.308370906787585]),
             {
               "landcover": 1,
               "system:index": "147"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44163059690344, -7.30353797311996]),
+            ee.Geometry.Point([110.44139456251013, -7.303490085068413]),
             {
               "landcover": 1,
               "system:index": "148"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44264447191107, -7.301450526892189]),
+            ee.Geometry.Point([110.44278662898886, -7.301482452406079]),
             {
               "landcover": 1,
               "system:index": "149"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4431379983698, -7.30176978192862]),
+            ee.Geometry.Point([110.4431004474436, -7.3020012416875035]),
             {
               "landcover": 1,
               "system:index": "150"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44334184625494, -7.301998581231181]),
+            ee.Geometry.Point([110.44334989288198, -7.302112980838557]),
             {
               "landcover": 1,
               "system:index": "151"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44335793950903, -7.30141328045642]),
+            ee.Geometry.Point([110.4434249947344, -7.30141328045642]),
             {
               "landcover": 1,
               "system:index": "152"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4397154996668, -7.302136924938737]),
+            ee.Geometry.Point([110.43969404199468, -7.302381686777991]),
             {
               "landcover": 1,
               "system:index": "153"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43936681249487, -7.302152887671466]),
+            ee.Geometry.Point([110.44134091832983, -7.301860237480828]),
             {
               "landcover": 1,
               "system:index": "154"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44246208169805, -7.300838620768599]),
+            ee.Geometry.Point([110.44235211112844, -7.30076944871935]),
             {
               "landcover": 1,
               "system:index": "155"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44919909733645, -7.300171035163035]),
+            ee.Geometry.Point([110.44922860163561, -7.30013644908812]),
             {
               "landcover": 1,
               "system:index": "156"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44949950474611, -7.30028809570444]),
+            ee.Geometry.Point([110.44959874647967, -7.300152411892258]),
             {
               "landcover": 1,
               "system:index": "157"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44943050107506, -7.296759860511067]),
+            ee.Geometry.Point([110.44968262872246, -7.296701329782568]),
             {
               "landcover": 1,
               "system:index": "158"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44965580663231, -7.295690343264033]),
+            ee.Geometry.Point([110.4496906753495, -7.295621170418755]),
             {
               "landcover": 1,
               "system:index": "159"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44901894625308, -7.295046503290803]),
+            ee.Geometry.Point([110.44913964565875, -7.295158244179039]),
             {
               "landcover": 1,
               "system:index": "160"
@@ -2459,21 +2453,18 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "199"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43950267285666, -7.30357153984191]),
+            ee.Geometry.Point([110.43960459679923, -7.303385308515501]),
             {
               "landcover": 1,
               "system:index": "200"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44216472019487, -7.302025574906679]),
+            ee.Geometry.Point([110.44196355451875, -7.3019564030410375]),
             {
               "landcover": 1,
               "system:index": "201"
             })]),
-    air = 
-    /* color: #1488ff */
-    /* shown: false */
-    ee.FeatureCollection(
+    air = /* color: #1488ff */ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.42618494243264, -7.305620337614403]),
             {
@@ -2697,7 +2688,7 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "36"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.43927235529972, -7.285484767930511]),
+            ee.Geometry.Point([110.44114453719212, -7.303203710145773]),
             {
               "landcover": 2,
               "system:index": "37"
@@ -3123,25 +3114,25 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "107"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.45132970180657, -7.2889995857804175]),
+            ee.Geometry.Point([110.45115267601159, -7.289079401781319]),
             {
               "landcover": 2,
               "system:index": "108"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.4512438711181, -7.289595544910521]),
+            ee.Geometry.Point([110.4512814220443, -7.28955563695783]),
             {
               "landcover": 2,
               "system:index": "109"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.45014952984002, -7.289552976427528]),
+            ee.Geometry.Point([110.4501280721679, -7.289733892452326]),
             {
               "landcover": 2,
               "system:index": "110"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44976329174187, -7.295469956752413]),
+            ee.Geometry.Point([110.44995641079095, -7.295451333285955]),
             {
               "landcover": 2,
               "system:index": "111"
@@ -3159,7 +3150,7 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "113"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44950579967644, -7.296810844300986]),
+            ee.Geometry.Point([110.4493180450454, -7.296877356475572]),
             {
               "landcover": 2,
               "system:index": "114"
@@ -3183,7 +3174,7 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "117"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.44338237293555, -7.301781728469738]),
+            ee.Geometry.Point([110.44342126496626, -7.301679300839789]),
             {
               "landcover": 2,
               "system:index": "118"
@@ -3477,7 +3468,7 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "166"
             }),
         ee.Feature(
-            ee.Geometry.Point([110.42778471442013, -7.285556321667271]),
+            ee.Geometry.Point([110.44290298553257, -7.301556607867825]),
             {
               "landcover": 2,
               "system:index": "167"
@@ -7954,9 +7945,18 @@ Map.addLayer(rawa_pening_shp, {}, 'lake');
 Map.addLayer(rawa_pening_sbwp, {}, 'shapefile');
 Map.addLayer(combinedImage, {bands: ['VV', 'VH', 'VV'], min: -30, max: 1}, 'combinedImage S1');
 Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
-Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -1, max: 1}, 'helper'); 
+Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -0.5, max: 0.5}, 'helper'); 
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
 // Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
+// Menghitung ekspresi RGB dengan perbaikan sintaks
+// var customRGB = combinedImage.addBands([
+//   combinedImage.select('B8').add(combinedImage.select('B11')).rename('R'),
+//   combinedImage.select('B8').rename('G'),
+//   combinedImage.select('B8').subtract(combinedImage.select('B4')).rename('B')
+// ]);
+
+// // Menampilkan layer dengan kombinasi warna yang diinginkan
+// Map.addLayer(customRGB, {min: 0, max: 0.3, bands: ['R', 'G', 'B']}, 'Custom RGB');
 
 // EXPORT
 // Export sample to drive
