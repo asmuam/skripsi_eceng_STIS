@@ -8527,5 +8527,6 @@ var hdidVis = {
   palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000'] // Biru (Air), Putih, Hijau-Kuning-Merah (Potensi Eceng)
 };
 
+print(hdid)
 // Tambahkan layer HDID ke peta.
 Map.addLayer(hdid, hdidVis, 'HDID (Data-Driven)');
