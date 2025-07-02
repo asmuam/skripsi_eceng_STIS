@@ -8481,6 +8481,7 @@ Export.image.toAsset({
 
 /// MENCOBA MEMBUAT INDEKS 
 
+var s1 = combinedImage;
 var s2 = combinedImage;
 // =================================================================
 // STEP 2: CALCULATE THE CHMI-RS INDEX
