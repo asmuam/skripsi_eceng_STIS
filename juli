@@ -8484,31 +8484,31 @@ Export.image.toAsset({
 var s1 = combinedImage;
 var s2 = combinedImage;
 
-// Select the necessary bands
-var nir = combinedImage.select('B8');
-var red = combinedImage.select('B4');
-var swir1 = combinedImage.select('B11');
-
-// Calculate NDVI
+// Calculate NDVI and NDWI
 var ndvi = combinedImage.normalizedDifference(['B8', 'B4']).rename('NDVI');
-
-// Calculate NDWI (using NIR and SWIR1)
 var ndwi = combinedImage.normalizedDifference(['B8', 'B11']).rename('NDWI');
 
-// Calculate the final CHMI by multiplying the two indices
-var chmi = ndvi.multiply(ndwi).rename('CHMI');
+// Calculate the initial CHMI by multiplying the two indices
+var chmi_initial = ndvi.multiply(ndwi);
+
+// Create a water/non-vegetation mask using an NDVI threshold
+// This identifies pixels that are not healthy vegetation
+var waterMask = ndvi.lt(0.1);
+
+// Apply the mask.
+// Where the mask is true (it is water/non-veg), set value to -1.
+// Otherwise, keep the original CHMI value.
+var chmi_masked = chmi_initial.where(waterMask, -1).rename('CHMI_masked');
 
 
 // =================================================================
 // STEP 3: VISUALIZE THE RESULT
 // =================================================================
-
-// The resulting values are typically between -0.5 and 1.0
 var chmiVis = {
-  min: -0.2,
+  min: -0.2, // A low min will show water clearly
   max: 0.8,
   palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
   // Blue (Water/Soil) -> White -> Green (Veg) -> Yellow/Red (Hyacinth)
 };
 
-Map.addLayer(chmi, chmiVis, 'CHMI (Automatic Hyacinth Index)');
+Map.addLayer(chmi_masked, chmiVis, 'CHMI with Water Mask');
