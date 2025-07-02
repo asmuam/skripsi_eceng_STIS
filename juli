@@ -8487,35 +8487,8 @@ var red = combinedImage.select('B4');   // Red
 var nir = combinedImage.select('B8');   // NIR
 var swir1 = combinedImage.select('B11'); // SWIR1
 
-// 1. Hitung SAVI (Soil-Adjusted Vegetation Index)
-// Formula: ((NIR - Red) / (NIR + Red + L)) * (1 + L), dengan L=0.5
-var savi = combinedImage.expression(
-    '((NIR - RED) / (NIR + RED + 0.5)) * 1.5', {
-      'NIR': nir,
-      'RED': red
-    }).rename('SAVI');
+var IDEG = combinedImage.normalizedDifference(['B8', 'B11']).rename('IDEG');
 
-// 2. Hitung BSI (Bare Soil Index)
-var bsi = combinedImage.expression(
-    '((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED) + (NIR + BLUE))', {
-      'SWIR1': swir1,
-      'RED': red,
-      'NIR': nir,
-      'BLUE': blue
-    }).rename('BSI');
-
-// 3. Hitung NDBI (Normalized Difference Built-up Index)
-var ndbi = combinedImage.normalizedDifference(['B11', 'B8']).rename('NDBI');
-
-// --- Langkah 3: Hitung HDID (Hyacinth Distinction Index - Data-Driven) -------------
-
-// Gabungkan BSI dan NDBI sebagai komponen penekan.
-var bsi_plus_ndbi = bsi.add(ndbi);
-
-// Hitung HDID final.
-var hdid = savi.subtract(bsi_plus_ndbi)
-               .divide(savi.add(bsi_plus_ndbi))
-               .rename('HDID');
 
 // --- Langkah 4: Visualisasi Hasil -------------------------------------------------
 
@@ -8527,6 +8500,6 @@ var hdidVis = {
   palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000'] // Biru (Air), Putih, Hijau-Kuning-Merah (Potensi Eceng)
 };
 
-print(hdid)
+print(IDEG)
 // Tambahkan layer HDID ke peta.
-Map.addLayer(hdid, hdidVis, 'HDID (Data-Driven)');
+Map.addLayer(IDEG, hdidVis, 'HDID (Data-Driven)');
