@@ -8485,29 +8485,33 @@ Export.image.toAsset({
 var nir = combinedImage.select('B8');   // NIR
 var red = combinedImage.select('B4');   // Red
 var swir1 = combinedImage.select('B11'); // SWIR1
+var vh = combinedImage.select('VH'); // <-- Radar band
 
-// 1. Hitung Base Index (menggunakan IVAT)
+// Hitung Base Index (IVAT)
 var baseIndex = nir.subtract(red.add(swir1))
                    .divide(nir.add(red.add(swir1)));
 
-// 2. Tentukan Kondisi untuk "Boost"
-//    Kondisi: Piksel adalah vegetasi (baseIndex > 0) DAN nilai SWIR sangat rendah.
-var swirThreshold = 0.135; // <-- NILAI PENTING UNTUK DIUBAH-UBAH
-var condition = baseIndex.gt(0).and(swir1.lt(swirThreshold));
+// Tentukan TIGA kondisi untuk "Boost"
+var swirThreshold = 0.135;  // Ambang batas kelembapan (optik)
+var vhThreshold = -16;      // Ambang batas kekasaran (radar, dalam dB). <--- PENTING UNTUK DIUBAH-UBAH
+var condition = baseIndex.gt(0)
+                  .and(swir1.lt(swirThreshold))
+                  .and(vh.gt(vhThreshold)); // <-- Kondisi ketiga ditambahkan
 
-// 3. Tentukan nilai yang telah di-"boost"
-var boostValue = 0.5; // <-- NILAI BOOST BISA DISESUAIKAN
+// Tentukan nilai yang telah di-"boost"
+var boostValue = 0.5;
 var boostedIndex = baseIndex.add(boostValue);
 
-// 4. Terapkan kondisi: jika kondisi terpenuhi, ganti nilai piksel dengan
-//    nilai yang sudah di-boost. Jika tidak, biarkan nilainya tetap.
-var finalIndex = baseIndex.where(condition, boostedIndex).rename('Conditional_Index');
+// Terapkan kondisi
+var finalIndex = baseIndex.where(condition, boostedIndex).rename('Radar_Optical_Index');
 
-// Visualisasi, rentang max mungkin perlu dinaikkan karena ada boost
-var conditionalVis = {
+
+// Visualisasi
+var finalVis = {
   min: -0.5,
-  max: 1.0,  // max dinaikkan untuk mengakomodasi nilai boost
-  palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000'] 
+  max: 1.0,
+  palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
 };
 
-Map.addLayer(finalIndex, conditionalVis, 'Conditional Hyacinth Index');
+Map.centerObject(aoi, 13);
+Map.addLayer(finalIndex, finalVis, 'Radar-Optical Hyacinth Index');
