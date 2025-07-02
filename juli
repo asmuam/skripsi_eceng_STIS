@@ -8481,33 +8481,33 @@ Export.image.toAsset({
 
 /// MENCOBA MEMBUAT INDEKS 
 
+var s2 = combinedImage;
 // =================================================================
-// STEP 2: CALCULATE THE CHMI-R INDEX
+// STEP 2: CALCULATE THE CHMI-RS INDEX
 // =================================================================
 
 // Calculate CHMI (Optical Score)
-var ndvi = combinedImage.normalizedDifference(['B8', 'B4']);
-var ndwi = combinedImage.normalizedDifference(['B8', 'B11']);
+var ndvi = s2.normalizedDifference(['B8', 'B4']);
+var ndwi = s2.normalizedDifference(['B8', 'B11']);
 var chmi = ndvi.multiply(ndwi);
 
-// Calculate RVI (Radar Score)
-// Note: We convert VH and VV from dB to linear units for the formula, which is more correct
-var vv_linear = ee.Image.constant(10).pow(combinedImage.select('VV').divide(10));
-var vh_linear = ee.Image.constant(10).pow(combinedImage.select('VH').divide(10));
-var rvi = vh_linear.multiply(4).divide(vv_linear.add(vh_linear));
+// Calculate RSI (Radar Structure Score)
+// This uses the raw dB values directly, as the normalized difference
+// works correctly on a logarithmic scale.
+var rsi = s1.normalizedDifference(['VV', 'VH']);
 
 // Calculate Final Index by multiplying the optical and radar scores
-var chmi_r = chmi.multiply(rvi).rename('CHMI-R');
+var chmi_rs = chmi.multiply(rsi).rename('CHMI-RS');
 
 
 // =================================================================
 // STEP 3: VISUALIZE THE RESULT
 // =================================================================
-var chmiR_Vis = {
-  min: 0,
-  max: 0.6, // The range is smaller due to multiplication of two fractions
+var chmiRS_Vis = {
+  min: 0.0,
+  max: 0.25, // The range will be different again. Check with Inspector.
   palette: ['#FFFFFF', '#ADFF2F', '#FFFF00', '#FF8C00', '#FF0000']
   // White -> Green -> Yellow -> Orange -> Red (Hyacinth)
 };
 
-Map.addLayer(chmi_r, chmiR_Vis, 'CHMI-R (Automatic Optical-Radar Index)');
+Map.addLayer(chmi_rs, chmiRS_Vis, 'CHMI-RS (Final Automatic Index)');
