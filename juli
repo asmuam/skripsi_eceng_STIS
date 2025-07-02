@@ -8483,32 +8483,32 @@ Export.image.toAsset({
 
 var s1 = combinedImage;
 var s2 = combinedImage;
-// =================================================================
-// STEP 2: CALCULATE THE CHMI-RS INDEX
-// =================================================================
 
-// Calculate CHMI (Optical Score)
-var ndvi = s2.normalizedDifference(['B8', 'B4']);
-var ndwi = s2.normalizedDifference(['B8', 'B11']);
-var chmi = ndvi.multiply(ndwi);
+// Select the necessary bands
+var nir = combinedImage.select('B8');
+var red = combinedImage.select('B4');
+var swir1 = combinedImage.select('B11');
 
-// Calculate RSI (Radar Structure Score)
-// This uses the raw dB values directly, as the normalized difference
-// works correctly on a logarithmic scale.
-var rsi = s1.normalizedDifference(['VV', 'VH']);
+// Calculate NDVI
+var ndvi = combinedImage.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-// Calculate Final Index by multiplying the optical and radar scores
-var chmi_rs = chmi.multiply(rsi).rename('CHMI-RS');
+// Calculate NDWI (using NIR and SWIR1)
+var ndwi = combinedImage.normalizedDifference(['B8', 'B11']).rename('NDWI');
+
+// Calculate the final CHMI by multiplying the two indices
+var chmi = ndvi.multiply(ndwi).rename('CHMI');
 
 
 // =================================================================
 // STEP 3: VISUALIZE THE RESULT
 // =================================================================
-var chmiRS_Vis = {
-  min: 0.0,
-  max: 0.25, // The range will be different again. Check with Inspector.
-  palette: ['#FFFFFF', '#ADFF2F', '#FFFF00', '#FF8C00', '#FF0000']
-  // White -> Green -> Yellow -> Orange -> Red (Hyacinth)
+
+// The resulting values are typically between -0.5 and 1.0
+var chmiVis = {
+  min: -0.2,
+  max: 0.8,
+  palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
+  // Blue (Water/Soil) -> White -> Green (Veg) -> Yellow/Red (Hyacinth)
 };
 
-Map.addLayer(chmi_rs, chmiRS_Vis, 'CHMI-RS (Final Automatic Index)');
+Map.addLayer(chmi, chmiVis, 'CHMI (Automatic Hyacinth Index)');
