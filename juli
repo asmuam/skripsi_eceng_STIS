@@ -8478,3 +8478,42 @@ Export.image.toAsset({
 
 // Map.setCenter(110.41770939127575,-7.291049219363841, 24)
 // Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
+
+// Definisikan variabel untuk setiap band agar mudah dibaca
+var blue = combinedImage.select('B2'); // Blue
+var red = combinedImage.select('B4');  // Red
+var nir = combinedImage.select('B8');  // NIR
+var swir1 = combinedImage.select('B11'); // SWIR1
+
+// 1. Hitung Floating Algae Index (FAI)
+// FAI = B8 - (0.8127 * B4) - (0.1873 * B11)
+var fai = nir.subtract(red.multiply(0.8127)).subtract(swir1.multiply(0.1873)).rename('FAI');
+
+// 2. Hitung Bare Soil Index (BSI)
+// BSI = ((B11 + B4) - (B8 + B2)) / ((B11 + B4) + (B8 + B2))
+var bsi = swir1.add(red).subtract(nir.add(blue))
+             .divide(swir1.add(red).add(nir.add(blue)))
+             .rename('BSI');
+
+// --- Langkah 3: Hitung Hyacinth Distinction Index (HDI) ---------------------------
+
+// 3. Hitung HDI dari layer FAI dan BSI
+// HDI = (FAI - BSI) / (FAI + BSI)
+var hdi = fai.subtract(bsi).divide(fai.add(bsi)).rename('HDI');
+
+// --- Langkah 4: Visualisasi Hasil -------------------------------------------------
+
+// Definisikan palet warna untuk setiap indeks
+var faiVis = {min: -500, max: 500, palette: ['blue', 'white', 'green']};
+var bsiVis = {min: -1, max: 1, palette: ['green', 'yellow', 'red']};
+// Palet HDI dirancang agar eceng gondok (nilai tinggi) terlihat mencolok.
+var hdiVis = {
+  min: -1,
+  max: 1,
+  palette: ['#0000FF', '#FFFFFF', '#00FF00', '#FFFF00', '#FF0000'] // Biru (air), Putih (lainnya), Hijau-Kuning-Merah (vegetasi/eceng)
+};
+
+// Tambahkan layer-layer indeks ke peta
+Map.addLayer(fai, faiVis, 'Floating Algae Index (FAI)');
+Map.addLayer(bsi, bsiVis, 'Bare Soil Index (BSI)');
+Map.addLayer(hdi, hdiVis, 'Hyacinth Distinction Index (HDI)');
