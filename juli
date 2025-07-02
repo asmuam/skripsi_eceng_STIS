@@ -8481,36 +8481,31 @@ Export.image.toAsset({
 
 /// MENCOBA MEMBUAT INDEKS 
 
-// Definisikan variabel untuk setiap band
-var nir = combinedImage.select('B8');   // NIR
-var red = combinedImage.select('B4');   // Red
-var swir1 = combinedImage.select('B11'); // SWIR1
-var vh = combinedImage.select('VH'); // <-- Radar band
+// Select the necessary bands
+var nir = combinedImage.select('B8');
+var red = combinedImage.select('B4');
+var swir1 = combinedImage.select('B11');
 
-// Hitung Base Index (IVAT)
-var baseIndex = nir.subtract(red.add(swir1))
-                   .divide(nir.add(red.add(swir1)));
+// Calculate NDVI
+var ndvi = combinedImage.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-// Tentukan TIGA kondisi untuk "Boost"
-var swirThreshold = 0.135;  // Ambang batas kelembapan (optik)
-var vhThreshold = -16;      // Ambang batas kekasaran (radar, dalam dB). <--- PENTING UNTUK DIUBAH-UBAH
-var condition = baseIndex.gt(0)
-                  .and(swir1.lt(swirThreshold))
-                  .and(vh.gt(vhThreshold)); // <-- Kondisi ketiga ditambahkan
+// Calculate NDWI (using NIR and SWIR1)
+var ndwi = combinedImage.normalizedDifference(['B8', 'B11']).rename('NDWI');
 
-// Tentukan nilai yang telah di-"boost"
-var boostValue = 0.5;
-var boostedIndex = baseIndex.add(boostValue);
-
-// Terapkan kondisi
-var finalIndex = baseIndex.where(condition, boostedIndex).rename('Radar_Optical_Index');
+// Calculate the final CHMI by multiplying the two indices
+var chmi = ndvi.multiply(ndwi).rename('CHMI');
 
 
-// Visualisasi
-var finalVis = {
-  min: -0.5,
-  max: 1.0,
+// =================================================================
+// STEP 3: VISUALIZE THE RESULT
+// =================================================================
+
+// The resulting values are typically between -0.5 and 1.0
+var chmiVis = {
+  min: -0.2,
+  max: 0.8,
   palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
+  // Blue (Water/Soil) -> White -> Green (Veg) -> Yellow/Red (Hyacinth)
 };
 
-Map.addLayer(finalIndex, finalVis, 'Radar-Optical Hyacinth Index');
+Map.addLayer(chmi, chmiVis, 'CHMI (Automatic Hyacinth Index)');
