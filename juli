@@ -8481,31 +8481,33 @@ Export.image.toAsset({
 
 /// MENCOBA MEMBUAT INDEKS 
 
-// Select the necessary bands
-var nir = combinedImage.select('B8');
-var red = combinedImage.select('B4');
-var swir1 = combinedImage.select('B11');
+// =================================================================
+// STEP 2: CALCULATE THE CHMI-R INDEX
+// =================================================================
 
-// Calculate NDVI
-var ndvi = combinedImage.normalizedDifference(['B8', 'B4']).rename('NDVI');
+// Calculate CHMI (Optical Score)
+var ndvi = combinedImage.normalizedDifference(['B8', 'B4']);
+var ndwi = combinedImage.normalizedDifference(['B8', 'B11']);
+var chmi = ndvi.multiply(ndwi);
 
-// Calculate NDWI (using NIR and SWIR1)
-var ndwi = combinedImage.normalizedDifference(['B8', 'B11']).rename('NDWI');
+// Calculate RVI (Radar Score)
+// Note: We convert VH and VV from dB to linear units for the formula, which is more correct
+var vv_linear = ee.Image.constant(10).pow(combinedImage.select('VV').divide(10));
+var vh_linear = ee.Image.constant(10).pow(combinedImage.select('VH').divide(10));
+var rvi = vh_linear.multiply(4).divide(vv_linear.add(vh_linear));
 
-// Calculate the final CHMI by multiplying the two indices
-var chmi = ndvi.multiply(ndwi).rename('CHMI');
+// Calculate Final Index by multiplying the optical and radar scores
+var chmi_r = chmi.multiply(rvi).rename('CHMI-R');
 
 
 // =================================================================
 // STEP 3: VISUALIZE THE RESULT
 // =================================================================
-
-// The resulting values are typically between -0.5 and 1.0
-var chmiVis = {
-  min: -0.2,
-  max: 0.8,
-  palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
-  // Blue (Water/Soil) -> White -> Green (Veg) -> Yellow/Red (Hyacinth)
+var chmiR_Vis = {
+  min: 0,
+  max: 0.6, // The range is smaller due to multiplication of two fractions
+  palette: ['#FFFFFF', '#ADFF2F', '#FFFF00', '#FF8C00', '#FF0000']
+  // White -> Green -> Yellow -> Orange -> Red (Hyacinth)
 };
 
-Map.addLayer(chmi, chmiVis, 'CHMI (Automatic Hyacinth Index)');
+Map.addLayer(chmi_r, chmiR_Vis, 'CHMI-R (Automatic Optical-Radar Index)');
