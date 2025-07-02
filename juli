@@ -8513,5 +8513,4 @@ var finalVis = {
   palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
 };
 
-Map.centerObject(aoi, 13);
 Map.addLayer(finalIndex, finalVis, 'Radar-Optical Hyacinth Index');
