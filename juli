@@ -8487,24 +8487,23 @@ var swir1 = combinedImage.select('B11'); // SWIR1
 
 // 1. Hitung Floating Algae Index (FAI)
 // FAI = B8 - (0.8127 * B4) - (0.1873 * B11)
-var fai = nir.subtract(red.multiply(0.8127)).subtract(swir1.multiply(0.1873)).rename('FAI');
+var fai = nir.subtract(red.multiply(0.8127)).subtract(swir1.multiply(0.1873));
 
 // 2. Hitung Bare Soil Index (BSI)
 // BSI = ((B11 + B4) - (B8 + B2)) / ((B11 + B4) + (B8 + B2))
 var bsi = swir1.add(red).subtract(nir.add(blue))
-             .divide(swir1.add(red).add(nir.add(blue)))
-             .rename('BSI');
+             .divide(swir1.add(red).add(nir.add(blue)));
 
 // --- Langkah 3: Hitung Hyacinth Distinction Index (HDI) ---------------------------
 
 // 3. Hitung HDI dari layer FAI dan BSI
 // HDI = (FAI - BSI) / (FAI + BSI)
-var hdi = fai.subtract(bsi).divide(fai.add(bsi)).rename('HDI');
+var hdi = fai.subtract(bsi).divide(fai.add(bsi));
 
 // --- Langkah 4: Visualisasi Hasil -------------------------------------------------
 
 // Definisikan palet warna untuk setiap indeks
-var faiVis = {min: -500, max: 500, palette: ['blue', 'white', 'green']};
+var faiVis = {min: -1, max: 1, palette: ['blue', 'white', 'green']};
 var bsiVis = {min: -1, max: 1, palette: ['green', 'yellow', 'red']};
 // Palet HDI dirancang agar eceng gondok (nilai tinggi) terlihat mencolok.
 var hdiVis = {
