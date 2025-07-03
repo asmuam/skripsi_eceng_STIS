@@ -8485,31 +8485,56 @@ var s1 = combinedImage;
 var s2 = combinedImage;
 var image = combinedImage;
 
-// Define bands for clarity
-var nir = image.select('B8');
-var blue = image.select('B2');
-var swir1 = image.select('B11');
 
-// 1. Calculate the 'k' parameter (the switch)
-var k = nir.subtract(swir1.multiply(2.5));
+//----------------------------------------------------------------------------------
+// --- SECTION 2: CALCULATING HYACINTH AND STANDARD INDICES ---
+//----------------------------------------------------------------------------------
 
-// 2. Calculate the Base Hyacinth Index (BHI)
-var bhi = image.normalizedDifference(['B8', 'B2']);
+// 1. Original Combined Hyacinth Index (CHI)
+// Good for general floating vegetation, but can be confused by algae.
+var chi = image.expression(
+    '((NIR + Green) - (SWIR1 + Red)) / ((NIR + Green) + (SWIR1 + Red))', {
+      'NIR': image.select('B8'),
+      'Green': image.select('B3'),
+      'SWIR1': image.select('B11'),
+      'Red': image.select('B4')
+    }).rename('CHI');
 
-// 3. Apply the conditional logic
-// Where k < 0, use the negative absolute value of BHI.
-// Where k > 0, use the original BHI.
-var avic = bhi.where(k.lt(0), bhi.abs().multiply(-1)).rename('AVIC');
+// 2. Refined Hyacinth Discrimination Index (HDI)
+// Incorporates SWIR2 to help distinguish hyacinth from algae.
+var hdi = image.expression(
+    '((NIR + Green) - (SWIR1 + SWIR2 + Red)) / ((NIR + Green) + (SWIR1 + SWIR2 + Red))', {
+      'NIR': image.select('B8'),
+      'Green': image.select('B3'),
+      'SWIR1': image.select('B11'),
+      'SWIR2': image.select('B12'),
+      'Red': image.select('B4')
+    }).rename('HDI');
 
 
-// =================================================================
-// STEP 3: VISUALIZE THE RESULT
-// =================================================================
-var avicVis = {
-  min: -1.0, // Non-hyacinth will be strongly negative
-  max: 1.0,  // Hyacinth will be strongly positive
-  palette: ['#8B0000', '#000000', '#FFFFFF', '#ADFF2F', '#00FF00']
-  // Dark Red/Black (Non-Hyacinth) -> White -> Bright Green (Hyacinth)
-};
+// 3. Standard NDVI (Normalized Difference Vegetation Index)
+var ndvi = image.normalizedDifference(['B8', 'B4']).rename('NDVI');
 
-Map.addLayer(avic, avicVis, 'AVIC (Conditional Hyacinth Index)');
+// 4. Standard MNDWI (Modified Normalized Difference Water Index)
+var mndwi = image.normalizedDifference(['B3', 'B11']).rename('MNDWI');
+
+
+//----------------------------------------------------------------------------------
+// --- SECTION 3: VISUALIZATION ---
+//----------------------------------------------------------------------------------
+
+// Define a color palette for the Hyacinth Indices.
+// Blue = Water/Non-Hyacinth, Green/Yellow/Red = Increasing likelihood of Hyacinth.
+var hyacinthPalette = ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']; // Blue, Cyan, Green, Yellow, Red
+
+// Define visualization parameters for each index.
+var chiVisParams = {min: 0, max: 0.8, palette: hyacinthPalette};
+var hdiVisParams = {min: 0, max: 0.8, palette: hyacinthPalette}; // Start with same params, adjust as needed
+var ndviVisParams = {min: -0.5, max: 1, palette: ['blue', 'white', 'green']};
+var mndwiVisParams = {min: -0.5, max: 1, palette: ['brown', 'white', 'blue']};
+
+// Add the calculated indices to the map.
+Map.addLayer(mndwi, mndwiVisParams, 'MNDWI (Water)', false);
+Map.addLayer(ndvi, ndviVisParams, 'NDVI (Vegetation)', false);
+Map.addLayer(chi, chiVisParams, 'Original CHI', false); // Keep for comparison, off by default
+Map.addLayer(hdi, hdiVisParams, 'Refined HDI (Hyacinth)');
