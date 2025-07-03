@@ -8498,7 +8498,7 @@ var v = image.normalizedDifference(['B8', 'B4']).rename('v');
 
 // Step 3: Calculate the 'H' (Hyacinth Value) parameter.
 var H = image.expression(
-    '((NIR + Green) - 2 * (Red + SWIR1 + SWIR2)) / ((NIR + Green) + (Red + SWIR1 + SWIR2))', {
+    '((NIR + Green) - * (Red + SWIR1 + SWIR2)) / ((NIR + Green) + (Red + SWIR1 + SWIR2))', {
       'NIR': image.select('B8'),
       'Green': image.select('B3'),
       'Red': image.select('B4'),
@@ -8511,7 +8511,7 @@ var H = image.expression(
 var uhi = ee.Image(-1).clip(image.geometry());
 // Where the conditions are met, replace -1 with the value from H.
 uhi = uhi.where(
-    w.gt(0).and(v.gt(0.2)), // The condition
+    w.gt(0).and(v.gt(0)), // The condition
     H                             // The value to use if condition is true
 ).rename('UHI');
 
