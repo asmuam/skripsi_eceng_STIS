@@ -8488,10 +8488,10 @@ var image = combinedImage;
 // Define bands for clarity
 var nir = image.select('B8');
 var blue = image.select('B2');
-var swir2 = image.select('B12');
+var swir1 = image.select('B11');
 
 // 1. Calculate the 'k' parameter (the switch)
-var k = nir.subtract(swir2.multiply(4));
+var k = nir.subtract(swir1.multiply(3));
 
 // 2. Calculate the Base Hyacinth Index (BHI)
 var bhi = image.normalizedDifference(['B8', 'B2']);
