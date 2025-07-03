@@ -8483,32 +8483,33 @@ Export.image.toAsset({
 
 var s1 = combinedImage;
 var s2 = combinedImage;
+var image = combinedImage;
 
-// Calculate NDVI and NDWI
-var ndvi = combinedImage.normalizedDifference(['B8', 'B4']).rename('NDVI');
-var ndwi = combinedImage.normalizedDifference(['B8', 'B11']).rename('NDWI');
+// Define bands for clarity
+var nir = image.select('B8');
+var blue = image.select('B2');
+var swir2 = image.select('B12');
 
-// Calculate the initial CHMI by multiplying the two indices
-var chmi_initial = ndvi.multiply(ndwi);
+// 1. Calculate the 'k' parameter (the switch)
+var k = nir.subtract(swir2.multiply(4));
 
-// Create a water/non-vegetation mask using an NDVI threshold
-// This identifies pixels that are not healthy vegetation
-var waterMask = ndvi.lt(0.1);
+// 2. Calculate the Base Hyacinth Index (BHI)
+var bhi = image.normalizedDifference(['B8', 'B2']);
 
-// Apply the mask.
-// Where the mask is true (it is water/non-veg), set value to -1.
-// Otherwise, keep the original CHMI value.
-var chmi_masked = chmi_initial.where(waterMask, -1).rename('CHMI_masked');
+// 3. Apply the conditional logic
+// Where k < 0, use the negative absolute value of BHI.
+// Where k > 0, use the original BHI.
+var avic = bhi.where(k.lt(0), bhi.abs().multiply(-1)).rename('AVIC');
 
 
 // =================================================================
 // STEP 3: VISUALIZE THE RESULT
 // =================================================================
-var chmiVis = {
-  min: -0.2, // A low min will show water clearly
-  max: 0.8,
-  palette: ['#0000FF', '#FFFFFF', '#ADFF2F', '#FFFF00', '#FF0000']
-  // Blue (Water/Soil) -> White -> Green (Veg) -> Yellow/Red (Hyacinth)
+var avicVis = {
+  min: -1.0, // Non-hyacinth will be strongly negative
+  max: 1.0,  // Hyacinth will be strongly positive
+  palette: ['#8B0000', '#000000', '#FFFFFF', '#ADFF2F', '#00FF00']
+  // Dark Red/Black (Non-Hyacinth) -> White -> Bright Green (Hyacinth)
 };
 
-Map.addLayer(chmi_masked, chmiVis, 'CHMI with Water Mask');
+Map.addLayer(avic, avicVis, 'AVIC (Conditional Hyacinth Index)');
