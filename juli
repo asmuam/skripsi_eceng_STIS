@@ -8491,7 +8491,7 @@ var blue = image.select('B2');
 var swir1 = image.select('B11');
 
 // 1. Calculate the 'k' parameter (the switch)
-var k = nir.subtract(swir1.multiply(3));
+var k = nir.subtract(swir1.multiply(2.5));
 
 // 2. Calculate the Base Hyacinth Index (BHI)
 var bhi = image.normalizedDifference(['B8', 'B2']);
