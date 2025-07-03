@@ -8498,7 +8498,7 @@ var v = image.normalizedDifference(['B8', 'B4']).rename('v');
 
 // Step 3: Calculate the 'H' (Hyacinth Value) parameter.
 var H = image.expression(
-    '((NIR + Green) - * (Red + SWIR1 + SWIR2)) / ((NIR + Green) + (Red + SWIR1 + SWIR2))', {
+    '((NIR + Green) - (Red + SWIR1 + SWIR2)) / ((NIR + Green) + (Red + SWIR1 + SWIR2))', {
       'NIR': image.select('B8'),
       'Green': image.select('B3'),
       'Red': image.select('B4'),
@@ -8511,7 +8511,7 @@ var H = image.expression(
 var uhi = ee.Image(-1).clip(image.geometry());
 // Where the conditions are met, replace -1 with the value from H.
 uhi = uhi.where(
-    w.gt(0).and(v.gt(0)), // The condition
+    w.lt(0).and(v.gt(0.2)), // The condition
     H                             // The value to use if condition is true
 ).rename('UHI');
 
@@ -8524,7 +8524,7 @@ uhi = uhi.where(
 var hyacinthPalette = ['#2c7bb6', '#abd9e9', '#ffffbf', '#fdae61', '#d7191c'];
 
 // Define visualization parameters.
-var uhiVisParams = {min: 0.1, max: 0.7, palette: hyacinthPalette};
+var uhiVisParams = {min: 0, max: 0.4, palette: hyacinthPalette};
 
 // Add the final UHI layer to the map.
 Map.addLayer(uhi, uhiVisParams, 'Unified Hyacinth Index (UHI)');
