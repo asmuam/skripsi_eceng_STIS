@@ -8487,54 +8487,44 @@ var image = combinedImage;
 
 
 //----------------------------------------------------------------------------------
-// --- SECTION 2: CALCULATING HYACINTH AND STANDARD INDICES ---
+// --- SECTION 2: UHI CALCULATION USING COMPONENTS ---
 //----------------------------------------------------------------------------------
 
-// 1. Original Combined Hyacinth Index (CHI)
-// Good for general floating vegetation, but can be confused by algae.
-var chi = image.expression(
-    '((NIR + Green) - (SWIR1 + Red)) / ((NIR + Green) + (SWIR1 + Red))', {
-      'NIR': image.select('B8'),
-      'Green': image.select('B3'),
-      'SWIR1': image.select('B11'),
-      'Red': image.select('B4')
-    }).rename('CHI');
+// Step 1: Calculate the 'w' (Water) parameter (MNDWI).
+var w = image.normalizedDifference(['Green', 'SWIR1']).rename('w');
 
-// 2. Refined Hyacinth Discrimination Index (HDI)
-// Incorporates SWIR2 to help distinguish hyacinth from algae.
-var hdi = image.expression(
-    '((NIR + Green) - (SWIR1 + SWIR2 + Red)) / ((NIR + Green) + (SWIR1 + SWIR2 + Red))', {
-      'NIR': image.select('B8'),
-      'Green': image.select('B3'),
-      'SWIR1': image.select('B11'),
-      'SWIR2': image.select('B12'),
-      'Red': image.select('B4')
-    }).rename('HDI');
+// Step 2: Calculate the 'v' (Vegetation) parameter (NDVI).
+var v = image.normalizedDifference(['NIR', 'Red']).rename('v');
 
+// Step 3: Calculate the 'H' (Hyacinth Value) parameter.
+var H = image.expression(
+    '((NIR + Green) - 2 * (Red + SWIR1 + SWIR2)) / ((NIR + Green) + (Red + SWIR1 + SWIR2))', {
+      'NIR': image.select('NIR'),
+      'Green': image.select('Green'),
+      'Red': image.select('Red'),
+      'SWIR1': image.select('SWIR1'),
+      'SWIR2': image.select('SWIR2')
+    }).rename('H');
 
-// 3. Standard NDVI (Normalized Difference Vegetation Index)
-var ndvi = image.normalizedDifference(['B8', 'B4']).rename('NDVI');
-
-// 4. Standard MNDWI (Modified Normalized Difference Water Index)
-var mndwi = image.normalizedDifference(['B3', 'B11']).rename('MNDWI');
+// Step 4: Apply the conditional logic to create the final UHI.
+// Start with a default image where all values are -1.
+var uhi = ee.Image(-1).clip(image.geometry());
+// Where the conditions are met, replace -1 with the value from H.
+uhi = uhi.where(
+    w.gt(0).and(v.gt(0.2)), // The condition
+    H                             // The value to use if condition is true
+).rename('UHI');
 
 
 //----------------------------------------------------------------------------------
 // --- SECTION 3: VISUALIZATION ---
 //----------------------------------------------------------------------------------
 
-// Define a color palette for the Hyacinth Indices.
-// Blue = Water/Non-Hyacinth, Green/Yellow/Red = Increasing likelihood of Hyacinth.
-var hyacinthPalette = ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']; // Blue, Cyan, Green, Yellow, Red
+// Define a color palette for the Hyacinth Index.
+var hyacinthPalette = ['#2c7bb6', '#abd9e9', '#ffffbf', '#fdae61', '#d7191c'];
 
-// Define visualization parameters for each index.
-var chiVisParams = {min: 0, max: 0.8, palette: hyacinthPalette};
-var hdiVisParams = {min: 0, max: 0.8, palette: hyacinthPalette}; // Start with same params, adjust as needed
-var ndviVisParams = {min: -0.5, max: 1, palette: ['blue', 'white', 'green']};
-var mndwiVisParams = {min: -0.5, max: 1, palette: ['brown', 'white', 'blue']};
+// Define visualization parameters.
+var uhiVisParams = {min: 0.1, max: 0.7, palette: hyacinthPalette};
 
-// Add the calculated indices to the map.
-Map.addLayer(mndwi, mndwiVisParams, 'MNDWI (Water)', false);
-Map.addLayer(ndvi, ndviVisParams, 'NDVI (Vegetation)', false);
-Map.addLayer(chi, chiVisParams, 'Original CHI', false); // Keep for comparison, off by default
-Map.addLayer(hdi, hdiVisParams, 'Refined HDI (Hyacinth)');
+// Add the final UHI layer to the map.
+Map.addLayer(uhi, uhiVisParams, 'Unified Hyacinth Index (UHI)');
