@@ -8486,45 +8486,74 @@ var s2 = combinedImage;
 var image = combinedImage;
 
 
-//----------------------------------------------------------------------------------
-// --- SECTION 2: UHI CALCULATION USING COMPONENTS ---
-//----------------------------------------------------------------------------------
-
-// Step 1: Calculate the 'w' (Water) parameter (MNDWI).
-var w = image.normalizedDifference(['B3', 'B11']).rename('w');
-
-// Step 2: Calculate the 'v' (Vegetation) parameter (NDVI).
-var v = image.normalizedDifference(['B8', 'B4']).rename('v');
-
-// Step 3: Calculate the 'H' (Hyacinth Value) parameter.
-var H = image.expression(
-    '((NIR + Green) - (Red + SWIR1 + SWIR2)) / ((NIR + Green) + (Red + SWIR1 + SWIR2))', {
-      'NIR': image.select('B8'),
-      'Green': image.select('B3'),
-      'Red': image.select('B4'),
-      'SWIR1': image.select('B11'),
-      'SWIR2': image.select('B12')
-    }).rename('H');
-
-// Step 4: Apply the conditional logic to create the final UHI.
-// Start with a default image where all values are -1.
-var uhi = ee.Image(-1).clip(image.geometry());
-// Where the conditions are met, replace -1 with the value from H.
-uhi = uhi.where(
-    w.lt(0).and(v.gt(0.2)), // The condition
-    H                             // The value to use if condition is true
-).rename('UHI');
+var bands = image.select(['B2', 'B3', 'B4', 'B8A', 'B11']);
 
 
-//----------------------------------------------------------------------------------
-// --- SECTION 3: VISUALIZATION ---
-//----------------------------------------------------------------------------------
+//=================================================================
+// 3. CALCULATE THE ADAPTIVE HYACINTH DISCRIMINATION INDEX (AHDI)
+//=================================================================
 
-// Define a color palette for the Hyacinth Index.
-var hyacinthPalette = ['#2c7bb6', '#abd9e9', '#ffffbf', '#fdae61', '#d7191c'];
+// Use a single expression for efficiency and clarity.
+var ahdi = bands.expression(
+  // The expression implements: sign(k) * |NDVI|
+  'k > 0 ? ndvi_abs : -ndvi_abs',
+  {
+    // Intermediate variable 'k': k = min(v, r)
+    'k': {
+      expression: 'v < r ? v : r', // A more efficient way to write min(v, r)
+      'v': {
+        expression: 'b3 - b4', // Constraint v (Vegetation Filter)
+        'b3': bands.select('B3'),
+        'b4': bands.select('B4')
+      },
+      'r': {
+        expression: 'term1 - term2', // Constraint r (Hyacinth-Specific Filter)
+        'term1': {
+          expression: '(b3 - b2) / (b3 + b2)', // Green-Blue Slope
+          'b2': bands.select('B2'),
+          'b3': bands.select('B3')
+        },
+        'term2': {
+          expression: '(b3 - b4) / (b8a - b11)', // Green Peak / Water Absorption Ratio
+          'b3': bands.select('B3'),
+          'b4': bands.select('B4'),
+          'b8a': bands.select('B8A'),
+          'b11': bands.select('B11')
+        }
+      }
+    },
+    // Absolute value of NDVI, the core magnitude of the index
+    'ndvi_abs': {
+      expression: 'abs((b8a - b4) / (b8a + b4))',
+      'b8a': bands.select('B8A'),
+      'b4': bands.select('B4')
+    }
+  }
+).rename('AHDI');
 
-// Define visualization parameters.
-var uhiVisParams = {min: 0, max: 0.4, palette: hyacinthPalette};
 
-// Add the final UHI layer to the map.
-Map.addLayer(uhi, uhiVisParams, 'Unified Hyacinth Index (UHI)');
+//=================================================================
+// 4. VISUALIZE THE RESULTS
+//=================================================================
+
+// Define a color palette for the AHDI result.
+var ahdiPalette = [
+  '440154', // Deep Blue/Purple (Negative: Water/Other)
+  '3b528b', // Dark Blue
+  '21918c', // Teal
+  '5dc963', // Green (Low positive values)
+  'fde725'  // Bright Yellow (High positive: Likely Hyacinth)
+];
+
+// Visualization parameters.
+var ahdiVisParams = {
+  min: -0.8,
+  max: 0.8,
+  palette: ahdiPalette
+};
+
+// Add the True Color composite for context.
+Map.addLayer(image, {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000}, 'True Color (S2)');
+
+// Add the final AHDI layer to the map.
+Map.addLayer(ahdi, ahdiVisParams, 'Adaptive Hyacinth Index (AHDI)');
