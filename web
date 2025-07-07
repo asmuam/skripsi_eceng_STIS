@@ -56,7 +56,7 @@ function panelcreate() {
         ui.Label({
             value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
             'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
-            'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+            'Data citra satelit Sentinel-1 dan Sentinel-2 diambil melalui platform GEE dan diolah dengan platform Google Colab. ' +
             'Hasil klasifikasi mencakup enam kelas:',
             style: {
                 fontSize: '0.9vw',
@@ -82,6 +82,7 @@ function referencecreate() {
     var referenceOne = ui.Label({ value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left' }, targetUrl: 'drive.google.com' });
     var referenceTwo = ui.Label({ value: '💻 Kode Python untuk Pengolahan', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2' });
     var referenceThree = ui.Label({ value: 'Created by:', style: { color: 'black', fontWeight: 'bold', textAlign: 'center' } });
+    var referenceFour = ui.Label({ value: '📝 Paper', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: ''});
     var author = ui.Label({ value: '222111840@stis.ac.id', style: { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, targetUrl: 'mailto:222111840@stis.ac.id' });
     introPanel.add(referenceZero).add(referenceOne).add(referenceTwo).add(referenceThree).add(author);
 }
@@ -94,6 +95,16 @@ function redraw(layer, opacity) {
         }
     });
     legend.clear();
+    legend.add(ui.Label({
+                  value: 'Panel Legenda',
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                  }
+                }));
     legend.add(checkboxSbwp);
     legend.add(ui.Label({ value: 'Pilih Layer Tampilan:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(select);
     legend.add(ui.Label({ value: 'Atur Opasitas:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(opacitySlider);
@@ -156,15 +167,15 @@ var dataInfo = {
 
 var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '40vh'} });
 dataPanel.add(ui.Label({
-  value: 'Data Panel',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
-  }
-}));
+                  value: 'Panel Data',
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                  }
+                }));
 var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
 var dot = null;
 
@@ -194,15 +205,15 @@ map.onClick(function(coords) {
 
     dataPanel.clear();
     dataPanel.add(ui.Label({
-      value: 'Data Panel',
-      style: {
-        fontWeight: 'bold',
-        fontSize: '18px',
-        margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-        textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-        stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
-      }
-    }));
+                  value: 'Panel Data',
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                  }
+                }));
     // PERBAIKAN: Menggunakan variabel 'sbwp' yang konsisten
     var isInShp = rawa_pening_shp.filterBounds(point).size();
     
@@ -213,7 +224,7 @@ map.onClick(function(coords) {
           if (selectedLayerKey === 'none') {
                 dataPanel.clear();
                 dataPanel.add(ui.Label({
-                  value: 'Data Panel',
+                  value: 'Panel Data',
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
@@ -236,7 +247,7 @@ map.onClick(function(coords) {
             if (selectedLayerKey === 'none') {
                 dataPanel.clear();
                 dataPanel.add(ui.Label({
-                  value: 'Data Panel',
+                  value: 'Panel Data',
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
@@ -252,7 +263,7 @@ map.onClick(function(coords) {
             var showData = function(data, title) {
                 dataPanel.clear();
                 dataPanel.add(ui.Label({
-                  value: 'Data Panel',
+                  value: 'Panel Data',
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
