@@ -533,9 +533,9 @@ opacitySlider.onChange(function(value) {
     redraw(selectedLayer, value);
 });        // Function to handle opacity changes and trigger redraw with updated opacity
 
-redraw('citra', opacitySlider.getValue());            // Invoke the redraw function at start up to initialize the exceedance map.
+redraw('optik_jun', opacitySlider.getValue());            // Invoke the redraw function at start up to initialize the exceedance map.
 
-map.addLayer(sbwp);
+map.addLayer(sbwp, {}, 'Sub Batas Wilayah Perencanaan');
 map.add(legend);                                      // Add legend to map.
 map.add(inspector);                                   // Add the inspector panel to the default map.
 map.setOptions('SATELLITE');
