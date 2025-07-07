@@ -162,7 +162,8 @@ dataPanel.add(ui.Label({
     fontSize: '18px',
     margin: '8px 12px' // Memberi sedikit spasi
   }
-}));var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
+}));
+var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
 var dot = null;
 
 var sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
@@ -190,7 +191,14 @@ map.onClick(function(coords) {
     map.layers().add(dot);
 
     dataPanel.clear();
-    
+    dataPanel.add(ui.Label({
+  value: 'Data Panel',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '8px 12px' // Memberi sedikit spasi
+  }
+}));
     // PERBAIKAN: Menggunakan variabel 'sbwp' yang konsisten
     var isInShp = rawa_pening_shp.filterBounds(point).size();
     
