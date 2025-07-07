@@ -29,11 +29,9 @@ var thePalette = [
     "#808080"  // Lain-lain
 ];
 
-// Daftar lengkap pita dan indeks yang akan diinspeksi
 var fullBandsToInspect = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI","VV","VH"];
 
 function panelcreate() {
-    // Create an intro panel with labels.
     var intro = ui.Panel([
         ui.Label({
             value: 'Sebaran Eceng Gondok',
@@ -63,233 +61,59 @@ function panelcreate() {
                 fontWeight: 'normal'
             },
         }),
-        ui.Label({
-            value: '0. Eceng Gondok',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                padding: '0',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '1. Keramba Jaring Apung',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '2. Air',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '3. Vegetasi lain',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '4. Tanah',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: '5. Lain-lain',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal',
-                margin: '0px 0px 0px 8px'
-            },
-        }),
-        ui.Label({
-            value: 'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih.',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-        ui.Label({
-            value: 'Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah ' +
-            'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai ' +
-            'Pemali Juana.',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-        ui.Label({
-            value: 'Lapisan data (layer) dapat diganti melalui panel legenda.',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
+        ui.Label('0. Eceng Gondok', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
+        ui.Label('1. Keramba Jaring Apung', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
+        ui.Label('2. Air', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
+        ui.Label('3. Vegetasi lain', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
+        ui.Label('4. Tanah', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
+        ui.Label('5. Lain-lain', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
+        ui.Label('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih.', { fontSize: '0.9vw', fontWeight: 'normal' }),
+        ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah ' +
+                 'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', { fontSize: '0.9vw', fontWeight: 'normal' }),
+        ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', { fontSize: '0.9vw', fontWeight: 'normal' }),
     ]);
-
     introPanel.add(intro);
 }
 
 function referencecreate() {
-    var referenceZero = ui.Label({
-        value: 'Data Tambahan:',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'left'
-        },
-    });
-    var referenceOne = ui.Label({
-        value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana',
-        style: {
-            color: 'blue',
-            fontWeight: 'bold',
-            textAlign: 'left'
-        },
-        targetUrl: 'drive.google.com'
-    });
-    var referenceTwo = ui.Label({
-        value: '💻 Kode Python untuk Pengolahan',
-        style: {
-            color: 'blue',
-            fontWeight: 'bold',
-            textAlign: 'left',
-            padding: '0px 0px 4px 0px'
-        },
-        targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2'
-    });
-    var referenceThree = ui.Label({
-        value: 'Created by:',
-        style: {
-            color: 'black',
-            fontWeight: 'bold',
-            textAlign: 'center'
-        },
-    });
-    var author = ui.Label({
-        value: '222111840@stis.ac.id',
-        style: {
-            color: 'blue',
-            fontWeight: 'bold',
-            textAlign: 'center'
-        },
-        targetUrl: 'mailto:222111840@stis.ac.id'
-    });
-
-    introPanel.add(referenceZero);
-    introPanel.add(referenceOne);
-    introPanel.add(referenceTwo);
-    introPanel.add(referenceThree);
-    introPanel.add(author);
+    var referenceZero = ui.Label({ value: 'Data Tambahan:', style: { color: 'black', fontWeight: 'bold', textAlign: 'left' } });
+    var referenceOne = ui.Label({ value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left' }, targetUrl: 'drive.google.com' });
+    var referenceTwo = ui.Label({ value: '💻 Kode Python untuk Pengolahan', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2' });
+    var referenceThree = ui.Label({ value: 'Created by:', style: { color: 'black', fontWeight: 'bold', textAlign: 'center' } });
+    var author = ui.Label({ value: '222111840@stis.ac.id', style: { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, targetUrl: 'mailto:222111840@stis.ac.id' });
+    introPanel.add(referenceZero).add(referenceOne).add(referenceTwo).add(referenceThree).add(author);
 }
 
 function redraw(layer, opacity) {
     var info = dataInfo[layer];
-    
-    var layers = map.layers();
-    layers.forEach(function(l) {
+    map.layers().forEach(function(l) {
         if (l.getName() !== 'Titik Inspeksi' && l.getName() !== 'Sub Batas Wilayah Perencanaan') {
             map.remove(l);
         }
     });
-    
     legend.clear();
-    
     legend.add(checkboxSbwp);
-    legend.add(ui.Label({
-        value: 'Pilih Layer Tampilan:',
-        style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textAlign: 'left',
-            margin: '4px 0px'
-        },
-    })).add(select);
+    legend.add(ui.Label({ value: 'Pilih Layer Tampilan:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(select);
+    legend.add(ui.Label({ value: 'Atur Opasitas:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(opacitySlider);
 
-    legend.add(ui.Label({
-        value: 'Atur Opasitas:',
-        style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textAlign: 'left',
-            margin: '4px 0px'
-        },
-    })).add(opacitySlider);
-
-    if (layer === 'none') {
-        return;
-    }
-
+    if (layer === 'none') return;
     info.vis.opacity = opacity;
     var visImg = info.img.visualize(info.vis);
 
     if (/optik/.test(layer) || /radar/.test(layer)) {
-        legend.add(ui.Label({
-            value: info.desc,
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        }));
+        legend.add(ui.Label({ value: info.desc, style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } }));
         map.addLayer(visImg, {}, layer, true);
         return;
     }
 
-    legend.add(ui.Label({
-        value: info.desc,
-        style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textAlign: 'left',
-            margin: '4px 0px'
-        },
-    }));
-
-    var classColors = info.vis.palette;
+    legend.add(ui.Label({ value: info.desc, style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } }));
     classNames.forEach(function(label, index) {
-        var colorBox = ui.Label({
-            style: {
-                backgroundColor: classColors[index],
-                padding: '8px',
-                margin: '4px',
-                border: '1px solid black',
-                width: '20px',
-                height: '20px',
-            }
-        });
-        var textLabel = ui.Label({
-            value: index + ': ' + label,
-            style: {
-                margin: '4px 0px',
-                fontSize: '12px',
-                padding: '0 4px'
-            }
-        });
-        var legendItem = ui.Panel({
-            widgets: [colorBox, textLabel],
-            layout: ui.Panel.Layout.flow('horizontal'),
-            style: {
-                margin: '4px 0px'
-            }
-        });
-        legend.add(legendItem);
+        var colorBox = ui.Label({ style: { backgroundColor: thePalette[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
+        var textLabel = ui.Label({ value: index + ': ' + label, style: { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } });
+        legend.add(ui.Panel({ widgets: [colorBox, textLabel], layout: ui.Panel.Layout.flow('horizontal'), style: { margin: '4px 0px' } }));
     });
-
     map.addLayer(visImg, {}, layer, true);
 }
-
 
 // =======================================================================================
 // LOGIKA UTAMA DAN INISIALISASI PETA
@@ -300,7 +124,10 @@ var introPanel = ui.Panel({
         width: '30%',
         fontSize: '1vw',
         fontWeight: 'bold',
-        border: '5px solid darkgray'
+        border: '5px solid darkgray',
+        // DIUBAH: Tambahkan properti untuk membuat panel bisa di-scroll
+        maxHeight: '90vh',
+        overflow: 'auto'
     }
 });
 
@@ -313,209 +140,47 @@ panelcreate();
 referencecreate();
 
 var dataInfo = {
-    'optik_jun': {
-        name: 'Citra RGB Sentinel-2 Juni',
-        desc: 'Citra dasar RGB Sentinel-2 bulan Juni',
-        img: rawa_pening_image_jun,
-        vis: {
-            bands: ['B4', 'B3', 'B2'],
-            min: 0,
-            max: 0.3
-        }
-    },
-    'optik_jul': {
-        name: 'Citra RGB Sentinel-2 Juli',
-        desc: 'Citra dasar RGB Sentinel-2 bulan Juli',
-        img: rawa_pening_image_jul,
-        vis: {
-            bands: ['B4', 'B3', 'B2'],
-            min: 0,
-            max: 0.3
-        }
-    },
-    'optik_ags': {
-        name: 'Citra RGB Sentinel-2 Agustus',
-        desc: 'Citra dasar RGB Sentinel-2 bulan Agustus',
-        img: rawa_pening_image_ags,
-        vis: {
-            bands: ['B4', 'B3', 'B2'],
-            min: 0,
-            max: 0.3
-        }
-    },
-    'radar_jun': {
-        name: 'Citra Radar Sentinel-1 Juni',
-        desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH, VV/VH)',
-        img: rawa_pening_image_jun,
-        vis: {
-            bands: ['VV', 'VH', 'VV_VH_ratio'],
-            min: -40,
-            max: 0
-        }
-    },
-    'radar_jul': {
-        name: 'Citra Radar Sentinel-1 Juli',
-        desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH, VV/VH)',
-        img: rawa_pening_image_jul,
-        vis: {
-            bands: ['VV', 'VH', 'VV_VH_ratio'],
-            min: -40,
-            max: 0
-        }
-    },
-    'radar_ags': {
-        name: 'Citra Radar Sentinel-1 Agustus',
-        desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH, VV/VH)',
-        img: rawa_pening_image_ags,
-        vis: {
-            bands: ['VV', 'VH', 'VV_VH_ratio'],
-            min: -40,
-            max: 0
-        }
-    },
-    'rf_jun': {
-        name: 'Klasifikasi RF Juni',
-        desc: 'Hasil klasifikasi Random Forest bulan Juni',
-        img: rf_jun,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette
-        }
-    },
-    'rf_jul': {
-        name: 'Klasifikasi RF Juli',
-        desc: 'Hasil klasifikasi Random Forest bulan Juli',
-        img: rf_jul,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette
-        }
-    },
-    'rf_ags': {
-        name: 'Klasifikasi RF Agustus',
-        desc: 'Hasil klasifikasi Random Forest bulan Agustus',
-        img: rf_ags,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette
-        }
-    },
-    'cnn1_jun': {
-        name: 'Klasifikasi CNN1D Juni',
-        desc: 'Hasil klasifikasi CNN1D bulan Juni',
-        img: cnn1_jun,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette
-        }
-    },
-    'cnn1_jul': {
-        name: 'Klasifikasi CNN1D Juli',
-        desc: 'Hasil klasifikasi CNN1D bulan Juli',
-        img: cnn1_jul,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette
-        }
-    },
-    'cnn1_ags': {
-        name: 'Klasifikasi CNN1D Agustus',
-        desc: 'Hasil klasifikasi CNN1D bulan Agustus',
-        img: cnn1_ags,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette
-        }
-    }
+    'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
+    'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
+    'optik_ags': { name: 'Citra RGB Sentinel-2 Agustus', desc: 'Citra dasar RGB Sentinel-2 bulan Agustus', img: rawa_pening_image_ags, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
+    'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+    'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+    'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+    'rf_jun': { name: 'Klasifikasi RF Juni', desc: 'Hasil klasifikasi Random Forest bulan Juni', img: rf_jun, vis: { min: 0, max: 5, palette: thePalette } },
+    'rf_jul': { name: 'Klasifikasi RF Juli', desc: 'Hasil klasifikasi Random Forest bulan Juli', img: rf_jul, vis: { min: 0, max: 5, palette: thePalette } },
+    'rf_ags': { name: 'Klasifikasi RF Agustus', desc: 'Hasil klasifikasi Random Forest bulan Agustus', img: rf_ags, vis: { min: 0, max: 5, palette: thePalette } },
+    'cnn1_jun': { name: 'Klasifikasi CNN1D Juni', desc: 'Hasil klasifikasi CNN1D bulan Juni', img: cnn1_jun, vis: { min: 0, max: 5, palette: thePalette } },
+    'cnn1_jul': { name: 'Klasifikasi CNN1D Juli', desc: 'Hasil klasifikasi CNN1D bulan Juli', img: cnn1_jul, vis: { min: 0, max: 5, palette: thePalette } },
+    'cnn1_ags': { name: 'Klasifikasi CNN1D Agustus', desc: 'Hasil klasifikasi CNN1D bulan Agustus', img: cnn1_ags, vis: { min: 0, max: 5, palette: thePalette } }
 };
 
-var dataPanel = ui.Panel({
-    style: {
-        position: 'bottom-right',
-        width: '25%',
-        padding: '8px'
-    }
-});
-var legend = ui.Panel({
-    style: {
-        position: 'bottom-left',
-        width: '20%',
-        padding: '8px'
-    }
-});
+var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px' } });
+var legend = ui.Panel({ style: { position: 'bottom-left', width: '20%', padding: '8px' } });
 var dot = null;
 
 var sbwpLayer = ui.Map.Layer(sbwp, {color: 'yellow'}, 'Sub Batas Wilayah Perencanaan');
-
-var checkboxSbwp = ui.Checkbox({
-  label: 'Tampilkan Batas Wilayah',
-  value: true,
-  onChange: function(checked) {
-    sbwpLayer.setShown(checked);
-  }
-});
+var checkboxSbwp = ui.Checkbox({ label: 'Tampilkan Batas Wilayah', value: true, onChange: function(checked) { sbwpLayer.setShown(checked); } });
 
 var items = [];
-Object.keys(dataInfo).forEach(function(key) {
-    items.push({
-        value: key,
-        label: dataInfo[key].name
-    });
-});
-items.push({
-    value: 'none',
-    label: 'Pilih Layer'
-});
+Object.keys(dataInfo).forEach(function(key) { items.push({ value: key, label: dataInfo[key].name }); });
+items.push({ value: 'none', label: 'Pilih Layer' });
 
-var select = ui.Select({
-    items: items,
-    value: items[0].value,
-    style: {
-        margin: '8px 0px',
-        stretch: 'horizontal'
-    }
-});
-select.onChange(function(layer) {
-    redraw(layer, opacitySlider.getValue());
-});
+var select = ui.Select({ items: items, value: items[0].value, style: { margin: '8px 0px', stretch: 'horizontal' } });
+select.onChange(function(layer) { redraw(layer, opacitySlider.getValue()); });
 
-var opacitySlider = ui.Slider({
-    min: 0,
-    max: 1,
-    value: 0.75,
-    step: 0.05,
-    style: {
-        width: '90%',
-        margin: '10px'
-    }
-});
-opacitySlider.onChange(function(value) {
-    var selectedLayer = select.getValue();
-    redraw(selectedLayer, value);
-});
+var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.75, step: 0.05, style: { width: '90%', margin: '10px' } });
+opacitySlider.onChange(function(value) { redraw(select.getValue(), value); });
 
 map.centerObject(roi, 14);
 map.add(dataPanel);
 map.add(legend);
 map.layers().add(sbwpLayer);
 
-// DIUBAH: Logika map.onClick disesuaikan sepenuhnya
 map.onClick(function(coords) {
-    if (dot) {
-        map.remove(dot);
-    }
+    if (dot) map.remove(dot);
     var point = ee.Geometry.Point(coords.lon, coords.lat);
-    dot = ui.Map.Layer(point, {
-        color: 'red'
-    }, 'Titik Inspeksi');
+    dot = ui.Map.Layer(point, { color: 'red' }, 'Titik Inspeksi');
     map.layers().add(dot);
-
     dataPanel.clear();
     dataPanel.add(ui.Label('Memuat data piksel...'));
 
@@ -526,28 +191,16 @@ map.onClick(function(coords) {
         return;
     }
 
-    // Fungsi untuk menampilkan data ke panel
     var showData = function(data, title) {
         dataPanel.clear();
-        dataPanel.add(ui.Label({
-            value: title,
-            style: {
-                fontWeight: 'bold',
-                fontSize: '16px',
-                margin: '0 0 8px 0'
-            }
-        }));
+        dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
         dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
-
         if (data) {
-            // Jika ada nilai klasifikasi, tampilkan di atas
             if (data.classification !== null && data.classification !== undefined) {
                 var classLabel = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
                 var classIndex = data.classification;
                 dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
             }
-            
-            // Tampilkan sisa band/indeks
             Object.keys(data).forEach(function(key) {
                 if (key !== 'classification') {
                     dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
@@ -558,54 +211,40 @@ map.onClick(function(coords) {
         }
     };
 
-    // LOGIKA UTAMA: Cek jenis layer yang aktif
-    if (/optik/.test(selectedLayerKey) || /radar/.test(selectedLayerKey)) {
-        // --- KASUS 1: Layer optik atau radar ---
-        var imageToInspect = dataInfo[selectedLayerKey].img;
-        var bands = dataInfo[selectedLayerKey].vis.bands;
-        
-        var data = imageToInspect.select(bands).reduceRegion({
-            reducer: ee.Reducer.first(),
-            geometry: point,
-            scale: 10
+    if (/radar/.test(selectedLayerKey)) {
+        // DIUBAH: Inspeksi hanya VV dan VH untuk radar
+        var bands = ['VV', 'VH'];
+        var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
+            reducer: ee.Reducer.first(), geometry: point, scale: 10
         }).getInfo();
-        
-        showData(data, 'Nilai Pita Terpilih');
-        
+        showData(data, 'Nilai Pita Radar');
+    } else if (/optik/.test(selectedLayerKey)) {
+        // DIUBAH: Inspeksi pita B1-B12 untuk optik
+        var bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12'];
+        var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
+            reducer: ee.Reducer.first(), geometry: point, scale: 10
+        }).getInfo();
+        showData(data, 'Nilai Pita Optik');
     } else {
-        // --- KASUS 2: Layer klasifikasi ---
+        // Kasus layer klasifikasi tetap sama, menampilkan semua data dasar
         var month = selectedLayerKey.split('_')[1];
-
         var baseImage;
         if (month === 'jun') baseImage = rawa_pening_image_jun;
-        if (month === 'jul') baseImage = rawa_pening_image_jul;
-        if (month === 'ags') baseImage = rawa_pening_image_ags;
+        else if (month === 'jul') baseImage = rawa_pening_image_jul;
+        else baseImage = rawa_pening_image_ags;
 
         var classificationImage = dataInfo[selectedLayerKey].img;
-
         var combinedImage = baseImage.select(fullBandsToInspect)
             .addBands(classificationImage.rename('classification'));
-
-        var dataInspect = combinedImage.reduceRegion({
-            reducer: ee.Reducer.first(),
-            geometry: point,
-            scale: 10
+        var data = combinedImage.reduceRegion({
+            reducer: ee.Reducer.first(), geometry: point, scale: 10
         }).getInfo();
-        
-        showData(dataInspect, 'Data Inspeksi Lengkap');
+        showData(data, 'Data Inspeksi Lengkap');
     }
 });
 
-
 redraw(items[0].value, 0.75);
-
 map.setOptions('SATELLITE');
-map.setControlVisibility({
-    all: false,
-    layerList: false,
-    zoomControl: true,
-    scaleControl: true,
-    mapTypeControl: true,
-    fullscreenControl: true
-});
+map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
 map.style().set('cursor', 'crosshair');
+```
