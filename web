@@ -12,7 +12,7 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rf_jun = ee.Image("projects/ee-222111840/assets/rf_jun");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // =======================================================================================
-// 2. FUNGSI-FUNGSI UI DAN LOGIKA
+// FUNGSI-FUNGSI UI DAN LOGIKA
 // =======================================================================================
 
 var classNames = [
@@ -28,6 +28,9 @@ var thePalette = [
     "#D2B48C", // Tanah
     "#808080"  // Lain-lain
 ];
+
+// Daftar lengkap pita dan indeks yang akan diinspeksi
+var fullBandsToInspect = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI","VV","VH"];
 
 function panelcreate() {
     // Create an intro panel with labels.
@@ -289,7 +292,7 @@ function redraw(layer, opacity) {
 
 
 // =======================================================================================
-// 3. LOGIKA UTAMA DAN INISIALISASI PETA
+// LOGIKA UTAMA DAN INISIALISASI PETA
 // =======================================================================================
 
 var introPanel = ui.Panel({
@@ -502,6 +505,7 @@ map.add(dataPanel);
 map.add(legend);
 map.layers().add(sbwpLayer);
 
+// DIUBAH: Logika map.onClick disesuaikan sepenuhnya
 map.onClick(function(coords) {
     if (dot) {
         map.remove(dot);
@@ -521,62 +525,77 @@ map.onClick(function(coords) {
         dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
         return;
     }
-    
-    var month = selectedLayerKey.split('_')[1];
 
-    var baseImage;
-    if (month === 'jun') baseImage = rawa_pening_image_jun;
-    if (month === 'jul') baseImage = rawa_pening_image_jul;
-    if (month === 'ags') baseImage = rawa_pening_image_ags;
-    
-    var rfImage;
-    if (month === 'jun') rfImage = rf_jun;
-    if (month === 'jul') rfImage = rf_jul;
-    if (month === 'ags') rfImage = rf_ags;
-    
-    var cnnImage;
-    if (month === 'jun') cnnImage = cnn1_jun;
-    if (month === 'jul') cnnImage = cnn1_jul;
-    if (month === 'ags') cnnImage = cnn1_ags;
-
-    var bandsToInspect = ['B4', 'B3', 'B2', 'B8', 'NDVI', 'NDWI', 'VV', 'VH'];
-    var combinedImage = baseImage.select(bandsToInspect)
-                                 .addBands(rfImage.rename('rf_class'))
-                                 .addBands(cnnImage.rename('cnn_class'));
-
-    var data = combinedImage.reduceRegion({
-        reducer: ee.Reducer.first(),
-        geometry: point,
-        scale: 10
-    }).getInfo();
-
-    dataPanel.clear();
-    dataPanel.add(ui.Label({
-        value: 'Data Piksel Terpilih',
-        style: {
-            fontWeight: 'bold',
-            fontSize: '16px',
-            margin: '0 0 8px 0'
-        }
-    }));
-    dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
-
-    if (data && data.rf_class !== null) {
-        var rfClassIndex = data.rf_class;
-        var cnnClassIndex = data.cnn_class;
-
-        dataPanel.add(ui.Label('Klasifikasi RF: ' + rfClassIndex + ' (' + classNames[rfClassIndex] + ')', {fontWeight: 'bold'}));
-        dataPanel.add(ui.Label('Klasifikasi CNN: ' + cnnClassIndex + ' (' + classNames[cnnClassIndex] + ')', {fontWeight: 'bold'}));
-
-        Object.keys(data).forEach(function(key) {
-            if (key !== 'rf_class' && key !== 'cnn_class') {
-                dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
+    // Fungsi untuk menampilkan data ke panel
+    var showData = function(data, title) {
+        dataPanel.clear();
+        dataPanel.add(ui.Label({
+            value: title,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '16px',
+                margin: '0 0 8px 0'
             }
-        });
+        }));
+        dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
+
+        if (data) {
+            // Jika ada nilai klasifikasi, tampilkan di atas
+            if (data.classification !== null && data.classification !== undefined) {
+                var classLabel = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
+                var classIndex = data.classification;
+                dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
+            }
+            
+            // Tampilkan sisa band/indeks
+            Object.keys(data).forEach(function(key) {
+                if (key !== 'classification') {
+                    dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
+                }
+            });
+        } else {
+            dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
+        }
+    };
+
+    // LOGIKA UTAMA: Cek jenis layer yang aktif
+    if (/optik/.test(selectedLayerKey) || /radar/.test(selectedLayerKey)) {
+        // --- KASUS 1: Layer optik atau radar ---
+        var imageToInspect = dataInfo[selectedLayerKey].img;
+        var bands = dataInfo[selectedLayerKey].vis.bands;
+        
+        var data = imageToInspect.select(bands).reduceRegion({
+            reducer: ee.Reducer.first(),
+            geometry: point,
+            scale: 10
+        }).getInfo();
+        
+        showData(data, 'Nilai Pita Terpilih');
+        
     } else {
-        dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
+        // --- KASUS 2: Layer klasifikasi ---
+        var month = selectedLayerKey.split('_')[1];
+
+        var baseImage;
+        if (month === 'jun') baseImage = rawa_pening_image_jun;
+        if (month === 'jul') baseImage = rawa_pening_image_jul;
+        if (month === 'ags') baseImage = rawa_pening_image_ags;
+
+        var classificationImage = dataInfo[selectedLayerKey].img;
+
+        var combinedImage = baseImage.select(fullBandsToInspect)
+            .addBands(classificationImage.rename('classification'));
+
+        var dataInspect = combinedImage.reduceRegion({
+            reducer: ee.Reducer.first(),
+            geometry: point,
+            scale: 10
+        }).getInfo();
+        
+        showData(dataInspect, 'Data Inspeksi Lengkap');
     }
 });
+
 
 redraw(items[0].value, 0.75);
 
