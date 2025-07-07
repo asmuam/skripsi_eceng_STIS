@@ -220,6 +220,14 @@ map.onClick(function(coords) {
 
             var showData = function(data, title) {
                 dataPanel.clear();
+                dataPanel.add(ui.Label({
+                  value: 'Data Panel',
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    margin: '8px 12px' // Memberi sedikit spasi
+                  }
+                }));
                 dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
                 dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
                 if (data) {
