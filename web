@@ -155,7 +155,14 @@ var dataInfo = {
 };
 
 var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '40vh'} });
-var legend = ui.Panel({ style: { position: 'bottom-left', width: '20%', padding: '8px' } });
+dataPanel.add(ui.Label({
+  value: 'Data Panel',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '8px 12px' // Memberi sedikit spasi
+  }
+}));var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
 var dot = null;
 
 var sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
