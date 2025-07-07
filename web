@@ -210,6 +210,16 @@ map.onClick(function(coords) {
         if (size === 0) {
           if (selectedLayerKey === 'none') {
                 dataPanel.clear();
+                dataPanel.add(ui.Label({
+                  value: 'Data Panel',
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                  }
+                }));
                 dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
                 return;
             }
@@ -223,6 +233,16 @@ map.onClick(function(coords) {
             var selectedLayerKey = select.getValue();
             if (selectedLayerKey === 'none') {
                 dataPanel.clear();
+                dataPanel.add(ui.Label({
+                  value: 'Data Panel',
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                  }
+                }));
                 dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
                 return;
             }
