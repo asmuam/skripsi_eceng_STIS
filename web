@@ -220,9 +220,9 @@ function redraw(layer, opacity) {
     // Construct the visualization image only for layers other than "none"
     var visImg = info.img.visualize(info.vis);
 
-    // If the selected layer is "citra" or "radar", reset and skip legend creation
-    if (layer === 'citra' || layer === 'radar') {
-        if (layer !== 'none') {
+    /// If the selected layer is an optical or radar image, skip legend creation
+    if (layer.includes('optik') || layer.includes('radar')) {
+      if (layer !== 'none') {
             // Add the layer for "citra" without a legend
             legend.add(
                 ui.Label({
