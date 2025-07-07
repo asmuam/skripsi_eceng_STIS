@@ -126,6 +126,7 @@ var introPanel = ui.Panel({
         fontWeight: 'bold',
         border: '5px solid darkgray',
         maxHeight: '90vh',
+        overflow: 'auto'
     }
 });
 
@@ -141,9 +142,9 @@ var dataInfo = {
     'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
     'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
     'optik_ags': { name: 'Citra RGB Sentinel-2 Agustus', desc: 'Citra dasar RGB Sentinel-2 bulan Agustus', img: rawa_pening_image_ags, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
-    'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH, VV)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV'], min: -40, max: 0 } },
-    'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH, VV)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV'], min: -40, max: 0 } },
-    'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH, VV)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV'], min: -40, max: 0 } },
+    'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+    'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+    'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
     'rf_jun': { name: 'Klasifikasi RF Juni', desc: 'Hasil klasifikasi Random Forest bulan Juni', img: rf_jun, vis: { min: 0, max: 5, palette: thePalette } },
     'rf_jul': { name: 'Klasifikasi RF Juli', desc: 'Hasil klasifikasi Random Forest bulan Juli', img: rf_jul, vis: { min: 0, max: 5, palette: thePalette } },
     'rf_ags': { name: 'Klasifikasi RF Agustus', desc: 'Hasil klasifikasi Random Forest bulan Agustus', img: rf_ags, vis: { min: 0, max: 5, palette: thePalette } },
@@ -179,66 +180,79 @@ map.onClick(function(coords) {
     var point = ee.Geometry.Point(coords.lon, coords.lat);
     dot = ui.Map.Layer(point, { color: 'red' }, 'Titik Inspeksi');
     map.layers().add(dot);
+
     dataPanel.clear();
-    dataPanel.add(ui.Label('Memuat data piksel...'));
-
-    var selectedLayerKey = select.getValue();
-    if (selectedLayerKey === 'none') {
-        dataPanel.clear();
-        dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
-        return;
-    }
-
-    var showData = function(data, title) {
-        dataPanel.clear();
-        dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
-        dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
-        if (data) {
-            if (data.classification !== null && data.classification !== undefined) {
-                var classLabel = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
-                var classIndex = data.classification;
-                dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
-            }
-            Object.keys(data).forEach(function(key) {
-                if (key !== 'classification') {
-                    dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
-                }
-            });
+    
+    // BARU: Cek apakah titik berada di dalam SBWP
+    var pointInSbwp = sbwp.filterBounds(point).size();
+    pointInSbwp.evaluate(function(size) {
+        if (size === 0) {
+            // Jika di luar, tampilkan pesan dan berhenti
+            dataPanel.add(ui.Label({
+                value: 'Objek berada di luar jangkauan penelitian.',
+                style: { fontWeight: 'bold', color: 'red' }
+            }));
+            return;
         } else {
-            dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
+            // Jika di dalam, lanjutkan proses inspeksi
+            dataPanel.add(ui.Label('Memuat data piksel...'));
+
+            var selectedLayerKey = select.getValue();
+            if (selectedLayerKey === 'none') {
+                dataPanel.clear();
+                dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
+                return;
+            }
+
+            var showData = function(data, title) {
+                dataPanel.clear();
+                dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
+                dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
+                if (data) {
+                    if (data.classification !== null && data.classification !== undefined) {
+                        var classLabel = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
+                        var classIndex = data.classification;
+                        dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
+                    }
+                    Object.keys(data).forEach(function(key) {
+                        if (key !== 'classification') {
+                            dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
+                        }
+                    });
+                } else {
+                    dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
+                }
+            };
+
+            if (/radar/.test(selectedLayerKey)) {
+                var bands = ['VV', 'VH'];
+                var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
+                    reducer: ee.Reducer.first(), geometry: point, scale: 10
+                }).getInfo();
+                showData(data, 'Nilai Pita Radar');
+            } else if (/optik/.test(selectedLayerKey)) {
+                var bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12'];
+                var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
+                    reducer: ee.Reducer.first(), geometry: point, scale: 10
+                }).getInfo();
+                showData(data, 'Nilai Pita Optik');
+            } else {
+                var month = selectedLayerKey.split('_')[1];
+                var baseImage;
+                if (month === 'jun') baseImage = rawa_pening_image_jun;
+                else if (month === 'jul') baseImage = rawa_pening_image_jul;
+                else baseImage = rawa_pening_image_ags;
+
+                var classificationImage = dataInfo[selectedLayerKey].img;
+                var combinedImage = baseImage.select(fullBandsToInspect)
+                    .addBands(classificationImage.rename('classification'));
+                var data = combinedImage.reduceRegion({
+                    reducer: ee.Reducer.first(), geometry: point, scale: 10
+                }).getInfo();
+                showData(data, 'Data Inspeksi Lengkap');
+            }
         }
-    };
-
-    if (/radar/.test(selectedLayerKey)) {
-        // DIUBAH: Inspeksi hanya VV dan VH untuk radar
-        var bands = ['VV', 'VH'];
-        var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
-            reducer: ee.Reducer.first(), geometry: point, scale: 10
-        }).getInfo();
-        showData(data, 'Nilai Pita Radar');
-    } else if (/optik/.test(selectedLayerKey)) {
-        // DIUBAH: Inspeksi pita B1-B12 untuk optik
-        var bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12'];
-        var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
-            reducer: ee.Reducer.first(), geometry: point, scale: 10
-        }).getInfo();
-        showData(data, 'Nilai Pita Optik');
-    } else {
-        // Kasus layer klasifikasi tetap sama, menampilkan semua data dasar
-        var month = selectedLayerKey.split('_')[1];
-        var baseImage;
-        if (month === 'jun') baseImage = rawa_pening_image_jun;
-        else if (month === 'jul') baseImage = rawa_pening_image_jul;
-        else baseImage = rawa_pening_image_ags;
-
-        var classificationImage = dataInfo[selectedLayerKey].img;
-        var combinedImage = baseImage.select(fullBandsToInspect)
-            .addBands(classificationImage.rename('classification'));
-        var dataInspect = combinedImage.reduceRegion({
-            reducer: ee.Reducer.first(), geometry: point, scale: 10
-        }).getInfo();
-        showData(dataInspect, 'Data Inspeksi Lengkap');
-    }
+    });
 });
 
 redraw(items[0].value, 0.75);
