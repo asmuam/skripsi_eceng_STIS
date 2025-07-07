@@ -9,7 +9,8 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rawa_pening_image_jun = ee.Image("projects/ee-222111840/assets/rawa_pening_image_jun"),
     rf_ags = ee.Image("projects/ee-222111840/assets/rf_ags"),
     rf_jul = ee.Image("projects/ee-222111840/assets/rf_jul"),
-    rf_jun = ee.Image("projects/ee-222111840/assets/rf_jun");
+    rf_jun = ee.Image("projects/ee-222111840/assets/rf_jun"),
+    rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // =======================================================================================
 // FUNGSI-FUNGSI UI DAN LOGIKA
@@ -126,7 +127,6 @@ var introPanel = ui.Panel({
         fontWeight: 'bold',
         border: '5px solid darkgray',
         maxHeight: '90vh',
-        overflow: 'auto'
     }
 });
 
@@ -184,25 +184,26 @@ map.onClick(function(coords) {
     dataPanel.clear();
     
     // BARU: Cek apakah titik berada di dalam SBWP
-    var pointInSbwp = sbwp.filterBounds(point).size();
-    pointInSbwp.evaluate(function(size) {
-        if (size === 0) {
-            // Jika di luar, tampilkan pesan dan berhenti
-            dataPanel.add(ui.Label({
-                value: 'Objek berada di luar jangkauan penelitian.',
-                style: { fontWeight: 'bold', color: 'red' }
-            }));
-            return;
-        } else {
-            // Jika di dalam, lanjutkan proses inspeksi
-            dataPanel.add(ui.Label('Memuat data piksel...'));
-
-            var selectedLayerKey = select.getValue();
-            if (selectedLayerKey === 'none') {
-                dataPanel.clear();
-                dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
-                return;
-            }
+    var isInShp = rawa_pening_shp.filterBounds(point).size();
+    
+    isInShp.evaluate(function(size) {
+      if (size === 0) {
+        dataPanel.add(ui.Label({
+          value: 'Objek berada di luar jangkauan penelitian.',
+          style: { fontWeight: 'bold', color: 'red' }
+        }));
+        return;
+      }
+    
+      // Titik valid — tampilkan data seperti biasa
+      dataPanel.add(ui.Label('Memuat data piksel...'));
+    
+      var selectedLayerKey = select.getValue();
+      if (selectedLayerKey === 'none') {
+        dataPanel.clear();
+        dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
+        return;
+      }
 
             var showData = function(data, title) {
                 dataPanel.clear();
