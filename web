@@ -81,10 +81,10 @@ function referencecreate() {
     var referenceZero = ui.Label({ value: 'Data Tambahan:', style: { color: 'black', fontWeight: 'bold', textAlign: 'left' } });
     var referenceOne = ui.Label({ value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left' }, targetUrl: 'drive.google.com' });
     var referenceTwo = ui.Label({ value: '💻 Kode Python untuk Pengolahan', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://colab.research.google.com/drive/1DCOyKQ2XWKaLIT7h8__X5uc6QrxCeyCb#scrollTo=OhQrbdyR-Y_k&uniqifier=2' });
-    var referenceFour = ui.Label({ value: '📝 Paper', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: ''});
+    var referenceFour = ui.Label({ value: '📝 Paper', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://drive.google.com/file/d/1GqTc-PHtt3lH_wgvNOzRXVKS0DMYd0tG/view?usp=drive_link'});
     var referenceThree = ui.Label({ value: 'Created by:', style: { color: 'black', fontWeight: 'bold', textAlign: 'center' } });
     var author = ui.Label({ value: '222111840@stis.ac.id', style: { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, targetUrl: 'mailto:222111840@stis.ac.id' });
-    introPanel.add(referenceZero).add(referenceOne).add(referenceTwo).add(referenceThree).add(author);
+    introPanel.add(referenceZero).add(referenceOne).add(referenceTwo).add(referenceFour).add(referenceThree).add(author);
 }
 
 function redraw(layer, opacity) {
