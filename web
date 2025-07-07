@@ -208,7 +208,10 @@ map.onClick(function(coords) {
     
     isInShp.evaluate(function(size) {
         if (size === 0) {
+          print("XXXXXXXXXXXXXXX")
           if (selectedLayerKey === 'none') {
+                      print("TTTTTTTTT")
+
                 dataPanel.clear();
                 dataPanel.add(ui.Label({
                   value: 'Data Panel',
@@ -222,6 +225,8 @@ map.onClick(function(coords) {
                 }));
                 dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
             } else {
+                                    print("CCCCCCCCCCCCC")
+
               dataPanel.add(ui.Label({
                   value: 'Objek berada di luar jangkauan penelitian.',
                   style: { fontWeight: 'bold', color: 'red' }
