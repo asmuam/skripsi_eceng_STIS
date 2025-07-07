@@ -17,9 +17,6 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
 // FUNGSI-FUNGSI UI DAN LOGIKA
 // =======================================================================================
 
-// Definisikan nama kategori dan fungsi helper untuk klasifikasi
-var categoryNames = ['Very Low', 'Low', 'Medium', 'High', 'Very High'];
-
 var classNames = [
     'Eceng Gondok', 'Keramba Jaring Apung', 'Air',
     'Vegetasi Lain', 'Tanah', 'Lain-lain'
@@ -35,19 +32,6 @@ var thePalette = [
 ];
 
 var fullBandsToInspect = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI","VV","VH"];
-
-// Fungsi ini akan berjalan di sisi klien (di browser Anda)
-function getCategoryFromBreaks(value, breaks) {
-  if (value === null || breaks === null) return 'N/A';
-  // Urutkan breaks untuk memastikan (seharusnya sudah urut dari Python)
-  breaks.sort(function(a, b) { return a - b; });
-  for (var i = 0; i < breaks.length - 1; i++) {
-    if (value >= breaks[i] && value <= breaks[i+1]) {
-      return categoryNames[i];
-    }
-  }
-  return 'N/A'; // Jika nilai di luar rentang
-}
 
 function panelcreate() {
     var intro = ui.Panel([
@@ -199,9 +183,10 @@ map.onClick(function(coords) {
     map.layers().add(dot);
 
     dataPanel.clear();
-
+    
+    // PERBAIKAN: Menggunakan variabel 'sbwp' yang konsisten
     var isInShp = rawa_pening_shp.filterBounds(point).size();
-
+    
     isInShp.evaluate(function(size) {
         if (size === 0) {
             dataPanel.add(ui.Label({
@@ -218,31 +203,19 @@ map.onClick(function(coords) {
                 return;
             }
 
-            // MODIFIKASI: showData sekarang menerima data breaks
-            var showData = function(data, title, breaksData) {
+            var showData = function(data, title) {
                 dataPanel.clear();
                 dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
                 dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
-
                 if (data) {
                     if (data.classification !== null && data.classification !== undefined) {
                         var classLabel = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
                         var classIndex = data.classification;
                         dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
                     }
-
                     Object.keys(data).forEach(function(key) {
                         if (key !== 'classification') {
-                            var value = data[key];
-                            var valueStr = value ? value.toFixed(4) : 'No data';
-                            var labelStr = key + ': ' + valueStr;
-
-                            // MODIFIKASI: Tambahkan kategori jika breaks tersedia
-                            if (breaksData && breaksData[key]) {
-                                var category = getCategoryFromBreaks(value, breaksData[key]);
-                                labelStr += ' (' + category + ')';
-                            }
-                            dataPanel.add(ui.Label(labelStr));
+                            dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
                         }
                     });
                 } else {
@@ -250,16 +223,19 @@ map.onClick(function(coords) {
                 }
             };
 
-            if (/radar/.test(selectedLayerKey) || /optik/.test(selectedLayerKey)) {
-                // Logika untuk radar dan optik tidak diubah, karena tidak perlu kategori
-                var bands = /radar/.test(selectedLayerKey) ? ['VV', 'VH'] : ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12'];
-                var title = /radar/.test(selectedLayerKey) ? 'Nilai Pita Radar' : 'Nilai Pita Optik';
+            if (/radar/.test(selectedLayerKey)) {
+                var bands = ['VV', 'VH'];
                 var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
                     reducer: ee.Reducer.first(), geometry: point, scale: 10
                 }).getInfo();
-                showData(data, title, null); // Tidak ada data breaks untuk layer ini
+                showData(data, 'Nilai Pita Radar');
+            } else if (/optik/.test(selectedLayerKey)) {
+                var bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12'];
+                var data = dataInfo[selectedLayerKey].img.select(bands).reduceRegion({
+                    reducer: ee.Reducer.first(), geometry: point, scale: 10
+                }).getInfo();
+                showData(data, 'Nilai Pita Optik');
             } else {
-                // Ini adalah bagian untuk layer klasifikasi RF/CNN
                 var month = selectedLayerKey.split('_')[1];
                 var baseImage;
                 if (month === 'jun') baseImage = rawa_pening_image_jun;
@@ -269,47 +245,15 @@ map.onClick(function(coords) {
                 var classificationImage = dataInfo[selectedLayerKey].img;
                 var combinedImage = baseImage.select(fullBandsToInspect)
                     .addBands(classificationImage.rename('classification'));
-
-                // MODIFIKASI: Ambil data piksel dan data breaks secara bersamaan
-                var pixelData = combinedImage.reduceRegion({
+                var data = combinedImage.reduceRegion({
                     reducer: ee.Reducer.first(), geometry: point, scale: 10
-                });
-
-                // Filter tabel breaks untuk bulan yang sesuai
-                var monthBreaks = breaksTable.filter(ee.Filter.eq('month', month));
-
-                // Gunakan ee.Join untuk menggabungkan hasil agar lebih efisien,
-                // tapi untuk onClick, .evaluate() lebih sederhana untuk dipahami.
-                // Kita akan mengevaluasi keduanya.
-                ee.Dictionary.fromLists(['pixel', 'breaks'], [pixelData, monthBreaks.toList(monthBreaks.size())])
-                .evaluate(function(results) {
-                    var data = results.pixel;
-                    var breaksFeatures = results.breaks;
-              
-                    var breaksData = {};
-                    breaksFeatures.forEach(function(feat) {
-                        var varName = feat.properties.variable;
-                        var breakValues = [];
-                        
-                        Object.keys(feat.properties).forEach(function(propKey) {
-                            
-                            // =======================================================
-                            // PERUBAHAN LOGIKA DI SINI:
-                            // Memeriksa kunci yang BUKAN 'month' dan BUKAN 'variable'.
-                            if (propKey !== 'month' && propKey !== 'variable') {
-                            // =======================================================
-                                breakValues.push(feat.properties[propKey]);
-                            }
-                        });
-                        breaksData[varName] = breakValues;
-                    });
-                    
-                    showData(data, 'Data Inspeksi Lengkap', breaksData);
-                });
+                }).getInfo();
+                showData(data, 'Data Inspeksi Lengkap');
             }
         }
     });
 });
+
 redraw(items[0].value, 0.75);
 map.setOptions('SATELLITE');
 map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
