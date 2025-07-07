@@ -1,6 +1,15 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
-    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
+    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
+    cnn1_ags = ee.Image("projects/ee-222111840/assets/cnn1_ags"),
+    cnn1_jul = ee.Image("projects/ee-222111840/assets/cnn1_jul"),
+    cnn1_jun = ee.Image("projects/ee-222111840/assets/cnn1_jun"),
+    rawa_pening_image_ags = ee.Image("projects/ee-222111840/assets/rawa_pening_image_ags"),
+    rawa_pening_image_jul = ee.Image("projects/ee-222111840/assets/rawa_pening_image_jul"),
+    rawa_pening_image_jun = ee.Image("projects/ee-222111840/assets/rawa_pening_image_jun"),
+    rf_ags = ee.Image("projects/ee-222111840/assets/rf_ags"),
+    rf_jul = ee.Image("projects/ee-222111840/assets/rf_jul"),
+    rf_jun = ee.Image("projects/ee-222111840/assets/rf_jun");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function panelcreate() {
     // Create an intro panel with labels.
