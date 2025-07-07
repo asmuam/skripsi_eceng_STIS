@@ -236,10 +236,10 @@ map.onClick(function(coords) {
         var classificationImage = dataInfo[selectedLayerKey].img;
         var combinedImage = baseImage.select(fullBandsToInspect)
             .addBands(classificationImage.rename('classification'));
-        var data = combinedImage.reduceRegion({
+        var dataInspect = combinedImage.reduceRegion({
             reducer: ee.Reducer.first(), geometry: point, scale: 10
         }).getInfo();
-        showData(data, 'Data Inspeksi Lengkap');
+        showData(dataInspect, 'Data Inspeksi Lengkap');
     }
 });
 
@@ -247,4 +247,3 @@ redraw(items[0].value, 0.75);
 map.setOptions('SATELLITE');
 map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
 map.style().set('cursor', 'crosshair');
-```
