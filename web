@@ -125,9 +125,7 @@ var introPanel = ui.Panel({
         fontSize: '1vw',
         fontWeight: 'bold',
         border: '5px solid darkgray',
-        // DIUBAH: Tambahkan properti untuk membuat panel bisa di-scroll
         maxHeight: '90vh',
-        overflow: 'auto'
     }
 });
 
@@ -143,9 +141,9 @@ var dataInfo = {
     'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
     'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
     'optik_ags': { name: 'Citra RGB Sentinel-2 Agustus', desc: 'Citra dasar RGB Sentinel-2 bulan Agustus', img: rawa_pening_image_ags, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
-    'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
-    'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
-    'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+    'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH, VV)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV'], min: -40, max: 0 } },
+    'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH, VV)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV'], min: -40, max: 0 } },
+    'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH, VV)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV'], min: -40, max: 0 } },
     'rf_jun': { name: 'Klasifikasi RF Juni', desc: 'Hasil klasifikasi Random Forest bulan Juni', img: rf_jun, vis: { min: 0, max: 5, palette: thePalette } },
     'rf_jul': { name: 'Klasifikasi RF Juli', desc: 'Hasil klasifikasi Random Forest bulan Juli', img: rf_jul, vis: { min: 0, max: 5, palette: thePalette } },
     'rf_ags': { name: 'Klasifikasi RF Agustus', desc: 'Hasil klasifikasi Random Forest bulan Agustus', img: rf_ags, vis: { min: 0, max: 5, palette: thePalette } },
@@ -154,7 +152,7 @@ var dataInfo = {
     'cnn1_ags': { name: 'Klasifikasi CNN1D Agustus', desc: 'Hasil klasifikasi CNN1D bulan Agustus', img: cnn1_ags, vis: { min: 0, max: 5, palette: thePalette } }
 };
 
-var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px' } });
+var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '40vh' } });
 var legend = ui.Panel({ style: { position: 'bottom-left', width: '20%', padding: '8px' } });
 var dot = null;
 
