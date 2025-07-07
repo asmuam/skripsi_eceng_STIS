@@ -222,12 +222,13 @@ map.onClick(function(coords) {
                 }));
                 dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
                 return;
+            } else {
+              dataPanel.add(ui.Label({
+                  value: 'Objek berada di luar jangkauan penelitian.',
+                  style: { fontWeight: 'bold', color: 'red' }
+              }));
+              return;
             }
-            dataPanel.add(ui.Label({
-                value: 'Objek berada di luar jangkauan penelitian.',
-                style: { fontWeight: 'bold', color: 'red' }
-            }));
-            return;
         } else {
             dataPanel.add(ui.Label('Memuat data piksel...'));
             var selectedLayerKey = select.getValue();
