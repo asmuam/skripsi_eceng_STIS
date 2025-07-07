@@ -282,26 +282,32 @@ map.onClick(function(coords) {
                 // tapi untuk onClick, .evaluate() lebih sederhana untuk dipahami.
                 // Kita akan mengevaluasi keduanya.
                 ee.Dictionary.fromLists(['pixel', 'breaks'], [pixelData, monthBreaks.toList(monthBreaks.size())])
-                  .evaluate(function(results) {
-                      var data = results.pixel;
-                      var breaksFeatures = results.breaks;
+  .evaluate(function(results) {
+      var data = results.pixel;
+      var breaksFeatures = results.breaks;
 
-                      // Ubah array of features menjadi objek yang mudah diakses: {B4: [0.1, 0.2, ...], B8: [...]}
-                      var breaksData = {};
-                      breaksFeatures.forEach(function(feat) {
-                          var varName = feat.properties.variable;
-                          var breakValues = [];
-                          // Ambil semua properti yang bernama 'break_x'
-                          Object.keys(feat.properties).forEach(function(propKey) {
-                              if (propKey.startsWith('break_')) {
-                                  breakValues.push(feat.properties[propKey]);
-                              }
-                          });
-                          breaksData[varName] = breakValues;
-                      });
-                      
-                      showData(data, 'Data Inspeksi Lengkap', breaksData);
-                  });
+      // Ubah array of features menjadi objek yang mudah diakses: {B4: [0.1, 0.2, ...], B8: [...]}
+      var breaksData = {};
+      breaksFeatures.forEach(function(feat) {
+          var varName = feat.properties.variable;
+          var breakValues = [];
+          
+          // Ambil semua properti yang bernama 'break_x'
+          Object.keys(feat.properties).forEach(function(propKey) {
+              
+              // =======================================================
+              // PERBAIKAN DI SINI:
+              // Konversi propKey menjadi String sebelum menggunakan .startsWith()
+              if (String(propKey).startsWith('break_')) {
+              // =======================================================
+                  breakValues.push(feat.properties[propKey]);
+              }
+          });
+          breaksData[varName] = breakValues;
+      });
+      
+      showData(data, 'Data Inspeksi Lengkap', breaksData);
+  });
             }
         }
     });
