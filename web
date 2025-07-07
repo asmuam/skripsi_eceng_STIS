@@ -1,11 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
-    image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
-    rf = ee.Image("projects/ee-222111840/assets/rf"),
-    cnn1d = ee.Image("projects/ee-222111840/assets/cnn1"),
-    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
-    cnnv200 = ee.Image("projects/ee-222111840/assets/cnn1_v200"),
-    rf_v200 = ee.Image("projects/ee-222111840/assets/rf_v200");
+    sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 function panelcreate() {
     // Create an intro panel with labels.
@@ -340,105 +335,85 @@ var thePalette = [
     "#808080"
 ];                               // Define color palette:
 var dataInfo = {
-    'citra': {
-        name: 'Citra RGB satelit Sentinel-2',
-        desc: 'Citra dasar RGB satelit Sentinel-2',
-        img: image,
-        vis: {
-            bands:['B4','B3','B2'],
-            min: 0,
-            max: 0.3,
-            opacity: 0.7
-        }
-    },
-    'radar': {
-        name: 'Citra radar satelit Sentinel-1',
-        desc: 'Citra radar satelit Sentinel-1 dalam bentuk RGB (VV, VH, VV/VH)',
-        img: image,
-        vis: {
-            bands:['VV','VH','VV_VH_ratio'],
-            min: -40,
-            max: 0,
-            opacity: 0.7
-        }
-    },
-    'rf': {
-        name: 'Klasifikasi Random Forest',
-        desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
-        img: rf,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    },
-        'rf_v200': {
-        name: 'Klasifikasi Random Forest v200',
-        desc: 'Hasil klasifikasi lahan menggunakan algoritma Random Forest',
-        img: rf_v200,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    },
-    'cnn1d': {
-        name: 'Klasifikasi CNN1D',
-        desc: 'Hasil klasifikasi lahan menggunakan algoritma CNN1D',
-        img: cnn1d,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    },
-    'cnnv200': {
-        name: 'Klasifikasi CNN1D V200',
-        desc: 'Hasil klasifikasi menggunakan CNN versi 200',
-        img: cnnv200,
-        vis: {
-            min: 0,
-            max: 5,
-            palette: thePalette,
-            opacity: 0.7
-        }
-    },
-    // 'cnnv200_keras': {
-    //     name: 'Klasifikasi CNN1D V200 keras',
-    //     desc: 'Hasil klasifikasi menggunakan CNN versi 200',
-    //     img: cnnv200,
-    //     vis: {
-    //         min: 0,
-    //         max: 5,
-    //         palette: thePalette,
-    //         opacity: 0.7
-    //     }
-    // },
-    // 'cnnjatiluhur': {
-    //     name: 'Klasifikasi CNN Jatiluhur',
-    //     desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
-    //     img: cnnjatiluhur,
-    //     vis: {
-    //         min: 0,
-    //         max: 5,
-    //         palette: thePalette,
-    //         opacity: 0.7
-    //     }
-    // },
-    // 'cnnjatiluhur_keras': {
-    //     name: 'Klasifikasi CNN Jatiluhur keras',
-    //     desc: 'Hasil klasifikasi area Waduk Jatiluhur menggunakan CNN',
-    //     img: cnnjatiluhur,
-    //     vis: {
-    //         min: 0,
-    //         max: 5,
-    //         palette: thePalette,
-    //         opacity: 0.7
-    //     }
-    // }
+  // Sentinel-2 RGB
+  'optik_jun': {
+    name: 'Citra RGB Sentinel-2 Juni',
+    desc: 'Citra dasar RGB Sentinel-2 bulan Juni',
+    img: rawa_pening_image_jun,
+    vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3, opacity: 0.7 }
+  },
+  'optik_jul': {
+    name: 'Citra RGB Sentinel-2 Juli',
+    desc: 'Citra dasar RGB Sentinel-2 bulan Juli',
+    img: rawa_pening_image_jul,
+    vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3, opacity: 0.7 }
+  },
+  'optik_ags': {
+    name: 'Citra RGB Sentinel-2 Agustus',
+    desc: 'Citra dasar RGB Sentinel-2 bulan Agustus',
+    img: rawa_pening_image_ags,
+    vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3, opacity: 0.7 }
+  },
+
+  // Sentinel-1 Radar
+  'radar_jun': {
+    name: 'Citra Radar Sentinel-1 Juni',
+    desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH, VV/VH)',
+    img: rawa_pening_image_jun,
+    vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0, opacity: 0.7 }
+  },
+  'radar_jul': {
+    name: 'Citra Radar Sentinel-1 Juli',
+    desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH, VV/VH)',
+    img: rawa_pening_image_jul,
+    vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0, opacity: 0.7 }
+  },
+  'radar_ags': {
+    name: 'Citra Radar Sentinel-1 Agustus',
+    desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH, VV/VH)',
+    img: rawa_pening_image_ags,
+    vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0, opacity: 0.7 }
+  },
+
+  // Random Forest
+  'rf_jun': {
+    name: 'Klasifikasi RF Juni',
+    desc: 'Hasil klasifikasi Random Forest bulan Juni',
+    img: rf_jun,
+    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
+  },
+  'rf_jul': {
+    name: 'Klasifikasi RF Juli',
+    desc: 'Hasil klasifikasi Random Forest bulan Juli',
+    img: rf_jul,
+    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
+  },
+  'rf_ags': {
+    name: 'Klasifikasi RF Agustus',
+    desc: 'Hasil klasifikasi Random Forest bulan Agustus',
+    img: rf_ags,
+    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
+  },
+
+  // CNN1D
+  'cnn1_jun': {
+    name: 'Klasifikasi CNN1D Juni',
+    desc: 'Hasil klasifikasi CNN1D bulan Juni',
+    img: cnn1_jun,
+    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
+  },
+  'cnn1_jul': {
+    name: 'Klasifikasi CNN1D Juli',
+    desc: 'Hasil klasifikasi CNN1D bulan Juli',
+    img: cnn1_jul,
+    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
+  },
+  'cnn1_ags': {
+    name: 'Klasifikasi CNN1D Agustus',
+    desc: 'Hasil klasifikasi CNN1D bulan Agustus',
+    img: cnn1_ags,
+    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
+  }
 };                                 // Define information about each layer that will be used to visualize it and describe it in a selector widget and legend.
 var dataPanel = ui.Panel({
     style: {
