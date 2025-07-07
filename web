@@ -12,56 +12,8 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rf_jun = ee.Image("projects/ee-222111840/assets/rf_jun"),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-Tentu. Setelah diperiksa, terdapat satu kesalahan penulisan nama variabel di dalam fungsi `map.onClick` yang perlu diperbaiki.
-
-Kesalahannya adalah Anda menggunakan variabel `rawa_pening_shp` untuk memeriksa batas wilayah, padahal variabel yang digunakan di seluruh skrip untuk data tersebut adalah `sbwp`.
-
------
-
-### Perbaikan Sintaks
-
-Saya telah memperbaiki kesalahan tersebut. Perubahan spesifiknya ada di dalam `map.onClick`:
-
-**Salah:**
-
-```javascript
-var isInShp = rawa_pening_shp.filterBounds(point).size();
-```
-
-**Benar:**
-
-```javascript
-var isInShp = sbwp.filterBounds(point).size();
-```
-
-Sisa dari kode Anda sudah benar secara sintaks.
-
------
-
-### Kode Lengkap yang Telah Diperbaiki
-
-Berikut adalah kode lengkap dengan perbaikan tersebut. Tidak ada penambahan atau pengurangan fungsionalitas, hanya perbaikan kesalahan nama variabel.
-
-```javascript
 // =======================================================================================
-// 1. DEFINISI DATA (WAJIB DIISI DENGAN ASET ANDA)
-// =======================================================================================
-// Ganti nilai 'YOUR_ASSET_ID' dengan ID aset milik Anda di Google Earth Engine.
-
-var roi = ee.FeatureCollection('YOUR_FEATURE_COLLECTION_ASSET_ID_FOR_ROI');
-var sbwp = ee.FeatureCollection('YOUR_FEATURE_COLLECTION_ASSET_ID_FOR_SBWP');
-var rf_jun = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_RF_JUNE');
-var rf_jul = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_RF_JULY');
-var rf_ags = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_RF_AUGUST');
-var cnn1_jun = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_CNN1D_JUNE');
-var cnn1_jul = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_CNN1D_JULY');
-var cnn1_ags = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_CNN1D_AUGUST');
-var rawa_pening_image_jun = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_COMPOSITE_JUNE');
-var rawa_pening_image_jul = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_COMPOSITE_JULY');
-var rawa_pening_image_ags = ee.Image('YOUR_IMAGE_ASSET_ID_FOR_COMPOSITE_AUGUST');
-
-// =======================================================================================
-// 2. FUNGSI-FUNGSI UI DAN LOGIKA
+// FUNGSI-FUNGSI UI DAN LOGIKA
 // =======================================================================================
 
 var classNames = [
@@ -165,7 +117,7 @@ function redraw(layer, opacity) {
 }
 
 // =======================================================================================
-// 3. LOGIKA UTAMA DAN INISIALISASI PETA
+// LOGIKA UTAMA DAN INISIALISASI PETA
 // =======================================================================================
 
 var introPanel = ui.Panel({
@@ -175,7 +127,6 @@ var introPanel = ui.Panel({
         fontWeight: 'bold',
         border: '5px solid darkgray',
         maxHeight: '90vh',
-        overflow: 'auto'
     }
 });
 
@@ -202,7 +153,7 @@ var dataInfo = {
     'cnn1_ags': { name: 'Klasifikasi CNN1D Agustus', desc: 'Hasil klasifikasi CNN1D bulan Agustus', img: cnn1_ags, vis: { min: 0, max: 5, palette: thePalette } }
 };
 
-var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '90vh', overflow: 'auto' } });
+var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '40vh'} });
 var legend = ui.Panel({ style: { position: 'bottom-left', width: '20%', padding: '8px' } });
 var dot = null;
 
@@ -306,4 +257,3 @@ redraw(items[0].value, 0.75);
 map.setOptions('SATELLITE');
 map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
 map.style().set('cursor', 'crosshair');
-```
