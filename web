@@ -11,6 +11,24 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rf_jul = ee.Image("projects/ee-222111840/assets/rf_jul"),
     rf_jun = ee.Image("projects/ee-222111840/assets/rf_jun");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// =======================================================================================
+// 2. FUNGSI-FUNGSI UI DAN LOGIKA
+// =======================================================================================
+
+var classNames = [
+    'Eceng Gondok', 'Keramba Jaring Apung', 'Air',
+    'Vegetasi Lain', 'Tanah', 'Lain-lain'
+];
+
+var thePalette = [
+    "#32CD32", // Eceng Gondok
+    "#BECD32", // Keramba Jaring Apung
+    "#1E90FF", // Air
+    "#228B22", // Vegetasi Lain
+    "#D2B48C", // Tanah
+    "#808080"  // Lain-lain
+];
+
 function panelcreate() {
     // Create an intro panel with labels.
     var intro = ui.Panel([
@@ -34,9 +52,9 @@ function panelcreate() {
         }),
         ui.Label({
             value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
-           'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
-           'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
-           'Hasil klasifikasi mencakup enam kelas:',
+            'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+            'Data citra satelit Sentinel-1 dan Sentinel-2 digunakan untuk ekstraksi pita dan indeks spektral. ' +
+            'Hasil klasifikasi mencakup enam kelas:',
             style: {
                 fontSize: '0.9vw',
                 fontWeight: 'normal'
@@ -92,15 +110,15 @@ function panelcreate() {
             },
         }),
         ui.Label({
-            value: 'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih',
+            value: 'Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih.',
             style: {
                 fontSize: '0.9vw',
                 fontWeight: 'normal'
             },
         }),
         ui.Label({
-            value: 'Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah '+
-            'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai '+
+            value: 'Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah ' +
+            'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai ' +
             'Pemali Juana.',
             style: {
                 fontSize: '0.9vw',
@@ -116,9 +134,9 @@ function panelcreate() {
         }),
     ]);
 
-    // Add intro panel to the main panel.
     introPanel.add(intro);
-}                          // Function to create the intro panel with labels.
+}
+
 function referencecreate() {
     var referenceZero = ui.Label({
         value: 'Data Tambahan:',
@@ -131,7 +149,7 @@ function referencecreate() {
     var referenceOne = ui.Label({
         value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana',
         style: {
-            color: 'black',
+            color: 'blue',
             fontWeight: 'bold',
             textAlign: 'left'
         },
@@ -140,7 +158,7 @@ function referencecreate() {
     var referenceTwo = ui.Label({
         value: '💻 Kode Python untuk Pengolahan',
         style: {
-            color: 'black',
+            color: 'blue',
             fontWeight: 'bold',
             textAlign: 'left',
             padding: '0px 0px 4px 0px'
@@ -158,116 +176,86 @@ function referencecreate() {
     var author = ui.Label({
         value: '222111840@stis.ac.id',
         style: {
-            color: 'black',
+            color: 'blue',
             fontWeight: 'bold',
             textAlign: 'center'
         },
         targetUrl: 'mailto:222111840@stis.ac.id'
     });
 
-    // Add reference to the panel.
     introPanel.add(referenceZero);
     introPanel.add(referenceOne);
     introPanel.add(referenceTwo);
     introPanel.add(referenceThree);
     introPanel.add(author);
-}                      // Function to create reference panel. 
+}
+
 function redraw(layer, opacity) {
-    // Fetch the info that corresponds to the selected layer
     var info = dataInfo[layer];
-
-    // Reset the layers and the legend
-    map.layers().reset();
+    
+    var layers = map.layers();
+    layers.forEach(function(l) {
+        if (l.getName() !== 'Titik Inspeksi' && l.getName() !== 'Sub Batas Wilayah Perencanaan') {
+            map.remove(l);
+        }
+    });
+    
     legend.clear();
-    map.addLayer(sbwp);
+    
+    legend.add(checkboxSbwp);
+    legend.add(ui.Label({
+        value: 'Pilih Layer Tampilan:',
+        style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            margin: '4px 0px'
+        },
+    })).add(select);
 
-    // Construct the layer selection widgets
-    legend.add(
-        ui.Label({
-            value: 'Choose display layer:',
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        })
-    )
-    .add(select);
+    legend.add(ui.Label({
+        value: 'Atur Opasitas:',
+        style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            margin: '4px 0px'
+        },
+    })).add(opacitySlider);
 
-    // Add opacity slider to the legend
-    legend.add(
-        ui.Label({
-            value: 'Adjust Opacity:',
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        })
-    )
-    .add(opacitySlider);
-
-    // If the selected layer is "none", just reset and return
     if (layer === 'none') {
         return;
     }
-    
-    // Update the opacity value in the dataInfo object
+
     info.vis.opacity = opacity;
-    
-    // Construct the visualization image only for layers other than "none"
     var visImg = info.img.visualize(info.vis);
 
-    /// If the selected layer is an optical or radar image, skip legend creation
-    if (layer.includes('optik') || layer.includes('radar')) {
-      if (layer !== 'none') {
-            // Add the layer for "citra" without a legend
-            legend.add(
-                ui.Label({
-                    value: info.desc,
-                    style: {
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        textAlign: 'left',
-                        margin: '4px 0px'
-                    },
-                })
-            );
-            map.addLayer(visImg, {}, layer);
-        }
+    if (/optik/.test(layer) || /radar/.test(layer)) {
+        legend.add(ui.Label({
+            value: info.desc,
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textAlign: 'left',
+                margin: '4px 0px'
+            },
+        }));
+        map.addLayer(visImg, {}, layer, true);
         return;
     }
 
-    // Construct the legend for "cnn1d" or "rf"
-    legend
-        .add(
-            ui.Label({
-                value: info.desc, // Add the description of the selected layer
-                style: {
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    textAlign: 'left',
-                    margin: '4px 0px'
-                },
-            })
-        );
+    legend.add(ui.Label({
+        value: info.desc,
+        style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            margin: '4px 0px'
+        },
+    }));
 
-    // Add the labels corresponding to the classes
-    var classLabels = [
-        'Eceng Gondok',
-        'Keramba Jaring Apung',
-        'Air',
-        'Vegetasi Lain',
-        'Tanah',
-        'Lain-lain'
-    ];
-
-    var classColors = info.vis.palette; // Use the palette from dataInfo
-
-    // Add each label with its corresponding color box
-    classLabels.forEach(function (label, index) {
+    var classColors = info.vis.palette;
+    classNames.forEach(function(label, index) {
         var colorBox = ui.Label({
             style: {
                 backgroundColor: classColors[index],
@@ -278,7 +266,6 @@ function redraw(layer, opacity) {
                 height: '20px',
             }
         });
-
         var textLabel = ui.Label({
             value: index + ': ' + label,
             style: {
@@ -287,265 +274,319 @@ function redraw(layer, opacity) {
                 padding: '0 4px'
             }
         });
-
         var legendItem = ui.Panel({
             widgets: [colorBox, textLabel],
             layout: ui.Panel.Layout.flow('horizontal'),
-            style: { margin: '4px 0px' }
+            style: {
+                margin: '4px 0px'
+            }
         });
-
         legend.add(legendItem);
     });
 
-    // Add the layer to the map, for layers other than "none" or "citra"
-    if (layer !== 'none') {
-        map.addLayer(visImg, {}, layer);
-        if (dot) {
-        map.add(dot);  // Removes the previous dot from the map
+    map.addLayer(visImg, {}, layer, true);
+}
+
+
+// =======================================================================================
+// 3. LOGIKA UTAMA DAN INISIALISASI PETA
+// =======================================================================================
+
+var introPanel = ui.Panel({
+    style: {
+        width: '30%',
+        fontSize: '1vw',
+        fontWeight: 'bold',
+        border: '5px solid darkgray'
     }
-    }
-}                 // Redraw function is called when the user changes the selected layer.
+});
 
-var inspector = ui.Panel({
-    layout: ui.Panel.Layout.flow('vertical'),
-});                      // Create an inspector panel with a horizontal layout.
-var introPanel = ui.Panel();                          // Create intro panel.
-var map = ui.Map();                                   // Initiate new map object.
+var map = ui.Map();
+ui.root.clear();
+ui.root.add(map);
+ui.root.insert(0, introPanel);
 
-inspector.add(ui.Label({
-        value: 'Click on a location to extract variables',
-        style: {
-            fontSize: '1.7vmin',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            margin: '0px 0px 0px 0px'
-        },
-    }));                       // Add a label to the panel.
-introPanel.style().set({
-    width: '30%',
-    fontSize: '1vw',
-    fontWeight: 'bold',
-    border: '5px solid darkgray'
-});                        // Set the width and font style for the main panel.
+panelcreate();
+referencecreate();
 
-ui.root.clear();                                      // Clear existing map.
-ui.root.add(map);                                     // Add custom map.
-ui.root.insert(1, introPanel);                        // Add the main panel to the UI root.
-
-panelcreate();                                        // Call the panelcreate function to create the intro panel.
-referencecreate();                                    // Call the reference panel creation function.
-
-var thePalette = [
-    "#32CD32",
-    "#BECD32",
-    "#1E90FF",
-    "#228B22",
-    "#D2B48C",
-    "#808080"
-];                               // Define color palette:
 var dataInfo = {
-  // Sentinel-2 RGB
-  'optik_jun': {
-    name: 'Citra RGB Sentinel-2 Juni',
-    desc: 'Citra dasar RGB Sentinel-2 bulan Juni',
-    img: rawa_pening_image_jun,
-    vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3, opacity: 0.7 }
-  },
-  'optik_jul': {
-    name: 'Citra RGB Sentinel-2 Juli',
-    desc: 'Citra dasar RGB Sentinel-2 bulan Juli',
-    img: rawa_pening_image_jul,
-    vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3, opacity: 0.7 }
-  },
-  'optik_ags': {
-    name: 'Citra RGB Sentinel-2 Agustus',
-    desc: 'Citra dasar RGB Sentinel-2 bulan Agustus',
-    img: rawa_pening_image_ags,
-    vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3, opacity: 0.7 }
-  },
+    'optik_jun': {
+        name: 'Citra RGB Sentinel-2 Juni',
+        desc: 'Citra dasar RGB Sentinel-2 bulan Juni',
+        img: rawa_pening_image_jun,
+        vis: {
+            bands: ['B4', 'B3', 'B2'],
+            min: 0,
+            max: 0.3
+        }
+    },
+    'optik_jul': {
+        name: 'Citra RGB Sentinel-2 Juli',
+        desc: 'Citra dasar RGB Sentinel-2 bulan Juli',
+        img: rawa_pening_image_jul,
+        vis: {
+            bands: ['B4', 'B3', 'B2'],
+            min: 0,
+            max: 0.3
+        }
+    },
+    'optik_ags': {
+        name: 'Citra RGB Sentinel-2 Agustus',
+        desc: 'Citra dasar RGB Sentinel-2 bulan Agustus',
+        img: rawa_pening_image_ags,
+        vis: {
+            bands: ['B4', 'B3', 'B2'],
+            min: 0,
+            max: 0.3
+        }
+    },
+    'radar_jun': {
+        name: 'Citra Radar Sentinel-1 Juni',
+        desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH, VV/VH)',
+        img: rawa_pening_image_jun,
+        vis: {
+            bands: ['VV', 'VH', 'VV_VH_ratio'],
+            min: -40,
+            max: 0
+        }
+    },
+    'radar_jul': {
+        name: 'Citra Radar Sentinel-1 Juli',
+        desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH, VV/VH)',
+        img: rawa_pening_image_jul,
+        vis: {
+            bands: ['VV', 'VH', 'VV_VH_ratio'],
+            min: -40,
+            max: 0
+        }
+    },
+    'radar_ags': {
+        name: 'Citra Radar Sentinel-1 Agustus',
+        desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH, VV/VH)',
+        img: rawa_pening_image_ags,
+        vis: {
+            bands: ['VV', 'VH', 'VV_VH_ratio'],
+            min: -40,
+            max: 0
+        }
+    },
+    'rf_jun': {
+        name: 'Klasifikasi RF Juni',
+        desc: 'Hasil klasifikasi Random Forest bulan Juni',
+        img: rf_jun,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette
+        }
+    },
+    'rf_jul': {
+        name: 'Klasifikasi RF Juli',
+        desc: 'Hasil klasifikasi Random Forest bulan Juli',
+        img: rf_jul,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette
+        }
+    },
+    'rf_ags': {
+        name: 'Klasifikasi RF Agustus',
+        desc: 'Hasil klasifikasi Random Forest bulan Agustus',
+        img: rf_ags,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette
+        }
+    },
+    'cnn1_jun': {
+        name: 'Klasifikasi CNN1D Juni',
+        desc: 'Hasil klasifikasi CNN1D bulan Juni',
+        img: cnn1_jun,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette
+        }
+    },
+    'cnn1_jul': {
+        name: 'Klasifikasi CNN1D Juli',
+        desc: 'Hasil klasifikasi CNN1D bulan Juli',
+        img: cnn1_jul,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette
+        }
+    },
+    'cnn1_ags': {
+        name: 'Klasifikasi CNN1D Agustus',
+        desc: 'Hasil klasifikasi CNN1D bulan Agustus',
+        img: cnn1_ags,
+        vis: {
+            min: 0,
+            max: 5,
+            palette: thePalette
+        }
+    }
+};
 
-  // Sentinel-1 Radar
-  'radar_jun': {
-    name: 'Citra Radar Sentinel-1 Juni',
-    desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH, VV/VH)',
-    img: rawa_pening_image_jun,
-    vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0, opacity: 0.7 }
-  },
-  'radar_jul': {
-    name: 'Citra Radar Sentinel-1 Juli',
-    desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH, VV/VH)',
-    img: rawa_pening_image_jul,
-    vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0, opacity: 0.7 }
-  },
-  'radar_ags': {
-    name: 'Citra Radar Sentinel-1 Agustus',
-    desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH, VV/VH)',
-    img: rawa_pening_image_ags,
-    vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0, opacity: 0.7 }
-  },
-
-  // Random Forest
-  'rf_jun': {
-    name: 'Klasifikasi RF Juni',
-    desc: 'Hasil klasifikasi Random Forest bulan Juni',
-    img: rf_jun,
-    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
-  },
-  'rf_jul': {
-    name: 'Klasifikasi RF Juli',
-    desc: 'Hasil klasifikasi Random Forest bulan Juli',
-    img: rf_jul,
-    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
-  },
-  'rf_ags': {
-    name: 'Klasifikasi RF Agustus',
-    desc: 'Hasil klasifikasi Random Forest bulan Agustus',
-    img: rf_ags,
-    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
-  },
-
-  // CNN1D
-  'cnn1_jun': {
-    name: 'Klasifikasi CNN1D Juni',
-    desc: 'Hasil klasifikasi CNN1D bulan Juni',
-    img: cnn1_jun,
-    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
-  },
-  'cnn1_jul': {
-    name: 'Klasifikasi CNN1D Juli',
-    desc: 'Hasil klasifikasi CNN1D bulan Juli',
-    img: cnn1_jul,
-    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
-  },
-  'cnn1_ags': {
-    name: 'Klasifikasi CNN1D Agustus',
-    desc: 'Hasil klasifikasi CNN1D bulan Agustus',
-    img: cnn1_ags,
-    vis: { min: 0, max: 5, palette: thePalette, opacity: 0.7 }
-  }
-};                                 // Define information about each layer that will be used to visualize it and describe it in a selector widget and legend.
 var dataPanel = ui.Panel({
     style: {
         position: 'bottom-right',
         width: '25%',
+        padding: '8px'
     }
-});                      // Create a new legend panel for the top-right corner.
+});
 var legend = ui.Panel({
     style: {
         position: 'bottom-left',
-        width: '30%'
+        width: '20%',
+        padding: '8px'
     }
 });
-var dot = null;                                       // Create a variable for the dot to be updated later.
+var dot = null;
 
-map.centerObject(roi, 14);                            // Set the center and zoom level of the new map.
-map.add(dataPanel);                                   // Add the legend panel to the map.
-map.onClick(function(coords) {
-    // Clear the main panel and call the panel creation functions.
-    dataPanel.clear();
+var sbwpLayer = ui.Map.Layer(sbwp, {color: 'yellow'}, 'Sub Batas Wilayah Perencanaan');
 
-    // Create labels for latitude and longitude.
-    var latLabel = ui.Label({
-        value: 'Lat: ' + coords.lat.toFixed(2),
-        style: {
-            fontSize: '12px',
-            margin: '0px 0px 0px 8px'
-        }
-    });
-    var lonLabel = ui.Label({
-        value: 'Lon: ' + coords.lon.toFixed(2),
-        style: {
-            fontSize: '12px',
-            margin: '0px 0px 0px 8px'
-        }
-    });
+var checkboxSbwp = ui.Checkbox({
+  label: 'Tampilkan Batas Wilayah',
+  value: true,
+  onChange: function(checked) {
+    sbwpLayer.setShown(checked);
+  }
+});
 
-    // Add the labels to the legend panel.
-    dataPanel
-    .add(
-        ui.Label({
-            value: 'Selected Pixel Data',
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-                margin: '4px 0px'
-            },
-        })
-    )
-    dataPanel.add(latLabel);
-    dataPanel.add(lonLabel);
-
-    // If the dot already exists, remove it.
-    if (dot) {
-        map.remove(dot);  // Removes the previous dot from the map
-    }
-
-    // Create a new point geometry based on the clicked coordinates.
-    var point = ee.Geometry.Point(coords.lon, coords.lat);
-
-    // Create a new dot and add it to the map.
-    dot = ui.Map.Layer(point, { color: 'red' });
-
-    // Add the new dot layer to the map.
-    map.add(dot);
-
-    // Update the inspector with a message.
-    inspector.clear();
-    inspector.style().set('shown', true);
-    inspector.add(
-        ui.Label({
-            value: 'Click on another location...',
-            style: {
-                fontSize: '1.7vmin',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                margin: '0px 0px 0px 0px'
-            },
-        })
-    );
-});                  // Register a callback on the default map to be invoked when the map is clicked.
-
-var items = [];                                       // Create a layer selector that dictates which layer is visible on the map.
+var items = [];
 Object.keys(dataInfo).forEach(function(key) {
-    items.push({value: key, label: dataInfo[key].name});
-});   // The list of possible layers are generated from the data info provided above.
-items.push({value: 'none', label: 'Select Layer'});
+    items.push({
+        value: key,
+        label: dataInfo[key].name
+    });
+});
+items.push({
+    value: 'none',
+    label: 'Pilih Layer'
+});
 
 var select = ui.Select({
     items: items,
     value: items[0].value,
-    style: {margin: '8px 0px'}
+    style: {
+        margin: '8px 0px',
+        stretch: 'horizontal'
+    }
 });
 select.onChange(function(layer) {
     redraw(layer, opacitySlider.getValue());
-});              // Redraw is called with both the selected layer and the opacity value
+});
+
 var opacitySlider = ui.Slider({
     min: 0,
     max: 1,
-    value: 0.75,  // Set default opacity value
+    value: 0.75,
     step: 0.05,
-    style: {width: '200px', margin: '10px'}
-});                 // Create opacity slider panel
+    style: {
+        width: '90%',
+        margin: '10px'
+    }
+});
 opacitySlider.onChange(function(value) {
-    // Get the current layer from the select widget
     var selectedLayer = select.getValue();
     redraw(selectedLayer, value);
-});        // Function to handle opacity changes and trigger redraw with updated opacity
+});
 
-redraw('optik_jun', opacitySlider.getValue());            // Invoke the redraw function at start up to initialize the exceedance map.
+map.centerObject(roi, 14);
+map.add(dataPanel);
+map.add(legend);
+map.layers().add(sbwpLayer);
 
-map.addLayer(sbwp, {}, 'Sub Batas Wilayah Perencanaan');
-map.add(legend);                                      // Add legend to map.
-map.add(inspector);                                   // Add the inspector panel to the default map.
+map.onClick(function(coords) {
+    if (dot) {
+        map.remove(dot);
+    }
+    var point = ee.Geometry.Point(coords.lon, coords.lat);
+    dot = ui.Map.Layer(point, {
+        color: 'red'
+    }, 'Titik Inspeksi');
+    map.layers().add(dot);
+
+    dataPanel.clear();
+    dataPanel.add(ui.Label('Memuat data piksel...'));
+
+    var selectedLayerKey = select.getValue();
+    if (selectedLayerKey === 'none') {
+        dataPanel.clear();
+        dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
+        return;
+    }
+    
+    var month = selectedLayerKey.split('_')[1];
+
+    var baseImage;
+    if (month === 'jun') baseImage = rawa_pening_image_jun;
+    if (month === 'jul') baseImage = rawa_pening_image_jul;
+    if (month === 'ags') baseImage = rawa_pening_image_ags;
+    
+    var rfImage;
+    if (month === 'jun') rfImage = rf_jun;
+    if (month === 'jul') rfImage = rf_jul;
+    if (month === 'ags') rfImage = rf_ags;
+    
+    var cnnImage;
+    if (month === 'jun') cnnImage = cnn1_jun;
+    if (month === 'jul') cnnImage = cnn1_jul;
+    if (month === 'ags') cnnImage = cnn1_ags;
+
+    var bandsToInspect = ['B4', 'B3', 'B2', 'B8', 'NDVI', 'NDWI', 'VV', 'VH'];
+    var combinedImage = baseImage.select(bandsToInspect)
+                                 .addBands(rfImage.rename('rf_class'))
+                                 .addBands(cnnImage.rename('cnn_class'));
+
+    var data = combinedImage.reduceRegion({
+        reducer: ee.Reducer.first(),
+        geometry: point,
+        scale: 10
+    }).getInfo();
+
+    dataPanel.clear();
+    dataPanel.add(ui.Label({
+        value: 'Data Piksel Terpilih',
+        style: {
+            fontWeight: 'bold',
+            fontSize: '16px',
+            margin: '0 0 8px 0'
+        }
+    }));
+    dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
+
+    if (data && data.rf_class !== null) {
+        var rfClassIndex = data.rf_class;
+        var cnnClassIndex = data.cnn_class;
+
+        dataPanel.add(ui.Label('Klasifikasi RF: ' + rfClassIndex + ' (' + classNames[rfClassIndex] + ')', {fontWeight: 'bold'}));
+        dataPanel.add(ui.Label('Klasifikasi CNN: ' + cnnClassIndex + ' (' + classNames[cnnClassIndex] + ')', {fontWeight: 'bold'}));
+
+        Object.keys(data).forEach(function(key) {
+            if (key !== 'rf_class' && key !== 'cnn_class') {
+                dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
+            }
+        });
+    } else {
+        dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
+    }
+});
+
+redraw(items[0].value, 0.75);
+
 map.setOptions('SATELLITE');
 map.setControlVisibility({
     all: false,
     layerList: false,
     zoomControl: true,
     scaleControl: true,
-    mapTypeControl: false,
-    fullscreenControl: false
-});                      // Set visibility options to remove geometry creator, map type controller, and layer list
-map.style().set('cursor', 'crosshair');               // Set the default map's cursor to a 'crosshair'.
-
+    mapTypeControl: true,
+    fullscreenControl: true
+});
+map.style().set('cursor', 'crosshair');
