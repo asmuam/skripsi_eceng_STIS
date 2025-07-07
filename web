@@ -160,7 +160,9 @@ dataPanel.add(ui.Label({
   style: {
     fontWeight: 'bold',
     fontSize: '18px',
-    margin: '8px 12px' // Memberi sedikit spasi
+    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
   }
 }));
 var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
@@ -192,13 +194,15 @@ map.onClick(function(coords) {
 
     dataPanel.clear();
     dataPanel.add(ui.Label({
-  value: 'Data Panel',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '8px 12px' // Memberi sedikit spasi
-  }
-}));
+      value: 'Data Panel',
+      style: {
+        fontWeight: 'bold',
+        fontSize: '18px',
+        margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+        textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+        stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+      }
+    }));
     // PERBAIKAN: Menggunakan variabel 'sbwp' yang konsisten
     var isInShp = rawa_pening_shp.filterBounds(point).size();
     
@@ -225,7 +229,9 @@ map.onClick(function(coords) {
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
-                    margin: '8px 12px' // Memberi sedikit spasi
+                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
+                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
+                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
                   }
                 }));
                 dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
