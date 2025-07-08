@@ -150,6 +150,27 @@ ui.root.insert(0, introPanel);
 panelcreate();
 referencecreate();
 
+var bandColorMap = {
+  // Pita Dasar
+  "B1": "black", "B2": "black", "B3": "black", "B4": "black", "B5": "black",
+  "B6": "black", "B7": "black", "B8": "black", "B8A": "black", "B9": "black", "B11": "black", "B12": "black",
+
+  // Indeks Vegetasi
+  "NDVI": "green", "GNDVI": "green", "EVI": "green", "SAVI": "green", "WAVI": "green", "RENDVI": "green", "NDAVI": "green", "FAI": "green",
+
+  // Indeks Air
+  "NDWI": "blue", "MNDWI": "blue",
+
+  // Indeks Tanah
+  "BSI": "saddlebrown", "NDBSI": "saddlebrown",
+
+  // Indeks Bangunan
+  "NDBI": "purple", "NBI": "purple", "NBAI": "purple",
+
+  // Radar
+  "VV": "gray", "VH": "gray"
+};
+
 var dataInfo = {
     'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
     'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
@@ -284,7 +305,13 @@ map.onClick(function(coords) {
                     fullBandsToInspect.forEach(function(key) {
                       if (data.hasOwnProperty(key)) {
                         var value = data[key];
-                        dataPanel.add(ui.Label(key + ': ' + (value !== null && value !== undefined ? value.toFixed(4) : 'No data')));
+                        var color = bandColorMap[key] || "black";
+                        dataPanel.add(ui.Label(key + ': ' + (value !== null && value !== undefined ? value.toFixed(4) : 'No data'), {
+                          border: '1px solid ' + color,
+                          padding: '2px 6px',
+                          margin: '2px 0',
+                          borderRadius: '4px'
+                        }));
                       }
                     });
                 } else {
