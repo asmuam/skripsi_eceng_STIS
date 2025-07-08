@@ -80,7 +80,7 @@ function panelcreate() {
 function referencecreate() {
     var referenceZero = ui.Label({ value: 'Data Tambahan:', style: { color: 'black', fontWeight: 'bold', textAlign: 'left' } });
     var referenceOne = ui.Label({ value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left' }, targetUrl: 'https://drive.google.com/drive/folders/17sTGS5TFTqMeb3zHZe9XvSxseOW18UmC?usp=drive_link'});
-    var referenceTwo = ui.Label({ value: '💻 Kode Python untuk Pengolahan', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 's.stis.ac.id/NotebookSkripsiEceng' });
+    var referenceTwo = ui.Label({ value: '💻 Kode Python untuk Pengolahan', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://s.stis.ac.id/NotebookSkripsiEceng' });
     var referenceFour = ui.Label({ value: '📝 Paper', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://drive.google.com/file/d/1GqTc-PHtt3lH_wgvNOzRXVKS0DMYd0tG/view?usp=drive_link'});
     var referenceThree = ui.Label({ value: 'Created by:', style: { color: 'black', fontWeight: 'bold', textAlign: 'center' } });
     var author = ui.Label({ value: '222111840@stis.ac.id', style: { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, targetUrl: 'mailto:222111840@stis.ac.id' });
