@@ -7401,17 +7401,7 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
               "system:index": "202"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-function getClosestImage(collection, targetDate) {
-  return collection
-    .map(function (image) {
-      var imageDate = ee.Date(image.get('system:time_start')); // Gunakan system:time_start
-      var diff = ee.Number(imageDate.difference(targetDate, 'day')).abs(); // Selisih waktu
-      return image.set('date_diff', diff);
-    })
-    .sort('date_diff')
-    .first(); // Citra dengan selisih waktu terkecil
-}                        // Function to get the image with the closest date or according to targetDate
-
+// Fungsi masking awan sederhana dengan mempertahankan properti awal
 function maskS2clouds(image, roi) {  
   var qa = image.select('QA60');
   var cloudBitMask = 1 << 10;
@@ -7449,139 +7439,51 @@ function maskS2clouds(image, roi) {
   return maskedImage.set('clear_pixel_percentage', clearPixelPercentage)
                     .copyProperties(image, image.propertyNames());
 }
-                                           // Function for masking Sentinel-2 clouds while preserving initial properties
-function findMatchingDates(s1Collection, s2Collection) {
-  var s1Dates = s1Collection.aggregate_array('system:time_start');
-  var s2Dates = s2Collection.aggregate_array('system:time_start');
 
-  s1Dates = s1Dates.map(function (date) {
-    return ee.Date(date).format('YYYY-MM-dd');
-  });
-  s2Dates = s2Dates.map(function (date) {
-    return ee.Date(date).format('YYYY-MM-dd');
-  });
+// Tanggal tetap untuk citra s1
+var targetDateS1 = ee.Date('2024-06-23');  
 
-  var commonDates = s1Dates.filter(ee.Filter.inList('item', s2Dates));
-  commonDates = commonDates.sort();
+// Tanggal tetap untuk citra s2
+var targetDateS2 = ee.Date('2024-06-21');                                     
 
-  return commonDates;
-}                  // Function to match images by date
-
-// Function to convert from dB
-function toNatural(img) {
-  return ee.Image(10.0).pow(img.select(0).divide(10.0));
-}
-
-//Function to convert to dB
-function toDB(img) {
-  return ee.Image(img).log10().multiply(10.0);
-}
-
-// defining a function to apply lee filtering on S1 image
-function lee_filter(img, size) {
-    // Replace null values with 0
-    var valid = img.mask().not();
-    img = img.unmask(0);
-    
-    var mean = img.reduceNeighborhood({
-        reducer: ee.Reducer.mean(),
-        kernel: ee.Kernel.square(size, 'pixels'),
-        optimization: 'window'
-    });
-
-    var variance = img.reduceNeighborhood({
-        reducer: ee.Reducer.variance(),
-        kernel: ee.Kernel.square(size, 'pixels'),
-        optimization: 'window'
-    });
-
-    var overallVariance = img.reduceRegion({
-        reducer: ee.Reducer.variance(),
-        geometry: img.geometry(),
-        scale: 10,
-        maxPixels: 1e9
-    }).values().get(0);
-
-    var weights = variance.divide(variance.add(ee.Image.constant(overallVariance)));
-    var output = mean.add(weights.multiply(img.subtract(mean)));
-
-    return output.rename(img.bandNames());
-}
-
-function gammaMap(img, ksize) {
-    // Replace null values with 0, seperti lee_filter
-    var valid = img.mask().not();
-    img = img.unmask(0);
-    
-    var enl = 5;
-    var bandNames = img.bandNames();
-    
-    // Convert image from dB to natural values (dipertahankan dari gammaMap asli)
-    var nat_img = toNatural(img);
-    
-    // Square kernel, ksize should be odd (typically 3, 5 or 7)
-    var weights = ee.List.repeat(ee.List.repeat(1, ksize), ksize);
-    
-    // ~~(ksize/2) does integer division in JavaScript
-    var kernel = ee.Kernel.fixed(ksize, ksize, weights, ~~(ksize/2), ~~(ksize/2), false);
-    
-    // Get mean and variance
-    var mean = nat_img.reduceNeighborhood(ee.Reducer.mean(), kernel);
-    var variance = nat_img.reduceNeighborhood(ee.Reducer.variance(), kernel);
-    
-    // "Pure speckle" threshold
-    var ci = variance.sqrt().divide(mean);  // square root of inverse of enl
-    
-    // If ci <= cu, the kernel lies in a "pure speckle" area -> return simple mean
-    var cu = 1.0 / Math.sqrt(enl);
-    
-    // If cu < ci < cmax the kernel lies in the low textured speckle area -> return the filtered value
-    var cmax = Math.sqrt(2.0) * cu;
-    
-    var alpha = ee.Image(1.0 + cu * cu).divide(ci.multiply(ci).subtract(cu * cu));
-    var b = alpha.subtract(enl + 1.0);
-    var d = mean.multiply(mean).multiply(b).multiply(b).add(alpha.multiply(mean).multiply(nat_img).multiply(4.0 * enl));
-    var f = b.multiply(mean).add(d.sqrt()).divide(alpha.multiply(2.0));
-    
-    // Komposisi output sebagai satu ee.Image
-    var result = ee.Image(0).select([]) // Citra kosong sebagai dasar
-        .addBands(
-            mean.updateMask(ci.lte(cu)) // Pure speckle
-                .unmask(f.updateMask(ci.gt(cu).and(ci.lt(cmax)))) // Low textured
-                .unmask(nat_img.updateMask(ci.gte(cmax))) // Highly textured
-        )
-        .rename(bandNames);
-    
-    // Kembalikan satu ee.Image dengan band yang telah difilter
-    return result;
-} 
-
-var targetDateS1 = ee.Date('2024-06-23');                                     // Tanggal tetap untuk citra s1
-var targetDateS2 = ee.Date('2024-06-21');                                     // Tanggal tetap untuk citra s2
-var range = 1;
-var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             // Sentinel-2
+var range = 30;
+// Koleksi Sentinel-2
+var sentinel2Collection = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             
   .filterBounds(roi)
   .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
-  // .filterDate('2024-3-01', '2024-12-31')
-  // .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
-  // .filter(ee.Filter.eq('SENSING_ORBIT_DIRECTION', 'DESCENDING'))
   .map(function(image) {
     return maskS2clouds(image, roi);  // Pastikan fungsi ini menambahkan properti 'clear_pixel_percentage'
   })
-  .filter(ee.Filter.gte('clear_pixel_percentage', 90))  // Hanya memilih citra dengan 100% piksel clear
+  .filter(ee.Filter.gte('clear_pixel_percentage', 90))  // Hanya memilih citra dengan 90% piksel clear
   .sort('system:time_start');
-var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       // Sentinel-1
+
+// Koleksi Sentinel-1
+var sentinel1Collection = ee.ImageCollection('COPERNICUS/S1_GRD')                       
   .filterBounds(roi)
   .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
-  // .filterDate('2024-3-01', '2024-12-31')
-  // .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
 
-var sentinel2List = sentinel2.toList(sentinel2.size());                       // Image selection
-var sentinel1List = sentinel1.toList(sentinel1.size());                       // Image selection
-var image_sen2 = ee.Image(sentinel2List.get(1));                              // 7/26/2024
-var image_sen1 = ee.Image(sentinel1List.get(0));                              // 7/25/2024
+var range = 1;
+// Sentinel-2
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')             
+  .filterBounds(roi)
+  .filterDate(targetDateS2.advance(-range, 'day'), targetDateS2.advance(range, 'day'))
+  .map(function(image) {
+    return maskS2clouds(image, roi);  // Pastikan fungsi ini menambahkan properti 'clear_pixel_percentage'
+  })
+  .filter(ee.Filter.gte('clear_pixel_percentage', 90))  // Hanya memilih citra dengan 90% piksel clear
+  .sort('system:time_start');
 
-// VIs
+// Sentinel-1
+var sentinel1 = ee.ImageCollection('COPERNICUS/S1_GRD')                       
+  .filterBounds(roi)
+  .filterDate(targetDateS1.advance(-range, 'day'), targetDateS1.advance(range, 'day'))
+
+var sentinel2List = sentinel2.toList(sentinel2.size());                       
+var sentinel1List = sentinel1.toList(sentinel1.size());                       
+var image_sen2 = ee.Image(sentinel2List.get(1));                              
+var image_sen1 = ee.Image(sentinel1List.get(0));                              
+
+// Menambahkan variabel indeks vegetasi kedalam citra
 var ndvi = image_sen2
   .expression('(NIR - RED) / (NIR + RED)', {
     RED: image_sen2.select('B4'),
@@ -7656,19 +7558,8 @@ var fai = image_sen2    // fai https://custom-scripts.sentinel-hub.com/custom-sc
   })
   .rename('FAI')
   .copyProperties(image_sen2, image_sen2.propertyNames())
-// var fdi = image_sen2    // https://docs.digitalearthafrica.org/en/latest/sandbox/notebooks/Real_world_examples/Floating_marine_debris.html
-//   .expression(
-//     'NIR - (RE2 + (SWIR1 - RE2) * ((842 * 1e-9 - 665 * 1e-9) / (1610 * 1e-9 - 665 * 1e-9))) * 10',
-//     {
-//       NIR: image_sen2.select('B8'), // NIR band
-//       RE2: image_sen2.select('B6'), // Red Edge 2 band
-//       SWIR1: image_sen2.select('B11'), // SWIR1 band (Band 11 for SWIR)
-//     }
-//   )
-//   .rename('FDI')
-//   .copyProperties(image_sen2, image_sen2.propertyNames())
 
-// WIs
+// Menambahkan variabel indeks air kedalam citra
 var ndwi = image_sen2
   .expression('(GREEN - NIR) / (GREEN + NIR)', {
     GREEN: image_sen2.select('B3'),
@@ -7684,7 +7575,7 @@ var mndwi = image_sen2
   .rename('MNDWI')
   .copyProperties(image_sen2, image_sen2.propertyNames());
   
-// Built-Up Indices
+// Menambahkan variabel indeks bangunan kedalam citra
 var ndbi = image_sen2
   .expression('(SWIR2 - NIR) / (SWIR2 + NIR)', {
     SWIR2: image_sen2.select('B12'),
@@ -7708,7 +7599,8 @@ var nbi = image_sen2
   })
   .rename('NBI')
   .copyProperties(image_sen2, image_sen2.propertyNames()); 
-// Soil indices
+  
+// Menambahkan variabel indeks tanah kedalam citra
 var bsi = image_sen2
   .expression(
     '((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED) + (NIR + BLUE))',
@@ -7736,55 +7628,6 @@ var ndbsi = image_sen2.expression(
 ).rename('NDBSI')
 .copyProperties(image_sen2, image_sen2.propertyNames());
 
-// radar
-var vv_vh_ratio = image_sen1
-  .expression('VV / VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('VV_VH_ratio')
-  .copyProperties(image_sen1, image_sen1.propertyNames())
-
-var vv_vh_diff = image_sen1
-  .expression('VV - VH', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('VV_VH_diff')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
-
-var vv_vh_mean = image_sen1
-  .expression('(VV + VH) / 2', {
-    VV: image_sen1.select('VV'),
-    VH: image_sen1.select('VH'),
-  })
-  .rename('VV_VH_mean')
-  .copyProperties(image_sen1, image_sen1.propertyNames());
-
-// var vv_vh_sum = image_sen1
-//   .expression('(VV + VH)', {
-//     VV: image_sen1.select('VV'),
-//     VH: image_sen1.select('VH'),
-//   })
-//   .rename('VV_VH_sum')
-//   .copyProperties(image_sen1, image_sen1.propertyNames());
-
-// var swi = image_sen1
-//   .expression('0.17*VV+0.008*VH*VV+0.002*VV*VV-0.0015*VH*VH+0.19', {
-//     VV: image_sen1.select('VV'),
-//     VH: image_sen1.select('VH'),
-//   })
-//   .rename('SWI')
-//   .copyProperties(image_sen1, image_sen1.propertyNames());
-
-// var rvi = image_sen1
-//   .expression('(4 * VH) / (VV + VH)', {
-//     VV: image_sen1.select('VV'),
-//     VH: image_sen1.select('VH'),
-//   })
-//   .rename('RVI')
-//   .copyProperties(image_sen1, image_sen1.propertyNames());
-  
 image_sen2 = image_sen2.addBands([
   ndvi,
   gndvi,
@@ -7839,16 +7682,7 @@ image_sen2 = image_sen2     // Select the required bands from the Sentinel-2 ima
   ])
   .toFloat() 
 
-image_sen1 = image_sen1.addBands([
-  vv_vh_ratio,
-  vv_vh_mean,
-  vv_vh_diff,
-  // vv_vh_sum,
-  // swi,
-  // rvi,
-])
-// image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']).toFloat()
-image_sen1 = image_sen1.select(['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']).toFloat()
+image_sen1 = image_sen1.select(['VV', 'VH']).toFloat()
 
 var sen2_bands = [
   'B1',
@@ -7881,13 +7715,13 @@ var sen2_bands = [
   'NDII',
   'NDBSI',
 ]
-// var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean', 'VV_VH_sum', 'SWI', 'RVI']
-var sen1_bands = ['VV', 'VH','VV_VH_ratio', 'VV_VH_diff', 'VV_VH_mean']
-var combinedBands = sen2_bands.concat(sen1_bands);    // Merge bands from Sentinel-2 and Sentinel-1
+var sen1_bands = ['VV', 'VH']
+// Menggabungkan pita dari satelit Sentinel-2 dan Sentinel-1
+var combinedBands = sen2_bands.concat(sen1_bands);    
 
 var seed = 222111840;   // Set the seed
 
-// Add a random column to each feature collection
+// Tambah kolom 'random'
 var ecengRandom = eceng.randomColumn('random', seed);
 var kjaRandom = kja.randomColumn('random', seed);
 var airRandom = air.randomColumn('random', seed);
@@ -7895,7 +7729,7 @@ var tanahRandom = tanah.randomColumn('random', seed);
 var vegetasiLainRandom = vegetasi_lain.randomColumn('random', seed);
 var lahanTerbangunRandom = lahan_terbangun.randomColumn('random', seed);
 
-// Limit each feature collection to x random items
+// Limit 200 sampel 
 var x = 200
 var ecengSampled = ecengRandom.limit(x, 'random');
 var kjaSampled = kjaRandom.limit(x, 'random');
@@ -7904,11 +7738,11 @@ var tanahSampled = tanahRandom.limit(x, 'random');
 var vegetasiLainSampled = vegetasiLainRandom.limit(x, 'random');
 var lahanTerbangunSampled = lahanTerbangunRandom.limit(x, 'random');
 
-// Merge the sampled feature collections
+// Gabungkan FeatureCollection tiap kelas menjadi 1 FeatureCollection
 var classNames = ecengSampled.merge(kjaSampled).merge(airSampled).merge(tanahSampled).merge(vegetasiLainSampled).merge(lahanTerbangunSampled);
 var classValues = classNames.aggregate_array('landcover').distinct();
 
-// Merge Sentinel-1 and Sentinel-2 imagery
+// Gabungkan pita citra Sentinel-1 and Sentinel-2
 var combinedImage = image_sen2.addBands(image_sen1);
 
 var sampled = combinedImage.select(combinedBands).sampleRegions({
@@ -7918,7 +7752,7 @@ var sampled = combinedImage.select(combinedBands).sampleRegions({
   geometries: true, 
 });
 
-// count the number of pixels in the area
+// Hitung piksel pada area Danau Rawa Pening 
 var pixelCountSHP = rawa_pening_shp.geometry().area().divide(10000);
 
 // Memotong citra Sentinel-2 dan Sentinel-1 dengan shapefile rawa_pening_shp
@@ -7931,17 +7765,19 @@ var areaImageS2 = image_sen2.unmask().reduceRegion({
   geometry: rawa_pening_shp,
   scale:10
   });
+  
 var areaImageS1 = image_sen1.unmask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp
   });
-  
+
+// Hitung piksel yang valid
 var validPixelCount = clippedImageS2.mask().reduceRegion({
   reducer: ee.Reducer.count(),
   geometry: rawa_pening_shp.geometry(),
   scale: 10,
   maxPixels: 1e10
-}).values().get(0);  // Calculate the number of valid pixels
+}).values().get(0);  
 
 // Calculate the total number of pixels in the clipped image
 var totalPixelCount = clippedImageS2.select(0).reduceRegion({
@@ -7961,17 +7797,13 @@ var noDataPixelPercentage = noDataPixelCount.divide(totalPixelCount).multiply(10
 var pixelCount = sampled.size();
 
 // LOG
-print("S1")
-print(sentinel1List)
-print("S2")
-print(sentinel2List)
 print('Area SHP hektar:', pixelCountSHP);
 print('Area untuk semua band Sentinel-2:', areaImageS2);
 print('Area untuk semua band Sentinel-1:', areaImageS1);
 print('Jumlah Piksel dalam Sampel:', pixelCount);
 print('Persentase piksel no-data:', noDataPixelPercentage);
-print('Koleksi Sentinel-2',sentinel2.toList(sentinel2.size()));
-print('Koleksi Sentinel-1',sentinel1.toList(sentinel1.size()));
+print('Koleksi Sentinel-2',sentinel2Collection.toList(sentinel2Collection.size()));
+print('Koleksi Sentinel-1',sentinel1Collection.toList(sentinel1Collection.size()));
 print('Sentinel-2 (RGB) 21 juni 2024:', image_sen2)
 print('Sentinel-1 VV 23 juni 2024:', image_sen1)
 print('Full Sample',sampled)
@@ -7985,13 +7817,8 @@ Map.addLayer(combinedImage, {bands: ['VV', 'VH', 'VV'], min: [-30], max: [1],}, 
 Map.addLayer(combinedImage.clip(rawa_pening_shp), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'combinedImage S2 clip'); 
 Map.addLayer(combinedImage, {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'True Color'); 
 Map.addLayer(combinedImage.clip(roi), {bands: ['BSI','FAI','NDWI'], min: -0.5, max: 0.5}, 'helper'); 
-
-// Tambahkan layer ke peta
 Map.addLayer(combinedImage, {bands: ['VH'], min: -25, max: 0}, 'VH ONLY'); 
 Map.addLayer(combinedImage, {bands: ['VV'], min: -25, max: 0}, 'VV ONLY'); 
-
-// Map.addLayer(combinedImage.clip(geometry2), {bands: ['VV'], min: -25, max: 0}, 'caution vv'); 
-// Map.addLayer(combinedImage.clip(geometry2), {bands: ['B4', 'B3', 'B2'], max: 0.3}, 'caution rgb'); 
 
 // EXPORT
 Export.table.toDrive({
@@ -8000,25 +7827,14 @@ Export.table.toDrive({
   folder: 'GEE_Exports', 
   fileFormat: 'csv',
   fileNamePrefix: 'data_sample_jun',
-})   // Export sample to drive
+})  
 
-// Export sample to asset
 Export.table.toAsset({
   collection: sampled, 
   description: 'sampel_asset_jun', 
   assetId: 'projects/ee-222111840/assets/sampel_jun',
 })   
 
-// // Ekspor FeatureCollection ke Google Drive sebagai shapefile
-// Export.table.toDrive({
-//   collection: rawa_pening_shp,
-//   description: 'export_shapefile',
-//   fileFormat: 'SHP',
-//   folder: 'GEE_Exports',
-//   fileNamePrefix: 'rawa_pening'
-// })   
-
-// Ekspor rawa_pening_image (semua band)
 Export.image.toDrive({
   image: combinedImage.clip(rawa_pening_shp),
   description: 'rawa_pening_image_drive_jun',
@@ -8039,121 +7855,3 @@ Export.image.toAsset({
   region: rawa_pening_shp,
   scale: 10
 });
-
-//Ekspor rawa_pening_image_raw (semua band dasar)
-var senRawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-2
-Export.image.toDrive({
-  image: senRawImage,
-  description: 'rawa_pening_image_raw_drive_jun',
-  fileNamePrefix: 'rawa_pening_image_raw_jun',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-
-Export.image.toAsset({
-  image: senRawImage,
-  description: 'rawa_pening_image_raw_asset_jun',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_raw_jun',
-  region: rawa_pening_shp,
-  scale: 10
-});
-
-// Ekspor rawa_pening_image_sentinel1 (hanya band Sentinel-1)
-var sen1Image = combinedImage.select(sen1_bands).clip(rawa_pening_shp);
-Export.image.toDrive({
-  image: sen1Image,
-  description: 'rawa_pening_image_sentinel1_drive_jun',
-  fileNamePrefix: 'rawa_pening_image_sentinel1_jun',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-
-Export.image.toAsset({
-  image: sen1Image,
-  description: 'rawa_pening_image_sentinel1_asset_jun',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_jun',
-  region: rawa_pening_shp,
-  scale: 10
-});
-
-// Ekspor rawa_pening_image_sentinel2 (hanya band Sentinel-2)
-var sen2Image = combinedImage.select(sen2_bands).clip(rawa_pening_shp);
-Export.image.toDrive({
-  image: sen2Image,
-  description: 'rawa_pening_image_sentinel2_drive_jun',
-  fileNamePrefix: 'rawa_pening_image_sentinel2_jun',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-
-Export.image.toAsset({
-  image: sen2Image,
-  description: 'rawa_pening_image_sentinel2_asset_jun',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_jun',
-  region: rawa_pening_shp,
-  scale: 10
-});
-
-// Ekspor rawa_pening_image_sentinel1_raw (native bands Sentinel-1)
-var sen1RawImage = combinedImage.select(['VV', 'VH']).clip(rawa_pening_shp); // Native bands Sentinel-1
-Export.image.toDrive({
-  image: sen1RawImage,
-  description: 'rawa_pening_image_sentinel1_raw_drive_jun',
-  fileNamePrefix: 'rawa_pening_image_sentinel1_raw_jun',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-
-Export.image.toAsset({
-  image: sen1RawImage,
-  description: 'rawa_pening_image_sentinel1_raw_asset_jun',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel1_raw_jun',
-  region: rawa_pening_shp,
-  scale: 10
-});
-
-// Ekspor rawa_pening_image_sentinel2_raw (native bands Sentinel-2)
-var sen2RawImage = combinedImage.select(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12']).clip(rawa_pening_shp); // Native bands Sentinel-2
-Export.image.toDrive({
-  image: sen2RawImage,
-  description: 'rawa_pening_image_sentinel2_raw_drive_jun',
-  fileNamePrefix: 'rawa_pening_image_sentinel2_raw_jun',
-  folder: 'GEE_Exports',
-  region: rawa_pening_shp,
-  scale: 10,
-  fileFormat: 'GeoTIFF',
-  formatOptions: {
-    cloudOptimized: true
-  }
-});
-
-Export.image.toAsset({
-  image: sen2RawImage,
-  description: 'rawa_pening_image_sentinel2_raw_asset_jun',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_sentinel2_raw_jun',
-  region: rawa_pening_shp,
-  scale: 10
-});
-
-// Map.setCenter(110.41770939127575,-7.291049219363841, 24)
-// Map.centerObject(classNames.filter(ee.Filter.eq('system:index', '1_1_1_1_2_53')), 22);
