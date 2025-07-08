@@ -321,7 +321,7 @@ map.onClick(function(coords) {
     });
 });
 
-redraw(items[0].value, 0.75);
+redraw('none', 0.75);
 map.setOptions('SATELLITE');
 map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
 map.style().set('cursor', 'crosshair');
