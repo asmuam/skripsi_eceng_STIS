@@ -186,7 +186,7 @@ var items = [];
 Object.keys(dataInfo).forEach(function(key) { items.push({ value: key, label: dataInfo[key].name }); });
 items.push({ value: 'none', label: 'Pilih Layer' });
 
-var select = ui.Select({ items: items, value: items[0].value, style: { margin: '8px 0px', stretch: 'horizontal' } });
+var select = ui.Select({ items: items, value: 'none', style: { margin: '8px 0px', stretch: 'horizontal' } });
 select.onChange(function(layer) { redraw(layer, opacitySlider.getValue()); });
 
 var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.75, step: 0.05, style: { width: '90%', margin: '10px' } });
