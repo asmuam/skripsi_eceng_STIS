@@ -273,7 +273,8 @@ map.onClick(function(coords) {
                   }
                 }));
                 dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
-                dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5) + ', Lon: ' + coords.lon.toFixed(5)));
+                dataPanel.add(ui.Label('Lat: ' + coords.lat.toFixed(5)));
+                dataPanel.add(ui.Label('Lon: ' + coords.lon.toFixed(5)));
                 if (data) {
                     if (data.classification !== null && data.classification !== undefined) {
                         var classLabel = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
