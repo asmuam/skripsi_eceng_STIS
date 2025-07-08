@@ -281,10 +281,11 @@ map.onClick(function(coords) {
                         var classIndex = data.classification;
                         dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
                     }
-                    Object.keys(data).forEach(function(key) {
-                        if (key !== 'classification') {
-                            dataPanel.add(ui.Label(key + ': ' + (data[key] ? data[key].toFixed(4) : 'No data')));
-                        }
+                    fullBandsToInspect.forEach(function(key) {
+                      if (data.hasOwnProperty(key)) {
+                        var value = data[key];
+                        dataPanel.add(ui.Label(key + ': ' + (value !== null && value !== undefined ? value.toFixed(4) : 'No data')));
+                      }
                     });
                 } else {
                     dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
