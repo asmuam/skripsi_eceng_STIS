@@ -1,98 +1,11 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var waduk_jatiluhur = /* color: #d6c6c6 */ee.FeatureCollection(
-        [ee.Feature(
-            ee.Geometry.Polygon(
-                [[[107.38786887371344, -6.564701533483087],
-                  [107.38580893719, -6.57629783681601],
-                  [107.3913021012525, -6.583801183058582],
-                  [107.40297507488532, -6.586529644489764],
-                  [107.41396140301032, -6.58175482714346],
-                  [107.41396140301032, -6.56879437729017],
-                  [107.41052817547126, -6.554469276810428],
-                  [107.40297507488532, -6.540143764801718],
-                  [107.4022884293775, -6.529228813312667],
-                  [107.38374900066657, -6.513538153702949],
-                  [107.352849952815, -6.494435819051845],
-                  [107.3253841325025, -6.484884379712101],
-                  [107.3034114762525, -6.488977875892589],
-                  [107.29860495769782, -6.516266999345441],
-                  [107.27937888347907, -6.547647655695567],
-                  [107.27800559246344, -6.613131356286051],
-                  [107.27319907390876, -6.647916048840697],
-                  [107.3027248307447, -6.667012481374671],
-                  [107.32607077801032, -6.679970351320368],
-                  [107.35490988933844, -6.686790145058047],
-                  [107.37207602703376, -6.692245911532456],
-                  [107.36589621746344, -6.679970351320368],
-                  [107.34461020672126, -6.6731504625108595],
-                  [107.32195090496344, -6.6642844650828525],
-                  [107.3192043229322, -6.644505893477524],
-                  [107.31714438640876, -6.624726526486523],
-                  [107.31165122234626, -6.60631054081705],
-                  [107.31783103191657, -6.597443340128493],
-                  [107.31645774090094, -6.56811223899305],
-                  [107.33499716961188, -6.55378711889664],
-                  [107.36246298992438, -6.575615708811063],
-                  [107.3741359635572, -6.574933579869977],
-                  [107.38100241863532, -6.558562204693172]]]),
-            {
-              "system:index": "0"
-            })]),
-    rawa_pening_image = ee.Image("projects/ee-222111840/assets/rawa_pening_image"),
-    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
-    cnn1 = ee.Image("projects/ee-222111840/assets/cnn1_v200"),
-    rf = ee.Image("projects/ee-222111840/assets/rf_v200");
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
-// Pusatkan peta ke koordinat tersebut
-Map.centerObject(roi, 14);
-// Tambahkan layer untuk citra Sentinel-2 dan Sentinel-1
-Map.addLayer(
-  rawa_pening_image.clip(roi),
- {bands:['B4','B3','B2'],min: 0, max: 0.3},
- "s2"
-);
-Map.addLayer(
-  rawa_pening_image.clip(roi),
- {bands:['VV'],min: -40, max: 0},
- "s1"
-);
-Map.addLayer(
-  rf,
-{min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
-  "rf"
-);
-Map.addLayer(
-  cnn1,
- {min: 0, max: 5, palette: ['lime', 'yellow','aqua','darkgreen','brown','grey'], opacity: 1},
- "cnn"
-);
+// Membuat bounding box dari koordinat
+var bounds = ee.Geometry.Rectangle([
+  110.41278, // Bujur minimum (110° 24’ 46”)
+  -7.5,      // Lintang minimum (7° 30’ 00” S → -7.5)
+  110.81833, // Bujur maksimum (110° 49’ 06”)
+  -7.06667   // Lintang maksimum (7° 4’ 00” S → -7.06667)
+]);
 
-// Fungsi untuk menghitung luas berdasarkan kelas dalam hektar
-function calculateClassArea(image, classValue, region) {
-  var classMasked = image.eq(classValue); // Masking kelas tertentu
-  var areaImage = classMasked.multiply(ee.Image.pixelArea()).divide(10000); // Konversi ke hektar
-  var areaStats = areaImage.reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: roi,
-    scale: 10, // Resolusi
-    maxPixels: 1e9
-  });
-  return areaStats;
-}
-
-// Daftar nama kelas
-var classes = ['Eceng', 'KJA', 'Air', 'Vegetasi lain', 'Tanah', 'Lahan terbangun'];
-
-// Hitung luas untuk masing-masing kelas dalam model rf
-print('Luas untuk model rf:');
-for (var i = 0; i < classes.length; i++) {
-  var rfArea = calculateClassArea(rf, i, roi);
-  print('Kelas ' + classes[i] + ' (hektar):', rfArea);
-}
-
-// Hitung luas untuk masing-masing kelas dalam model cnn1
-print('Luas untuk model cnn1:');
-for (var i = 0; i < classes.length; i++) {
-  var cnn1Area = calculateClassArea(cnn1, i, roi);
-  print('Kelas ' + classes[i] + ' (hektar):', cnn1Area);
-}
+// Tampilkan sebagai layer di peta
+Map.centerObject(bounds, 10); // Zoom level 10 bisa disesuaikan
+Map.addLayer(bounds, {color: 'red'}, 'Area Studi');
