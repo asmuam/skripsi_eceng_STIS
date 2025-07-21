@@ -81,6 +81,7 @@ var app = {
       legend: null,
       data: null,
     },
+    sbwpLayer: null,
     dot: null,
     widgets: {
       title: null,
