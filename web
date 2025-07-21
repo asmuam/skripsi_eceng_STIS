@@ -170,6 +170,16 @@ function redraw(newLayerKey, newOpacity) {
     if (lastInspectedPoint) {
         inspectPoint(lastInspectedPoint.geom, lastInspectedPoint.coords);
     }
+    
+    // =================================================================
+    // TAMBAHAN: Pastikan Titik Inspeksi Selalu di Atas
+    // =================================================================
+    // Jika ada titik inspeksi (dot), hapus dan tambahkan lagi agar posisinya
+    // selalu berada di layer teratas setelah semua layer lain digambar.
+    if (dot) {
+        map.remove(dot);
+        map.add(dot);
+    }
 }
 // =======================================================================================
 // LOGIKA UTAMA DAN INISIALISASI PETA
