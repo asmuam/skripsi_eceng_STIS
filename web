@@ -349,7 +349,6 @@ app.boot = {
     });
     app.ui.panels.legend.add(checkboxSbwp);
   
-
     var items = Object.keys(DATA_LAYERS).map(function(key) {
       return { label: DATA_LAYERS[key].name, value: key };
     });
