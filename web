@@ -339,9 +339,16 @@ app.boot = {
     app.ui.panels.legend.clear();
     app.ui.panels.legend.add(ui.Label('Panel Legenda', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' }));
 
-    var sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
-    var checkboxSbwp = ui.Checkbox({ label: 'Tampilkan Batas Wilayah', value: true, onChange: function(checked) { sbwpLayer.setShown(checked); } });
+    // Buat checkbox yang mengontrol layer SBWP yang sudah ada di app.ui
+    var checkboxSbwp = ui.Checkbox({
+      label: 'Tampilkan Batas Wilayah',
+      value: true, // Nilai default (tercentang)
+      onChange: function(checked) {
+        app.ui.sbwpLayer.setShown(checked);
+      }
+    });
     app.ui.panels.legend.add(checkboxSbwp);
+  
 
     var items = Object.keys(DATA_LAYERS).map(function(key) {
       return { label: DATA_LAYERS[key].name, value: key };
