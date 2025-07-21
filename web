@@ -224,8 +224,53 @@ items.push({ value: 'none', label: 'Pilih Layer' });
 var select = ui.Select({ items: items, value: 'none', style: { margin: '8px 0px', stretch: 'horizontal' } });
 select.onChange(function(layer) { redraw(layer, opacitySlider.getValue()); });
 
-var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.75, step: 0.05, style: { width: '90%', margin: '10px' } });
-opacitySlider.onChange(function(value) { redraw(select.getValue(), value); });
+// =================================================================
+// SINKRONISASI SLIDER DAN TEXTBOX UNTUK OPASITAS
+// =================================================================
+var opacitySlider, opacityTextbox; // Deklarasikan di luar agar bisa diakses bersama
+
+// Buat Textbox untuk input numerik
+opacityTextbox = ui.Textbox({
+    value: '0.75',
+    placeholder: '0.0-1.0',
+    style: { width: '70px', margin: '0 0 0 8px' } // Beri lebar tetap agar rapi
+});
+
+// Buat Slider untuk kontrol visual
+opacitySlider = ui.Slider({
+    min: 0,
+    max: 1,
+    value: 0.75,
+    step: 0.01, // Step lebih kecil untuk presisi
+    style: { stretch: 'horizontal' }
+});
+
+// --- Logika Sinkronisasi ---
+
+// Saat Slider diubah:
+opacitySlider.onChange(function(value) {
+    // 1. Perbarui nilai di Textbox tanpa memicu event onChange-nya
+    opacityTextbox.setValue(value.toFixed(2), false);
+    // 2. Perbarui peta
+    redraw(select.getValue(), value);
+});
+
+// Saat Textbox diubah:
+opacityTextbox.onChange(function(text) {
+    var value = parseFloat(text);
+    if (!isNaN(value) && value >= 0 && value <= 1) {
+        // 1. Perbarui posisi Slider tanpa memicu event onChange-nya
+        opacitySlider.setValue(value, false);
+        // 2. Perbarui peta
+        redraw(select.getValue(), value);
+    }
+});
+
+// Buat panel horizontal untuk menampung keduanya
+var opacityControlPanel = ui.Panel({
+    widgets: [opacitySlider, opacityTextbox],
+    layout: ui.Panel.Layout.flow('horizontal')
+});
 
 map.centerObject(roi, 14);
 map.add(dataPanel);
