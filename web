@@ -424,9 +424,8 @@ function inspectPoint(point, coords) {
         }
 
         var imageToInspect;
-        var bandsToSelect = ee.List(fullBandsToInspect);
 
-        // Tentukan gambar dan band mana yang akan diinspeksi
+        // Tentukan gambar mana yang akan diinspeksi
         if (/optik|radar/.test(selectedLayerKey)) {
             imageToInspect = dataInfo[selectedLayerKey].img;
         } else { // Untuk layer klasifikasi
@@ -440,8 +439,21 @@ function inspectPoint(point, coords) {
             imageToInspect = baseImage.addBands(classificationImage.rename('classification'));
         }
         
-        // Ambil data dari titik
-        var data = imageToInspect.select(bandsToSelect.add('classification')).reduceRegion({
+        // ======================= PERBAIKAN UTAMA DI SINI =======================
+        // Logika ini secara dinamis hanya akan memilih band yang ada di citra.
+        
+        // 1. Daftar semua band yang kita inginkan.
+        var desiredBands = ee.List(fullBandsToInspect).add('classification');
+        
+        // 2. Daftar band yang benar-benar tersedia di citra yang diinspeksi.
+        var availableBands = imageToInspect.bandNames();
+        
+        // 3. Buat daftar seleksi HANYA dari band yang ada di kedua daftar (irisan).
+        var bandsToSelect = desiredBands.filter(ee.Filter.inList('item', availableBands));
+        // ======================================================================
+
+        // Ambil data dari titik dengan daftar band yang sudah valid
+        var data = imageToInspect.select(bandsToSelect).reduceRegion({
             reducer: ee.Reducer.first(),
             geometry: point,
             scale: 10
