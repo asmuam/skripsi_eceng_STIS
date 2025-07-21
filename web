@@ -118,38 +118,41 @@ function updateMapLayer(newLayerKey, newOpacity) {
     return;
   }
 
-  // --- 2. PERBARUI PANEL LEGEND ---
-  app.boot.populateLegendPanel();
-
-  // --- 3. HAPUS LAYER LAMA ---
+  // ======================= PERBAIKAN UTAMA DI SINI =======================
+  // Hapus layer lama dari peta SEBELUM mengubah state
   if (app.state.currentLayerKey !== 'none') {
     app.ui.map.layers().forEach(function(l) {
       if (l.getName() === app.state.currentLayerKey) app.ui.map.remove(l);
     });
   }
+  
+  // Perbarui state APLIKASI terlebih dahulu. Ini adalah langkah kunci.
+  app.state.currentLayerKey = newLayerKey;
+  // =====================================================================
 
-  // --- 4. RESET JIKA LAYER BARU 'NONE' ---
+  // Sekarang, gambar ulang panel legenda. Karena state sudah baru, dropdown akan benar.
+  app.boot.populateLegendPanel();
+
+  // --- 4. RESET ATAU TAMBAHKAN LAYER BARU ---
   if (newLayerKey === 'none') {
+    // Jika layer baru adalah 'none', cukup panggil ulang inspeksi untuk membersihkan panel data.
     if (app.state.lastInspectedPoint) {
       inspectPoint(app.state.lastInspectedPoint.geom, app.state.lastInspectedPoint.coords);
     }
-    app.state.currentLayerKey = 'none';
-    return;
+    return; // Selesai
   }
 
-  // --- 5. TAMBAHKAN LAYER BARU ---
+  // Jika ada layer baru, tambahkan ke peta.
   var info = DATA_LAYERS[newLayerKey];
   info.vis.opacity = newOpacity;
   var visImg = info.img.visualize(info.vis);
   app.ui.map.addLayer(visImg, {}, newLayerKey, true);
   
-  // --- 6. PERBARUI STATUS & INSPEKSI ---
-  app.state.currentLayerKey = newLayerKey;
+  // --- 5. PERBARUI INSPEKSI & TITIK ---
   if (app.state.lastInspectedPoint) {
     inspectPoint(app.state.lastInspectedPoint.geom, app.state.lastInspectedPoint.coords);
   }
   
-  // --- 7. PASTIKAN TITIK INSPEKSI DI ATAS ---
   if (app.ui.dot) {
     app.ui.map.remove(app.ui.dot);
     app.ui.map.add(app.ui.dot);
@@ -342,7 +345,7 @@ app.boot = {
     // Buat checkbox yang mengontrol layer SBWP yang sudah ada di app.ui
     var checkboxSbwp = ui.Checkbox({
       label: 'Tampilkan Batas Wilayah',
-      value: true, // Nilai default (tercentang)
+      value: app.ui.sbwpLayer.getShown(),
       onChange: function(checked) {
         app.ui.sbwpLayer.setShown(checked);
       }
@@ -353,7 +356,7 @@ app.boot = {
       return { label: DATA_LAYERS[key].name, value: key };
     });
     items.push({ label: 'Pilih Layer', value: 'none' });
-    var select = ui.Select({ items: items, value: app.state.currentLayerKey, style: { margin: '8px 0px', stretch: 'horizontal' },
+    var select = ui.Select({ items: items, value:  value: app.state.currentLayerKey, style: { margin: '8px 0px', stretch: 'horizontal' },
       onChange: function(layerKey) { updateMapLayer(layerKey, opacitySlider.getValue()); }
     });
     
@@ -378,7 +381,7 @@ app.boot = {
     app.ui.panels.legend.add(ui.Label('Atur Opasitas:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(opacityControlPanel);
     
     if (app.state.currentLayerKey !== 'none' && !/optik|radar/.test(app.state.currentLayerKey)) {
-      legend.add(ui.Label(DATA_LAYERS[app.state.currentLayerKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
+       app.ui.panels.legend.add(ui.Label(DATA_LAYERS[app.state.currentLayerKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
       CONFIG.CLASS_NAMES.forEach(function(label, index) {
         var colorBox = ui.Label({ style: { backgroundColor: CONFIG.PALETTE[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
         var textLabel = ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px', padding: '0 4px' });
