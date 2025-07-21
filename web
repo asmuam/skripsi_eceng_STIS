@@ -13,495 +13,398 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     breaksTable = ee.FeatureCollection("projects/ee-222111840/assets/jenks_breaks_interval");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
 // =======================================================================================
-// FUNGSI-FUNGSI UI DAN LOGIKA
+// KONFIGURASI & ASET (CONFIG & ASSETS)
+// Bagian ini berisi semua data statis dan konfigurasi aplikasi.
 // =======================================================================================
 
-var classNames = [
+var CONFIG = {
+  CLASS_NAMES: [
     'Eceng Gondok', 'Keramba Jaring Apung', 'Air',
     'Vegetasi Lain', 'Tanah', 'Lain-lain'
-];
+  ],
+  PALETTE: [
+    "#32CD32", "#BECD32", "#1E90FF", "#228B22", "#D2B48C", "#808080"
+  ],
+  BANDS: {
+    ALL: ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI","VV","VH"],
+    OPTICAL: ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI"],
+    RADAR: ["VV","VH"]
+  },
+  BAND_COLORS: {
+    "B1": "black", "B2": "black", "B3": "black", "B4": "black", "B5": "black", "B6": "black", "B7": "black", "B8": "black", "B8A": "black", "B9": "black", "B11": "black", "B12": "black",
+    "NDVI": "green", "GNDVI": "green", "EVI": "green", "SAVI": "green", "WAVI": "green", "RENDVI": "green", "NDAVI": "green", "FAI": "green",
+    "NDWI": "blue", "MNDWI": "blue",
+    "BSI": "saddlebrown", "NDBSI": "saddlebrown",
+    "NDBI": "purple", "NBI": "purple", "NBAI": "purple",
+    "VV": "gray", "VH": "gray"
+  },
+  URLS: {
+    ASSET: 'https://drive.google.com/drive/folders/17sTGS5TFTqMeb3zHZe9XvSxseOW18UmC?usp=drive_link',
+    CODE: 'https://s.stis.ac.id/NotebookSkripsiEceng',
+    PAPER: 'https://drive.google.com/file/d/1GqTc-PHtt3lH_wgvNOzRXVKS0DMYd0tG/view?usp=drive_link',
+    AUTHOR: 'mailto:222111840@stis.ac.id'
+  }
+};
 
-var thePalette = [
-    "#32CD32", // Eceng Gondok
-    "#BECD32", // Keramba Jaring Apung
-    "#1E90FF", // Air
-    "#228B22", // Vegetasi Lain
-    "#D2B48C", // Tanah
-    "#808080"  // Lain-lain
-];
+var DATA_LAYERS = {
+  'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
+  'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
+  'optik_ags': { name: 'Citra RGB Sentinel-2 Agustus', desc: 'Citra dasar RGB Sentinel-2 bulan Agustus', img: rawa_pening_image_ags, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
+  'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+  'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+  'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
+  'rf_jun': { name: 'Klasifikasi RF Juni', desc: 'Hasil klasifikasi Random Forest bulan Juni', img: rf_jun, vis: { min: 0, max: 5, palette: CONFIG.PALETTE } },
+  'rf_jul': { name: 'Klasifikasi RF Juli', desc: 'Hasil klasifikasi Random Forest bulan Juli', img: rf_jul, vis: { min: 0, max: 5, palette: CONFIG.PALETTE } },
+  'rf_ags': { name: 'Klasifikasi RF Agustus', desc: 'Hasil klasifikasi Random Forest bulan Agustus', img: rf_ags, vis: { min: 0, max: 5, palette: CONFIG.PALETTE } },
+  'cnn1_jun': { name: 'Klasifikasi CNN1D Juni', desc: 'Hasil klasifikasi CNN1D bulan Juni', img: cnn1_jun, vis: { min: 0, max: 5, palette: CONFIG.PALETTE } },
+  'cnn1_jul': { name: 'Klasifikasi CNN1D Juli', desc: 'Hasil klasifikasi CNN1D bulan Juli', img: cnn1_jul, vis: { min: 0, max: 5, palette: CONFIG.PALETTE } },
+  'cnn1_ags': { name: 'Klasifikasi CNN1D Agustus', desc: 'Hasil klasifikasi CNN1D bulan Agustus', img: cnn1_ags, vis: { min: 0, max: 5, palette: CONFIG.PALETTE } }
+};
 
-var fullBandsToInspect = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI","VV","VH"];
-// VARIABEL BARU: Grup band untuk tampilan dinamis di panel data
-var opticalBands = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI"];
-var radarBands = ["VV","VH"];
 
-function panelcreate() {
-    var intro = ui.Panel([
-        ui.Label({
-            value: 'Sebaran Eceng Gondok',
-            style: {
-                fontSize: '1.4vw',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                stretch: 'horizontal'
-            },
-        }),
-        ui.Label({
-            value: 'Danau Rawa Pening 2024',
-            style: {
-                fontSize: '1.4vw',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                stretch: 'horizontal'
-            },
-        }),
-        ui.Label({
-            value: 'Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
-            'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
-            'Data citra satelit Sentinel-1 dan Sentinel-2 diambil melalui platform GEE dan diolah dengan platform Google Colab. ' +
-            'Hasil klasifikasi mencakup enam kelas:',
-            style: {
-                fontSize: '0.9vw',
-                fontWeight: 'normal'
-            },
-        }),
-        ui.Label('0. Eceng Gondok', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
-        ui.Label('1. Keramba Jaring Apung', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
-        ui.Label('2. Air', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
-        ui.Label('3. Vegetasi lain', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
-        ui.Label('4. Tanah', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
-        ui.Label('5. Lain-lain', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0px 0px 0px 8px' }),
-        ui.Label('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih.', { fontSize: '0.9vw', fontWeight: 'normal' }),
-        ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah ' +
-                 'Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', { fontSize: '0.9vw', fontWeight: 'normal' }),
-        ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', { fontSize: '0.9vw', fontWeight: 'normal' }),
-    ]);
-    introPanel.add(intro);
-}
-
-function referencecreate() {
-    var referenceZero = ui.Label({ value: 'Data Tambahan:', style: { color: 'black', fontWeight: 'bold', textAlign: 'left' } });
-    var referenceOne = ui.Label({ value: '📁 Aset Balai Besar Wilayah Sungai Pemali Juana', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left' }, targetUrl: 'https://drive.google.com/drive/folders/17sTGS5TFTqMeb3zHZe9XvSxseOW18UmC?usp=drive_link'});
-    var referenceTwo = ui.Label({ value: '💻 Kode Python untuk Pengolahan', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://s.stis.ac.id/NotebookSkripsiEceng' });
-    var referenceFour = ui.Label({ value: '📝 Paper', style: { color: 'blue', fontWeight: 'bold', textAlign: 'left', padding: '0px 0px 4px 0px' }, targetUrl: 'https://drive.google.com/file/d/1GqTc-PHtt3lH_wgvNOzRXVKS0DMYd0tG/view?usp=drive_link'});
-    var referenceThree = ui.Label({ value: 'Created by:', style: { color: 'black', fontWeight: 'bold', textAlign: 'center' } });
-    var author = ui.Label({ value: '222111840@stis.ac.id', style: { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, targetUrl: 'mailto:222111840@stis.ac.id' });
-    introPanel.add(referenceZero).add(referenceOne).add(referenceTwo).add(referenceFour).add(referenceThree).add(author);
-}
-
-// FUNGSI redraw YANG SUDAH DIOPTIMALKAN
-function redraw(newLayerKey, newOpacity) {
-    // Helper function untuk mendapatkan bulan dari key
-    var getMonthFromKey = function(key) {
-        if (key === 'none' || !key) return null;
-        return key.split('_')[1];
-    };
-
-    var currentMonth = getMonthFromKey(currentLayerKey);
-    var newMonth = getMonthFromKey(newLayerKey);
-
-    // --- 1. HANYA OPASITAS YANG BERUBAH ---
-    // Jika layer sama, hanya ubah opasitas. Ini adalah path tercepat.
-    if (newLayerKey === currentLayerKey && newLayerKey !== 'none') {
-        map.layers().forEach(function(l) {
-            if (l.getName() === currentLayerKey) {
-                l.setOpacity(newOpacity);
-            }
-        });
-        // Perbarui nilai opasitas di 'vis' untuk konsistensi
-        dataInfo[newLayerKey].vis.opacity = newOpacity;
-        return; // Selesai, tidak perlu proses lebih lanjut.
-    }
-
-    // --- 2. PERBARUI PANEL LEGEND (Selalu dilakukan jika ada perubahan layer) ---
-    legend.clear();
-    legend.add(ui.Label({ value: 'Panel Legenda', style: { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' }}));
-    legend.add(checkboxSbwp);
-    legend.add(ui.Label({ value: 'Pilih Layer Tampilan:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(select);
-    legend.add(ui.Label({ value: 'Atur Opasitas:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(opacityControlPanel);
-
-    // Jika layer target adalah 'none', hapus layer lama dan reset.
-    if (newLayerKey === 'none') {
-        map.layers().forEach(function(l) {
-            if (l.getName() === currentLayerKey) {
-                map.remove(l);
-            }
-        });
-        if (lastInspectedPoint) {
-            inspectPoint(lastInspectedPoint.geom, lastInspectedPoint.coords);
-        }
-        currentLayerKey = 'none';
-        return;
-    }
-
-    var info = dataInfo[newLayerKey];
-    info.vis.opacity = newOpacity;
-    var visImg = info.img.visualize(info.vis);
-    
-    // Tambahkan deskripsi dan legenda kelas ke panel legenda
-    legend.add(ui.Label({ value: info.desc, style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } }));
-    if (!/optik/.test(newLayerKey) && !/radar/.test(newLayerKey)) {
-        classNames.forEach(function(label, index) {
-            var colorBox = ui.Label({ style: { backgroundColor: thePalette[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
-            var textLabel = ui.Label({ value: index + ': ' + label, style: { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } });
-            legend.add(ui.Panel({ widgets: [colorBox, textLabel], layout: ui.Panel.Layout.flow('horizontal'), style: { margin: '4px 0px' } }));
-        });
-    }
-
-    // --- 3. LOGIKA UTAMA: GANTI LAYER DI PETA ---
-    // Hapus layer lama
-    if (currentLayerKey !== 'none') {
-        map.layers().forEach(function(l) {
-            if (l.getName() === currentLayerKey) {
-                map.remove(l);
-            }
-        });
-    }
-
-    // Tambahkan layer baru
-    map.addLayer(visImg, {}, newLayerKey, true);
-
-    // --- 4. PERBARUI STATUS & INSPEKSI ---
-    // Perbarui status layer aktif
-    currentLayerKey = newLayerKey;
-
-    // Panggil ulang inspeksi jika ada titik yang sudah dipilih
-    if (lastInspectedPoint) {
-        inspectPoint(lastInspectedPoint.geom, lastInspectedPoint.coords);
-    }
-    
-    // =================================================================
-    // TAMBAHAN: Pastikan Titik Inspeksi Selalu di Atas
-    // =================================================================
-    // Jika ada titik inspeksi (dot), hapus dan tambahkan lagi agar posisinya
-    // selalu berada di layer teratas setelah semua layer lain digambar.
-    if (dot) {
-        map.remove(dot);
-        map.add(dot);
-    }
-}
 // =======================================================================================
-// LOGIKA UTAMA DAN INISIALISASI PETA
+// STATUS APLIKASI (APPLICATION STATE)
+// Satu tempat untuk semua variabel yang dapat berubah selama aplikasi berjalan.
 // =======================================================================================
 
-var introPanel = ui.Panel({
-    style: {
-        width: '30%',
-        fontSize: '1vw',
-        fontWeight: 'bold',
-        border: '5px solid darkgray',
-        maxHeight: '90vh',
+var app = {
+  state: {
+    currentLayerKey: 'none',
+    lastInspectedPoint: null,
+  },
+  ui: {
+    map: null,
+    panels: {
+      intro: null,
+      legend: null,
+      data: null,
+    },
+    dot: null,
+    widgets: {
+      title: null,
+      status: null,
+      coords: null,
+      classificationPanel: null,
+      classificationLabel: null,
+      bandsPanel: null,
+      bandLabels: {}
     }
-});
-
-var map = ui.Map();
-ui.root.clear();
-ui.root.add(map);
-ui.root.insert(0, introPanel);
-
-panelcreate();
-referencecreate();
-
-var bandColorMap = {
-  // Pita Dasar
-  "B1": "black", "B2": "black", "B3": "black", "B4": "black", "B5": "black",
-  "B6": "black", "B7": "black", "B8": "black", "B8A": "black", "B9": "black", "B11": "black", "B12": "black",
-
-  // Indeks Vegetasi
-  "NDVI": "green", "GNDVI": "green", "EVI": "green", "SAVI": "green", "WAVI": "green", "RENDVI": "green", "NDAVI": "green", "FAI": "green",
-
-  // Indeks Air
-  "NDWI": "blue", "MNDWI": "blue",
-
-  // Indeks Tanah
-  "BSI": "saddlebrown", "NDBSI": "saddlebrown",
-
-  // Indeks Bangunan
-  "NDBI": "purple", "NBI": "purple", "NBAI": "purple",
-
-  // Radar
-  "VV": "gray", "VH": "gray"
+  }
 };
 
-var dataInfo = {
-    'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
-    'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
-    'optik_ags': { name: 'Citra RGB Sentinel-2 Agustus', desc: 'Citra dasar RGB Sentinel-2 bulan Agustus', img: rawa_pening_image_ags, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
-    'radar_jun': { name: 'Citra Radar Sentinel-1 Juni', desc: 'Citra radar Sentinel-1 bulan Juni (VV, VH)', img: rawa_pening_image_jun, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
-    'radar_jul': { name: 'Citra Radar Sentinel-1 Juli', desc: 'Citra radar Sentinel-1 bulan Juli (VV, VH)', img: rawa_pening_image_jul, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
-    'radar_ags': { name: 'Citra Radar Sentinel-1 Agustus', desc: 'Citra radar Sentinel-1 bulan Agustus (VV, VH)', img: rawa_pening_image_ags, vis: { bands: ['VV', 'VH', 'VV_VH_ratio'], min: -40, max: 0 } },
-    'rf_jun': { name: 'Klasifikasi RF Juni', desc: 'Hasil klasifikasi Random Forest bulan Juni', img: rf_jun, vis: { min: 0, max: 5, palette: thePalette } },
-    'rf_jul': { name: 'Klasifikasi RF Juli', desc: 'Hasil klasifikasi Random Forest bulan Juli', img: rf_jul, vis: { min: 0, max: 5, palette: thePalette } },
-    'rf_ags': { name: 'Klasifikasi RF Agustus', desc: 'Hasil klasifikasi Random Forest bulan Agustus', img: rf_ags, vis: { min: 0, max: 5, palette: thePalette } },
-    'cnn1_jun': { name: 'Klasifikasi CNN1D Juni', desc: 'Hasil klasifikasi CNN1D bulan Juni', img: cnn1_jun, vis: { min: 0, max: 5, palette: thePalette } },
-    'cnn1_jul': { name: 'Klasifikasi CNN1D Juli', desc: 'Hasil klasifikasi CNN1D bulan Juli', img: cnn1_jul, vis: { min: 0, max: 5, palette: thePalette } },
-    'cnn1_ags': { name: 'Klasifikasi CNN1D Agustus', desc: 'Hasil klasifikasi CNN1D bulan Agustus', img: cnn1_ags, vis: { min: 0, max: 5, palette: thePalette } }
-};
 
-var dataPanel = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '40vh'} });
-dataPanel.add(ui.Label({
-                  value: 'Panel Data',
-                  style: {
-                    fontWeight: 'bold',
-                    fontSize: '18px',
-                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
-                  }
-                }));
-var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
-var dot = null;
-
-// OBJEK BARU untuk menyimpan referensi ke semua widget di Panel Data
-var panelWidgets = {
-    title: null,
-    status: null, // Untuk pesan 'Memuat...', 'Di luar jangkauan', dll.
-    coords: null,
-    classificationPanel: null,
-    classificationLabel: null,
-    bandsPanel: null,
-    bandLabels: {} // {NDVI: ui.Label, B1: ui.Label, ...}
-};
-
-// VARIABEL BARU untuk menyimpan status layer aktif
-var currentLayerKey = 'none';
-
-// VARIABEL BARU untuk menyimpan titik inspeksi
-var lastInspectedPoint = null; 
-
-var sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
-var checkboxSbwp = ui.Checkbox({ label: 'Tampilkan Batas Wilayah', value: true, onChange: function(checked) { sbwpLayer.setShown(checked); } });
-
-var items = [];
-Object.keys(dataInfo).forEach(function(key) { items.push({ value: key, label: dataInfo[key].name }); });
-items.push({ value: 'none', label: 'Pilih Layer' });
-
-var select = ui.Select({ items: items, value: 'none', style: { margin: '8px 0px', stretch: 'horizontal' } });
-select.onChange(function(layer) { redraw(layer, opacitySlider.getValue()); });
-
-// =================================================================
-// SINKRONISASI SLIDER DAN TEXTBOX UNTUK OPASITAS
-// =================================================================
-var opacitySlider, opacityTextbox; // Deklarasikan di luar agar bisa diakses bersama
-
-// Buat Textbox untuk input numerik
-opacityTextbox = ui.Textbox({
-    value: '0.75',
-    placeholder: '0.0-1.0',
-    style: { width: '70px', margin: '0 0 0 8px' } // Beri lebar tetap agar rapi
-});
-
-// Buat Slider untuk kontrol visual
-opacitySlider = ui.Slider({
-    min: 0,
-    max: 1,
-    value: 0.75,
-    step: 0.01, // Step lebih kecil untuk presisi
-    style: { stretch: 'horizontal' }
-});
-
-// --- Logika Sinkronisasi ---
-
-// Saat Slider diubah:
-opacitySlider.onChange(function(value) {
-    // 1. Perbarui nilai di Textbox tanpa memicu event onChange-nya
-    opacityTextbox.setValue(value.toFixed(2), false);
-    // 2. Perbarui peta
-    redraw(select.getValue(), value);
-});
-
-// Saat Textbox diubah:
-opacityTextbox.onChange(function(text) {
-    var value = parseFloat(text);
-    if (!isNaN(value) && value >= 0 && value <= 1) {
-        // 1. Perbarui posisi Slider tanpa memicu event onChange-nya
-        opacitySlider.setValue(value, false);
-        // 2. Perbarui peta
-        redraw(select.getValue(), value);
-    }
-});
-
-// Buat panel horizontal untuk menampung keduanya
-var opacityControlPanel = ui.Panel({
-    widgets: [opacitySlider, opacityTextbox],
-    layout: ui.Panel.Layout.flow('horizontal')
-});
-
-map.centerObject(roi, 14);
-map.add(dataPanel);
-map.add(legend);
-map.layers().add(sbwpLayer);
-
-// =================================================================
-// LOGIKA PANEL DATA YANG DIOPTIMALKAN (V2 - Tampilan Dinamis)
-// =================================================================
+// =======================================================================================
+// FUNGSI INTI / KONTROLER (CONTROLLERS)
+// Bagian ini berisi semua fungsi yang menjalankan logika utama aplikasi.
+// =======================================================================================
 
 /**
- * 1. FUNGSI UNTUK MEMBANGUN LAYOUT PANEL DATA (HANYA DIJALANKAN SEKALI)
+ * Memperbarui layer yang ditampilkan di peta.
+ * Fungsi ini menangani penambahan, penghapusan, dan pembaruan opasitas layer
+ * serta memastikan titik inspeksi selalu di atas.
+ * @param {string} newLayerKey - Kunci dari layer baru yang akan ditampilkan dari DATA_LAYERS.
+ * @param {number} newOpacity - Nilai opasitas baru antara 0 dan 1.
  */
-function createDataPanelLayout() {
-    dataPanel.clear();
-
-    panelWidgets.title = ui.Label('Panel Data', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' });
-    panelWidgets.status = ui.Label('', { stretch: 'horizontal', textAlign: 'center', color: 'gray', fontWeight: 'bold' });
-    panelWidgets.coords = ui.Label('Klik pada peta untuk inspeksi', { margin: '0 0 8px 8px' });
-
-    panelWidgets.classificationLabel = ui.Label('', { fontWeight: 'bold' });
-    panelWidgets.classificationPanel = ui.Panel([panelWidgets.classificationLabel], null, { margin: '0 0 8px 8px', shown: false });
-
-    // PERUBAHAN: Panel band utama sekarang awalnya disembunyikan
-    panelWidgets.bandsPanel = ui.Panel([], ui.Panel.Layout.flow('vertical'), { margin: '0 8px', stretch: 'horizontal', shown: false });
-    
-    fullBandsToInspect.forEach(function(bandName) {
-        var color = bandColorMap[bandName] || "black";
-        var bandLabel = ui.Label(bandName + ': -', {
-            border: '1px solid ' + color,
-            color: color,
-            padding: '2px 6px',
-            margin: '2px 0',
-            borderRadius: '4px',
-            shown: false // PERUBAHAN: Setiap label band juga awalnya disembunyikan
-        });
-        panelWidgets.bandLabels[bandName] = bandLabel;
-        panelWidgets.bandsPanel.add(bandLabel);
+function updateMapLayer(newLayerKey, newOpacity) {
+  // --- 1. HANYA OPASITAS YANG BERUBAH ---
+  if (newLayerKey === app.state.currentLayerKey && newLayerKey !== 'none') {
+    app.ui.map.layers().forEach(function(l) {
+      if (l.getName() === app.state.currentLayerKey) l.setOpacity(newOpacity);
     });
+    DATA_LAYERS[newLayerKey].vis.opacity = newOpacity;
+    return;
+  }
 
-    dataPanel.add(panelWidgets.title);
-    dataPanel.add(panelWidgets.status);
-    dataPanel.add(panelWidgets.coords);
-    dataPanel.add(panelWidgets.classificationPanel);
-    dataPanel.add(panelWidgets.bandsPanel);
+  // --- 2. PERBARUI PANEL LEGEND ---
+  app.boot.populateLegendPanel();
+
+  // --- 3. HAPUS LAYER LAMA ---
+  if (app.state.currentLayerKey !== 'none') {
+    app.ui.map.layers().forEach(function(l) {
+      if (l.getName() === app.state.currentLayerKey) app.ui.map.remove(l);
+    });
+  }
+
+  // --- 4. RESET JIKA LAYER BARU 'NONE' ---
+  if (newLayerKey === 'none') {
+    if (app.state.lastInspectedPoint) {
+      inspectPoint(app.state.lastInspectedPoint.geom, app.state.lastInspectedPoint.coords);
+    }
+    app.state.currentLayerKey = 'none';
+    return;
+  }
+
+  // --- 5. TAMBAHKAN LAYER BARU ---
+  var info = DATA_LAYERS[newLayerKey];
+  info.vis.opacity = newOpacity;
+  var visImg = info.img.visualize(info.vis);
+  app.ui.map.addLayer(visImg, {}, newLayerKey, true);
+  
+  // --- 6. PERBARUI STATUS & INSPEKSI ---
+  app.state.currentLayerKey = newLayerKey;
+  if (app.state.lastInspectedPoint) {
+    inspectPoint(app.state.lastInspectedPoint.geom, app.state.lastInspectedPoint.coords);
+  }
+  
+  // --- 7. PASTIKAN TITIK INSPEKSI DI ATAS ---
+  if (app.ui.dot) {
+    app.ui.map.remove(app.ui.dot);
+    app.ui.map.add(app.ui.dot);
+  }
 }
 
 /**
- * 2. FUNGSI UNTUK MEMPERBARUI KONTEN PANEL DATA DENGAN DATA BARU
+ * Memperbarui konten di dalam Panel Data berdasarkan hasil inspeksi.
+ * @param {Object} data - Objek hasil dari reduceRegion.
+ * @param {Object} coords - Koordinat titik yang diinspeksi.
+ * @param {string} selectedLayerKey - Kunci dari layer yang sedang diinspeksi.
  */
 function updateDataPanel(data, coords, selectedLayerKey) {
-    panelWidgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
-    panelWidgets.status.setValue('');
+  app.ui.widgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
+  app.ui.widgets.status.setValue('');
 
-    // Tentukan tipe layer untuk logika tampilan band
-    var layerType;
-    if (/optik/.test(selectedLayerKey)) layerType = 'optical';
-    else if (/radar/.test(selectedLayerKey)) layerType = 'radar';
-    else layerType = 'classification';
+  var layerType = /optik/.test(selectedLayerKey) ? 'optical' : /radar/.test(selectedLayerKey) ? 'radar' : 'classification';
 
-    // Perbarui label klasifikasi
-    if (data && data.classification !== null && data.classification !== undefined) {
-        var classIndex = data.classification;
-        var classLabelText = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
-        panelWidgets.classificationLabel.setValue(classLabelText + classIndex + ' (' + classNames[classIndex] + ')');
-        panelWidgets.classificationPanel.style().set('shown', true);
+  if (data && data.classification !== null && data.classification !== undefined) {
+    var classLabelText = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
+    app.ui.widgets.classificationLabel.setValue(classLabelText + data.classification + ' (' + CONFIG.CLASS_NAMES[data.classification] + ')');
+    app.ui.widgets.classificationPanel.style().set('shown', true);
+  } else {
+    app.ui.widgets.classificationPanel.style().set('shown', false);
+  }
+
+  CONFIG.BANDS.ALL.forEach(function(bandName) {
+    var label = app.ui.widgets.bandLabels[bandName];
+    var showThisBand = (layerType === 'classification') ||
+                       (layerType === 'optical' && CONFIG.BANDS.OPTICAL.indexOf(bandName) !== -1) ||
+                       (layerType === 'radar' && CONFIG.BANDS.RADAR.indexOf(bandName) !== -1);
+
+    if (showThisBand && data && data.hasOwnProperty(bandName)) {
+      label.setValue(bandName + ': ' + (data[bandName] !== null ? data[bandName].toFixed(4) : 'No data'));
+      label.style().set('shown', true);
     } else {
-        panelWidgets.classificationPanel.style().set('shown', false);
+      label.style().set('shown', false);
     }
-
-    // PERUBAHAN: Perbarui semua label band dengan logika dinamis
-    fullBandsToInspect.forEach(function(bandName) {
-        var label = panelWidgets.bandLabels[bandName];
-        var showThisBand = false;
-
-        // Tentukan apakah band ini harus ditampilkan berdasarkan tipe layer
-        if (layerType === 'classification') {
-            showThisBand = true;
-        } else if (layerType === 'optical' && opticalBands.indexOf(bandName) !== -1) {
-            showThisBand = true;
-        } else if (layerType === 'radar' && radarBands.indexOf(bandName) !== -1) {
-            showThisBand = true;
-        }
-
-        // Jika band harus ditampilkan DAN ada datanya, perbarui dan tampilkan
-        if (showThisBand && data && data.hasOwnProperty(bandName)) {
-            var value = data[bandName];
-            label.setValue(bandName + ': ' + (value !== null ? value.toFixed(4) : 'No data'));
-            label.style().set('shown', true);
-        } else {
-            label.style().set('shown', false); // Sembunyikan jika tidak relevan
-        }
-    });
+  });
 }
 
 /**
- * 3. FUNGSI INSPEKSI UTAMA (YANG MENGATUR SEMUANYA)
+ * Menjalankan proses inspeksi pada sebuah titik di peta.
+ * @param {ee.Geometry.Point} point - Objek geometri titik.
+ * @param {Object} coords - Objek koordinat {lon, lat}.
  */
 function inspectPoint(point, coords) {
-    if (!panelWidgets.title) {
-        createDataPanelLayout();
+  if (!app.ui.widgets.title) app.boot.populateDataPanel();
+  
+  app.ui.widgets.status.setValue('Memuat data piksel...');
+  app.ui.widgets.coords.setValue('');
+
+  var selectedLayerKey = app.state.currentLayerKey;
+  if (selectedLayerKey === 'none') {
+    app.ui.widgets.status.setValue('⚠️ Pilih layer terlebih dahulu untuk inspeksi.');
+    app.ui.widgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
+    app.ui.widgets.bandsPanel.style().set('shown', false);
+    app.ui.widgets.classificationPanel.style().set('shown', false);
+    return;
+  }
+
+  rawa_pening_shp.filterBounds(point).size().evaluate(function(size) {
+    if (size === 0) {
+      app.ui.widgets.status.setValue('⚠️ Objek berada di luar jangkauan penelitian.');
+      app.ui.widgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
+      app.ui.widgets.bandsPanel.style().set('shown', false);
+      app.ui.widgets.classificationPanel.style().set('shown', false);
+      return;
+    }
+
+    app.ui.widgets.bandsPanel.style().set('shown', true);
+
+    var imageToInspect;
+    if (/optik|radar/.test(selectedLayerKey)) {
+      imageToInspect = DATA_LAYERS[selectedLayerKey].img;
+    } else {
+      var month = selectedLayerKey.split('_')[1];
+      var baseImage = (month === 'jun') ? rawa_pening_image_jun : (month === 'jul') ? rawa_pening_image_jul : rawa_pening_image_ags;
+      imageToInspect = baseImage.addBands(DATA_LAYERS[selectedLayerKey].img.rename('classification'));
     }
     
-    panelWidgets.status.setValue('Memuat data piksel...');
-    panelWidgets.coords.setValue(''); // Kosongkan koordinat saat loading
+    var desiredBands = ee.List(CONFIG.BANDS.ALL).add('classification');
+    var availableBands = imageToInspect.bandNames();
+    var bandsToSelect = desiredBands.filter(ee.Filter.inList('item', availableBands));
 
-    var selectedLayerKey = select.getValue();
-    if (selectedLayerKey === 'none') {
-        panelWidgets.status.setValue('⚠️ Pilih layer terlebih dahulu untuk inspeksi.');
-        panelWidgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
-        panelWidgets.bandsPanel.style().set('shown', false); // Sembunyikan panel band
-        panelWidgets.classificationPanel.style().set('shown', false); // Sembunyikan panel klasifikasi
-        return;
-    }
-
-    var isInShp = rawa_pening_shp.filterBounds(point).size();
-    isInShp.evaluate(function(size) {
-        if (size === 0) {
-            panelWidgets.status.setValue('⚠️ Objek berada di luar jangkauan penelitian.');
-            panelWidgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
-            panelWidgets.bandsPanel.style().set('shown', false); // Sembunyikan panel band
-            panelWidgets.classificationPanel.style().set('shown', false); // Sembunyikan panel klasifikasi
-            return;
-        }
-
-        // Jika valid, tampilkan panel band utama sebelum diisi
-        panelWidgets.bandsPanel.style().set('shown', true);
-
-        var imageToInspect;
-        var desiredBands = ee.List(fullBandsToInspect).add('classification');
-        var availableBands = dataInfo[selectedLayerKey].img.bandNames();
-
-        if (/optik|radar/.test(selectedLayerKey)) {
-            imageToInspect = dataInfo[selectedLayerKey].img;
-        } else {
-            var month = selectedLayerKey.split('_')[1];
-            var baseImage;
-            if (month === 'jun') baseImage = rawa_pening_image_jun;
-            else if (month === 'jul') baseImage = rawa_pening_image_jul;
-            else baseImage = rawa_pening_image_ags;
-            
-            var classificationImage = dataInfo[selectedLayerKey].img;
-            imageToInspect = baseImage.addBands(classificationImage.rename('classification'));
-        }
-        
-        availableBands = imageToInspect.bandNames();
-        var bandsToSelect = desiredBands.filter(ee.Filter.inList('item', availableBands));
-
-        var data = imageToInspect.select(bandsToSelect).reduceRegion({
-            reducer: ee.Reducer.first(),
-            geometry: point,
-            scale: 10
-        });
-
-        data.evaluate(function(result) {
-            updateDataPanel(result, coords, selectedLayerKey);
-        });
+    imageToInspect.select(bandsToSelect).reduceRegion({
+      reducer: ee.Reducer.first(),
+      geometry: point,
+      scale: 10
+    }).evaluate(function(result) {
+      updateDataPanel(result, coords, selectedLayerKey);
     });
+  });
 }
 
-// MODIFIKASI: map.onClick sekarang lebih sederhana
-map.onClick(function(coords) {
-    if (dot) map.remove(dot);
-    var point = ee.Geometry.Point(coords.lon, coords.lat);
-    dot = ui.Map.Layer(point, { color: 'red' }, 'Titik Inspeksi');
-    map.layers().add(dot);
+/**
+ * Menangani event klik pada peta.
+ * @param {Object} coords - Objek koordinat yang dikembalikan oleh event klik.
+ */
+function handleMapClick(coords) {
+  if (app.ui.dot) app.ui.map.remove(app.ui.dot);
+  var point = ee.Geometry.Point(coords.lon, coords.lat);
+  app.ui.dot = ui.Map.Layer(point, { color: 'red' }, 'Titik Inspeksi');
+  app.ui.map.add(app.ui.dot);
 
-    // Simpan titik dan koordinat yang baru diklik
-    lastInspectedPoint = {geom: point, coords: coords};
+  app.state.lastInspectedPoint = { geom: point, coords: coords };
+  inspectPoint(point, coords);
+}
+
+
+// =======================================================================================
+// INISIALISASI APLIKASI (APP INITIALIZATION)
+// Bagian ini membangun UI awal, mengatur event listener, dan memulai aplikasi.
+// =======================================================================================
+
+var app.boot = {
+  /**
+   * Fungsi utama untuk menjalankan aplikasi.
+   */
+  run: function() {
+    this.createAndArrangePanels();
+    this.populateIntroPanel();
+    this.populateLegendPanel();
+    app.ui.map.onClick(handleMapClick);
+    app.ui.map.style().set('cursor', 'crosshair');
+    updateMapLayer('none', 0.75);
+  },
+
+  /**
+   * Membuat dan mengatur panel-panel utama UI.
+   */
+  createAndArrangePanels: function() {
+    app.ui.map = ui.Map();
+    ui.root.clear();
+    ui.root.add(app.ui.map);
+
+    app.ui.panels.intro = ui.Panel({ style: { width: '30%', border: '5px solid darkgray', maxHeight: '90vh' } });
+    app.ui.panels.legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
+    app.ui.panels.data = ui.Panel({ style: { position: 'bottom-right', width: '25%', padding: '8px', maxHeight: '40vh'} });
+
+    ui.root.insert(0, app.ui.panels.intro);
+    app.ui.map.add(app.ui.panels.legend);
+    app.ui.map.add(app.ui.panels.data);
     
-    // Panggil fungsi inspeksi
-    inspectPoint(point, coords);
-});
+    app.ui.map.setOptions('SATELLITE');
+    app.ui.map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
+    app.ui.map.centerObject(roi, 14);
+  },
 
-redraw('none', 0.75);
-map.setOptions('SATELLITE');
-map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
-map.style().set('cursor', 'crosshair');
+  /**
+   * Mengisi konten untuk panel intro.
+   */
+  populateIntroPanel: function() {
+    var intro = [
+      ui.Label('Sebaran Eceng Gondok', { fontSize: '1.4vw', fontWeight: 'bold', textAlign: 'center', stretch: 'horizontal' }),
+      ui.Label('Danau Rawa Pening 2024', { fontSize: '1.4vw', fontWeight: 'bold', textAlign: 'center', stretch: 'horizontal' }),
+      ui.Label('Aplikasi ini memvisualisasikan hasil klasifikasi area Danau Rawa Pening. ' +
+               'Klasifikasi dilakukan menggunakan metode machine learning Random Forest (RF) dan deep learning CNN1D. ' +
+               'Data citra satelit Sentinel-1 dan Sentinel-2 diambil melalui platform GEE dan diolah dengan platform Google Colab. ' +
+               'Hasil klasifikasi mencakup enam kelas:', { fontSize: '0.9vw', fontWeight: 'normal' }),
+      ui.Label('0. Eceng Gondok', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0 0 0 8px' }),
+      ui.Label('1. Keramba Jaring Apung', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0 0 0 8px' }),
+      ui.Label('2. Air', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0 0 0 8px' }),
+      ui.Label('3. Vegetasi lain', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0 0 0 8px' }),
+      ui.Label('4. Tanah', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0 0 0 8px' }),
+      ui.Label('5. Lain-lain', { fontSize: '0.9vw', fontWeight: 'normal', margin: '0 0 0 8px' }),
+      ui.Label('Klik pada titik untuk melihat klasifikasi, nilai indeks spektral, dan detail lain dari piksel terpilih.', { fontSize: '0.9vw', fontWeight: 'normal' }),
+      ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', { fontSize: '0.9vw', fontWeight: 'normal' }),
+      ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', { fontSize: '0.9vw', fontWeight: 'normal' }),
+      ui.Label('Data Tambahan:', { color: 'black', fontWeight: 'bold', textAlign: 'left', margin: '12px 0 0 0' }),
+      ui.Label('📁 Aset Balai Besar Wilayah Sungai Pemali Juana', { color: 'blue', fontWeight: 'bold' }, CONFIG.URLS.ASSET),
+      ui.Label('💻 Kode Python untuk Pengolahan', { color: 'blue', fontWeight: 'bold', padding: '0 0 4px 0' }, CONFIG.URLS.CODE),
+      ui.Label('📝 Paper', { color: 'blue', fontWeight: 'bold', padding: '0 0 4px 0' }, CONFIG.URLS.PAPER),
+      ui.Label('Created by:', { color: 'black', fontWeight: 'bold', textAlign: 'center', margin: '12px 0 0 0' }),
+      ui.Label('222111840@stis.ac.id', { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, CONFIG.URLS.AUTHOR)
+    ];
+    intro.forEach(function(widget) { app.ui.panels.intro.add(widget); });
+  },
+
+  /**
+   * Mengisi konten untuk panel legenda, termasuk semua kontrol.
+   */
+  populateLegendPanel: function() {
+    app.ui.panels.legend.clear();
+    app.ui.panels.legend.add(ui.Label('Panel Legenda', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' }));
+
+    var sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
+    var checkboxSbwp = ui.Checkbox({ label: 'Tampilkan Batas Wilayah', value: true, onChange: function(checked) { sbwpLayer.setShown(checked); } });
+    app.ui.panels.legend.add(checkboxSbwp);
+
+    var items = Object.keys(DATA_LAYERS).map(function(key) {
+      return { label: DATA_LAYERS[key].name, value: key };
+    });
+    items.push({ label: 'Pilih Layer', value: 'none' });
+    var select = ui.Select({ items: items, value: app.state.currentLayerKey, style: { margin: '8px 0px', stretch: 'horizontal' },
+      onChange: function(layerKey) { updateMapLayer(layerKey, opacitySlider.getValue()); }
+    });
+    
+    var opacityTextbox = ui.Textbox({ value: '0.75', placeholder: '0.0-1.0', style: { width: '70px', margin: '0 0 0 8px' }});
+    var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.75, step: 0.01, style: { stretch: 'horizontal' }});
+    
+    opacitySlider.onChange(function(value) {
+      opacityTextbox.setValue(value.toFixed(2), false);
+      updateMapLayer(select.getValue(), value);
+    });
+    opacityTextbox.onChange(function(text) {
+      var value = parseFloat(text);
+      if (!isNaN(value) && value >= 0 && value <= 1) {
+        opacitySlider.setValue(value, false);
+        updateMapLayer(select.getValue(), value);
+      }
+    });
+    
+    var opacityControlPanel = ui.Panel([opacitySlider, opacityTextbox], ui.Panel.Layout.flow('horizontal'));
+
+    app.ui.panels.legend.add(ui.Label('Pilih Layer Tampilan:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(select);
+    app.ui.panels.legend.add(ui.Label('Atur Opasitas:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(opacityControlPanel);
+    
+    if (app.state.currentLayerKey !== 'none' && !/optik|radar/.test(app.state.currentLayerKey)) {
+      legend.add(ui.Label(DATA_LAYERS[app.state.currentLayerKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
+      CONFIG.CLASS_NAMES.forEach(function(label, index) {
+        var colorBox = ui.Label({ style: { backgroundColor: CONFIG.PALETTE[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
+        var textLabel = ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px', padding: '0 4px' });
+        app.ui.panels.legend.add(ui.Panel([colorBox, textLabel], ui.Panel.Layout.flow('horizontal'), { margin: '4px 0px' }));
+      });
+    } else if (app.state.currentLayerKey !== 'none') {
+      app.ui.panels.legend.add(ui.Label(DATA_LAYERS[app.state.currentLayerKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
+    }
+  },
+  
+  /**
+   * Mengisi layout awal untuk panel data.
+   */
+  populateDataPanel: function() {
+    app.ui.panels.data.clear();
+    app.ui.widgets.title = ui.Label('Panel Data', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' });
+    app.ui.widgets.status = ui.Label('', { stretch: 'horizontal', textAlign: 'center', color: 'gray', fontWeight: 'bold' });
+    app.ui.widgets.coords = ui.Label('Klik pada peta untuk inspeksi', { margin: '0 0 8px 8px' });
+    app.ui.widgets.classificationLabel = ui.Label('', { fontWeight: 'bold' });
+    app.ui.widgets.classificationPanel = ui.Panel([app.ui.widgets.classificationLabel], null, { margin: '0 0 8px 8px', shown: false });
+    app.ui.widgets.bandsPanel = ui.Panel([], ui.Panel.Layout.flow('vertical'), { margin: '0 8px', stretch: 'horizontal', shown: false });
+    
+    CONFIG.BANDS.ALL.forEach(function(bandName) {
+      var color = CONFIG.BAND_COLORS[bandName] || "black";
+      var bandLabel = ui.Label(bandName + ': -', { border: '1px solid ' + color, color: color, padding: '2px 6px', margin: '2px 0', borderRadius: '4px', shown: false });
+      app.ui.widgets.bandLabels[bandName] = bandLabel;
+      app.ui.widgets.bandsPanel.add(bandLabel);
+    });
+
+    app.ui.panels.data.add(app.ui.widgets.title);
+    app.ui.panels.data.add(app.ui.widgets.status);
+    app.ui.panels.data.add(app.ui.widgets.coords);
+    app.ui.panels.data.add(app.ui.widgets.classificationPanel);
+    app.ui.panels.data.add(app.ui.widgets.bandsPanel);
+  }
+};
+
+// Jalankan aplikasi
+app.boot.run();
