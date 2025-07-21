@@ -294,6 +294,9 @@ app.boot = {
     app.ui.map.add(app.ui.panels.legend);
     app.ui.map.add(app.ui.panels.data);
     
+    app.ui.sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
+    app.ui.map.add(app.ui.sbwpLayer);
+  
     app.ui.map.setOptions('SATELLITE');
     app.ui.map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
     app.ui.map.centerObject(roi, 14);
