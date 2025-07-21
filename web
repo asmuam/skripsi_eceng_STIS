@@ -47,21 +47,6 @@ var CONFIG = {
   }
 };
 
-// Ganti dengan aset gambar Anda
-var rawa_pening_image_jun = ee.Image('projects/ee-222111840/assets/RawaPening2024Jun');
-var rawa_pening_image_jul = ee.Image('projects/ee-222111840/assets/RawaPening2024Jul');
-var rawa_pening_image_ags = ee.Image('projects/ee-222111840/assets/RawaPening2024Ags');
-var rf_jun = ee.Image('projects/ee-222111840/assets/JuniRF');
-var rf_jul = ee.Image('projects/ee-222111840/assets/JuliRF');
-var rf_ags = ee.Image('projects/ee-222111840/assets/AgustusRF');
-var cnn1_jun = ee.Image('projects/ee-222111840/assets/JuniCNN1');
-var cnn1_jul = ee.Image('projects/ee-222111840/assets/JuliCNN1');
-var cnn1_ags = ee.Image('projects/ee-222111840/assets/AgustusCNN1');
-var sbwp = ee.FeatureCollection('projects/ee-222111840/assets/SBWP');
-var roi = ee.Geometry.Point([110.45, -7.28]);
-var rawa_pening_shp = ee.FeatureCollection('projects/ee-222111840/assets/RawapeningSHP');
-
-
 var DATA_LAYERS = {
   'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
   'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
