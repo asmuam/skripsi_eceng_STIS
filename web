@@ -13,7 +13,6 @@ var roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
     rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     breaksTable = ee.FeatureCollection("projects/ee-222111840/assets/jenks_breaks_interval");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
 // =======================================================================================
 // KONFIGURASI & ASET (CONFIG & ASSETS)
 // Bagian ini berisi semua data statis dan konfigurasi aplikasi.
@@ -48,6 +47,21 @@ var CONFIG = {
   }
 };
 
+// Ganti dengan aset gambar Anda
+var rawa_pening_image_jun = ee.Image('projects/ee-222111840/assets/RawaPening2024Jun');
+var rawa_pening_image_jul = ee.Image('projects/ee-222111840/assets/RawaPening2024Jul');
+var rawa_pening_image_ags = ee.Image('projects/ee-222111840/assets/RawaPening2024Ags');
+var rf_jun = ee.Image('projects/ee-222111840/assets/JuniRF');
+var rf_jul = ee.Image('projects/ee-222111840/assets/JuliRF');
+var rf_ags = ee.Image('projects/ee-222111840/assets/AgustusRF');
+var cnn1_jun = ee.Image('projects/ee-222111840/assets/JuniCNN1');
+var cnn1_jul = ee.Image('projects/ee-222111840/assets/JuliCNN1');
+var cnn1_ags = ee.Image('projects/ee-222111840/assets/AgustusCNN1');
+var sbwp = ee.FeatureCollection('projects/ee-222111840/assets/SBWP');
+var roi = ee.Geometry.Point([110.45, -7.28]);
+var rawa_pening_shp = ee.FeatureCollection('projects/ee-222111840/assets/RawapeningSHP');
+
+
 var DATA_LAYERS = {
   'optik_jun': { name: 'Citra RGB Sentinel-2 Juni', desc: 'Citra dasar RGB Sentinel-2 bulan Juni', img: rawa_pening_image_jun, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
   'optik_jul': { name: 'Citra RGB Sentinel-2 Juli', desc: 'Citra dasar RGB Sentinel-2 bulan Juli', img: rawa_pening_image_jul, vis: { bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3 } },
@@ -81,8 +95,8 @@ var app = {
       legend: null,
       data: null,
     },
-    sbwpLayer: null,
     dot: null,
+    sbwpLayer: null,
     widgets: {
       title: null,
       status: null,
@@ -103,13 +117,10 @@ var app = {
 
 /**
  * Memperbarui layer yang ditampilkan di peta.
- * Fungsi ini menangani penambahan, penghapusan, dan pembaruan opasitas layer
- * serta memastikan titik inspeksi selalu di atas.
- * @param {string} newLayerKey - Kunci dari layer baru yang akan ditampilkan dari DATA_LAYERS.
+ * @param {string} newLayerKey - Kunci dari layer baru yang akan ditampilkan.
  * @param {number} newOpacity - Nilai opasitas baru antara 0 dan 1.
  */
 function updateMapLayer(newLayerKey, newOpacity) {
-  // --- 1. HANYA OPASITAS YANG BERUBAH ---
   if (newLayerKey === app.state.currentLayerKey && newLayerKey !== 'none') {
     app.ui.map.layers().forEach(function(l) {
       if (l.getName() === app.state.currentLayerKey) l.setOpacity(newOpacity);
@@ -118,37 +129,28 @@ function updateMapLayer(newLayerKey, newOpacity) {
     return;
   }
 
-  // ======================= PERBAIKAN UTAMA DI SINI =======================
-  // Hapus layer lama dari peta SEBELUM mengubah state
   if (app.state.currentLayerKey !== 'none') {
     app.ui.map.layers().forEach(function(l) {
       if (l.getName() === app.state.currentLayerKey) app.ui.map.remove(l);
     });
   }
   
-  // Perbarui state APLIKASI terlebih dahulu. Ini adalah langkah kunci.
   app.state.currentLayerKey = newLayerKey;
-  // =====================================================================
-
-  // Sekarang, gambar ulang panel legenda. Karena state sudah baru, dropdown akan benar.
+  
   app.boot.populateLegendPanel();
 
-  // --- 4. RESET ATAU TAMBAHKAN LAYER BARU ---
   if (newLayerKey === 'none') {
-    // Jika layer baru adalah 'none', cukup panggil ulang inspeksi untuk membersihkan panel data.
     if (app.state.lastInspectedPoint) {
       inspectPoint(app.state.lastInspectedPoint.geom, app.state.lastInspectedPoint.coords);
     }
-    return; // Selesai
+    return;
   }
 
-  // Jika ada layer baru, tambahkan ke peta.
   var info = DATA_LAYERS[newLayerKey];
   info.vis.opacity = newOpacity;
   var visImg = info.img.visualize(info.vis);
   app.ui.map.addLayer(visImg, {}, newLayerKey, true);
   
-  // --- 5. PERBARUI INSPEKSI & TITIK ---
   if (app.state.lastInspectedPoint) {
     inspectPoint(app.state.lastInspectedPoint.geom, app.state.lastInspectedPoint.coords);
   }
@@ -299,7 +301,7 @@ app.boot = {
     
     app.ui.sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
     app.ui.map.add(app.ui.sbwpLayer);
-  
+    
     app.ui.map.setOptions('SATELLITE');
     app.ui.map.setControlVisibility({ all: false, layerList: false, zoomControl: true, scaleControl: true, mapTypeControl: true, fullscreenControl: true });
     app.ui.map.centerObject(roi, 14);
@@ -342,7 +344,6 @@ app.boot = {
     app.ui.panels.legend.clear();
     app.ui.panels.legend.add(ui.Label('Panel Legenda', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' }));
 
-    // Buat checkbox yang mengontrol layer SBWP yang sudah ada di app.ui
     var checkboxSbwp = ui.Checkbox({
       label: 'Tampilkan Batas Wilayah',
       value: app.ui.sbwpLayer.getShown(),
@@ -351,17 +352,28 @@ app.boot = {
       }
     });
     app.ui.panels.legend.add(checkboxSbwp);
-  
+
     var items = Object.keys(DATA_LAYERS).map(function(key) {
       return { label: DATA_LAYERS[key].name, value: key };
     });
     items.push({ label: 'Pilih Layer', value: 'none' });
-    var select = ui.Select({ items: items, value:  value: app.state.currentLayerKey, style: { margin: '8px 0px', stretch: 'horizontal' },
-      onChange: function(layerKey) { updateMapLayer(layerKey, opacitySlider.getValue()); }
+    
+    var opacityValue = 0.75;
+    if(DATA_LAYERS[app.state.currentLayerKey]) {
+      opacityValue = DATA_LAYERS[app.state.currentLayerKey].vis.opacity;
+    }
+
+    var select = ui.Select({
+      items: items,
+      value: app.state.currentLayerKey,
+      style: { margin: '8px 0px', stretch: 'horizontal' },
+      onChange: function(layerKey) {
+        updateMapLayer(layerKey, opacitySlider.getValue());
+      }
     });
     
-    var opacityTextbox = ui.Textbox({ value: '0.75', placeholder: '0.0-1.0', style: { width: '70px', margin: '0 0 0 8px' }});
-    var opacitySlider = ui.Slider({ min: 0, max: 1, value: 0.75, step: 0.01, style: { stretch: 'horizontal' }});
+    var opacityTextbox = ui.Textbox({ value: opacityValue.toFixed(2), placeholder: '0.0-1.0', style: { width: '70px', margin: '0 0 0 8px' }});
+    var opacitySlider = ui.Slider({ min: 0, max: 1, value: opacityValue, step: 0.01, style: { stretch: 'horizontal' }});
     
     opacitySlider.onChange(function(value) {
       opacityTextbox.setValue(value.toFixed(2), false);
@@ -380,15 +392,17 @@ app.boot = {
     app.ui.panels.legend.add(ui.Label('Pilih Layer Tampilan:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(select);
     app.ui.panels.legend.add(ui.Label('Atur Opasitas:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(opacityControlPanel);
     
-    if (app.state.currentLayerKey !== 'none' && !/optik|radar/.test(app.state.currentLayerKey)) {
-       app.ui.panels.legend.add(ui.Label(DATA_LAYERS[app.state.currentLayerKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
-      CONFIG.CLASS_NAMES.forEach(function(label, index) {
-        var colorBox = ui.Label({ style: { backgroundColor: CONFIG.PALETTE[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
-        var textLabel = ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px', padding: '0 4px' });
-        app.ui.panels.legend.add(ui.Panel([colorBox, textLabel], ui.Panel.Layout.flow('horizontal'), { margin: '4px 0px' }));
-      });
-    } else if (app.state.currentLayerKey !== 'none') {
-      app.ui.panels.legend.add(ui.Label(DATA_LAYERS[app.state.currentLayerKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
+    var currentKey = app.state.currentLayerKey;
+    if (currentKey !== 'none') {
+      app.ui.panels.legend.add(ui.Label(DATA_LAYERS[currentKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
+      
+      if (!/optik|radar/.test(currentKey)) {
+        CONFIG.CLASS_NAMES.forEach(function(label, index) {
+          var colorBox = ui.Label({ style: { backgroundColor: CONFIG.PALETTE[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
+          var textLabel = ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } );
+          app.ui.panels.legend.add(ui.Panel([colorBox, textLabel], ui.Panel.Layout.flow('horizontal'), { margin: '4px 0px' }));
+        });
+      }
     }
   },
   
