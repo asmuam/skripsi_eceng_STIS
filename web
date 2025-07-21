@@ -264,7 +264,7 @@ function handleMapClick(coords) {
 // Bagian ini membangun UI awal, mengatur event listener, dan memulai aplikasi.
 // =======================================================================================
 
-var app.boot = {
+app.boot = {
   /**
    * Fungsi utama untuk menjalankan aplikasi.
    */
