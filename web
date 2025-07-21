@@ -32,6 +32,9 @@ var thePalette = [
 ];
 
 var fullBandsToInspect = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI","VV","VH"];
+// VARIABEL BARU: Grup band untuk tampilan dinamis di panel data
+var opticalBands = ["B1","B2","B3","B4","B5","B6","B7","B8","B8A","B9","B11","B12","NDVI","GNDVI","EVI","SAVI","WAVI","RENDVI","NDAVI","FAI","NDWI","MNDWI","NDBI","NBI","NBAI","BSI","NDBSI"];
+var radarBands = ["VV","VH"];
 
 function panelcreate() {
     var intro = ui.Panel([
@@ -321,30 +324,25 @@ map.add(legend);
 map.layers().add(sbwpLayer);
 
 // =================================================================
-// LOGIKA PANEL DATA YANG DIOPTIMALKAN (TANPA BLINK)
+// LOGIKA PANEL DATA YANG DIOPTIMALKAN (V2 - Tampilan Dinamis)
 // =================================================================
 
 /**
  * 1. FUNGSI UNTUK MEMBANGUN LAYOUT PANEL DATA (HANYA DIJALANKAN SEKALI)
  */
 function createDataPanelLayout() {
-    dataPanel.clear(); // Hanya clear sekali saat membangun layout
+    dataPanel.clear();
 
-    // Buat semua widget dengan teks placeholder dan simpan referensinya
     panelWidgets.title = ui.Label('Panel Data', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' });
-    panelWidgets.status = ui.Label('', { stretch: 'horizontal', textAlign: 'center', color: 'gray' });
+    panelWidgets.status = ui.Label('', { stretch: 'horizontal', textAlign: 'center', color: 'gray', fontWeight: 'bold' });
     panelWidgets.coords = ui.Label('Klik pada peta untuk inspeksi', { margin: '0 0 8px 8px' });
 
-    // Panel untuk klasifikasi (bisa disembunyikan/ditampilkan)
     panelWidgets.classificationLabel = ui.Label('', { fontWeight: 'bold' });
-    panelWidgets.classificationPanel = ui.Panel(
-        [panelWidgets.classificationLabel],
-        null,
-        { margin: '0 0 8px 0', shown: false } // Awalnya disembunyikan
-    );
+    panelWidgets.classificationPanel = ui.Panel([panelWidgets.classificationLabel], null, { margin: '0 0 8px 8px', shown: false });
 
-    // Panel untuk semua band/indeks
-    panelWidgets.bandsPanel = ui.Panel(null, ui.Panel.Layout.flow('vertical'), { margin: '0 8px', stretch: 'horizontal' });
+    // PERUBAHAN: Panel band utama sekarang awalnya disembunyikan
+    panelWidgets.bandsPanel = ui.Panel([], ui.Panel.Layout.flow('vertical'), { margin: '0 8px', stretch: 'horizontal', shown: false });
+    
     fullBandsToInspect.forEach(function(bandName) {
         var color = bandColorMap[bandName] || "black";
         var bandLabel = ui.Label(bandName + ': -', {
@@ -352,13 +350,13 @@ function createDataPanelLayout() {
             color: color,
             padding: '2px 6px',
             margin: '2px 0',
-            borderRadius: '4px'
+            borderRadius: '4px',
+            shown: false // PERUBAHAN: Setiap label band juga awalnya disembunyikan
         });
-        panelWidgets.bandLabels[bandName] = bandLabel; // Simpan referensi
+        panelWidgets.bandLabels[bandName] = bandLabel;
         panelWidgets.bandsPanel.add(bandLabel);
     });
 
-    // Tambahkan semua komponen utama ke dataPanel
     dataPanel.add(panelWidgets.title);
     dataPanel.add(panelWidgets.status);
     dataPanel.add(panelWidgets.coords);
@@ -370,30 +368,46 @@ function createDataPanelLayout() {
  * 2. FUNGSI UNTUK MEMPERBARUI KONTEN PANEL DATA DENGAN DATA BARU
  */
 function updateDataPanel(data, coords, selectedLayerKey) {
-    // Perbarui koordinat
     panelWidgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
-    panelWidgets.status.setValue(''); // Hapus status 'Memuat...'
+    panelWidgets.status.setValue('');
+
+    // Tentukan tipe layer untuk logika tampilan band
+    var layerType;
+    if (/optik/.test(selectedLayerKey)) layerType = 'optical';
+    else if (/radar/.test(selectedLayerKey)) layerType = 'radar';
+    else layerType = 'classification';
 
     // Perbarui label klasifikasi
     if (data && data.classification !== null && data.classification !== undefined) {
         var classIndex = data.classification;
         var classLabelText = /rf/.test(selectedLayerKey) ? 'Klasifikasi RF: ' : 'Klasifikasi CNN: ';
         panelWidgets.classificationLabel.setValue(classLabelText + classIndex + ' (' + classNames[classIndex] + ')');
-        panelWidgets.classificationPanel.style().set('shown', true); // Tampilkan panel
+        panelWidgets.classificationPanel.style().set('shown', true);
     } else {
-        panelWidgets.classificationPanel.style().set('shown', false); // Sembunyikan panel
+        panelWidgets.classificationPanel.style().set('shown', false);
     }
 
-    // Perbarui semua label band
+    // PERUBAHAN: Perbarui semua label band dengan logika dinamis
     fullBandsToInspect.forEach(function(bandName) {
         var label = panelWidgets.bandLabels[bandName];
-        if (data && data.hasOwnProperty(bandName)) {
+        var showThisBand = false;
+
+        // Tentukan apakah band ini harus ditampilkan berdasarkan tipe layer
+        if (layerType === 'classification') {
+            showThisBand = true;
+        } else if (layerType === 'optical' && opticalBands.indexOf(bandName) !== -1) {
+            showThisBand = true;
+        } else if (layerType === 'radar' && radarBands.indexOf(bandName) !== -1) {
+            showThisBand = true;
+        }
+
+        // Jika band harus ditampilkan DAN ada datanya, perbarui dan tampilkan
+        if (showThisBand && data && data.hasOwnProperty(bandName)) {
             var value = data[bandName];
             label.setValue(bandName + ': ' + (value !== null ? value.toFixed(4) : 'No data'));
             label.style().set('shown', true);
         } else {
-            // Sembunyikan label jika band tidak ada di data (misal pindah ke layer radar)
-            label.style().set('shown', false);
+            label.style().set('shown', false); // Sembunyikan jika tidak relevan
         }
     });
 }
@@ -402,33 +416,42 @@ function updateDataPanel(data, coords, selectedLayerKey) {
  * 3. FUNGSI INSPEKSI UTAMA (YANG MENGATUR SEMUANYA)
  */
 function inspectPoint(point, coords) {
-    // Jika panel belum pernah dibuat, bangun layoutnya terlebih dahulu.
     if (!panelWidgets.title) {
         createDataPanelLayout();
     }
     
-    panelWidgets.status.setValue('Memuat data piksel...'); // Tampilkan status loading
+    panelWidgets.status.setValue('Memuat data piksel...');
+    panelWidgets.coords.setValue(''); // Kosongkan koordinat saat loading
 
     var selectedLayerKey = select.getValue();
     if (selectedLayerKey === 'none') {
-        panelWidgets.status.setValue('Pilih layer terlebih dahulu untuk inspeksi.');
+        panelWidgets.status.setValue('⚠️ Pilih layer terlebih dahulu untuk inspeksi.');
+        panelWidgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
+        panelWidgets.bandsPanel.style().set('shown', false); // Sembunyikan panel band
+        panelWidgets.classificationPanel.style().set('shown', false); // Sembunyikan panel klasifikasi
         return;
     }
 
     var isInShp = rawa_pening_shp.filterBounds(point).size();
     isInShp.evaluate(function(size) {
         if (size === 0) {
-            panelWidgets.status.setValue('Objek berada di luar jangkauan penelitian.');
+            panelWidgets.status.setValue('⚠️ Objek berada di luar jangkauan penelitian.');
             panelWidgets.coords.setValue('Lat: ' + coords.lat.toFixed(5) + ' | Lon: ' + coords.lon.toFixed(5));
+            panelWidgets.bandsPanel.style().set('shown', false); // Sembunyikan panel band
+            panelWidgets.classificationPanel.style().set('shown', false); // Sembunyikan panel klasifikasi
             return;
         }
 
-        var imageToInspect;
+        // Jika valid, tampilkan panel band utama sebelum diisi
+        panelWidgets.bandsPanel.style().set('shown', true);
 
-        // Tentukan gambar mana yang akan diinspeksi
+        var imageToInspect;
+        var desiredBands = ee.List(fullBandsToInspect).add('classification');
+        var availableBands = dataInfo[selectedLayerKey].img.bandNames();
+
         if (/optik|radar/.test(selectedLayerKey)) {
             imageToInspect = dataInfo[selectedLayerKey].img;
-        } else { // Untuk layer klasifikasi
+        } else {
             var month = selectedLayerKey.split('_')[1];
             var baseImage;
             if (month === 'jun') baseImage = rawa_pening_image_jun;
@@ -439,27 +462,15 @@ function inspectPoint(point, coords) {
             imageToInspect = baseImage.addBands(classificationImage.rename('classification'));
         }
         
-        // ======================= PERBAIKAN UTAMA DI SINI =======================
-        // Logika ini secara dinamis hanya akan memilih band yang ada di citra.
-        
-        // 1. Daftar semua band yang kita inginkan.
-        var desiredBands = ee.List(fullBandsToInspect).add('classification');
-        
-        // 2. Daftar band yang benar-benar tersedia di citra yang diinspeksi.
-        var availableBands = imageToInspect.bandNames();
-        
-        // 3. Buat daftar seleksi HANYA dari band yang ada di kedua daftar (irisan).
+        availableBands = imageToInspect.bandNames();
         var bandsToSelect = desiredBands.filter(ee.Filter.inList('item', availableBands));
-        // ======================================================================
 
-        // Ambil data dari titik dengan daftar band yang sudah valid
         var data = imageToInspect.select(bandsToSelect).reduceRegion({
             reducer: ee.Reducer.first(),
             geometry: point,
             scale: 10
         });
 
-        // Setelah data diterima, panggil fungsi update
         data.evaluate(function(result) {
             updateDataPanel(result, coords, selectedLayerKey);
         });
