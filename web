@@ -87,6 +87,7 @@ function referencecreate() {
     introPanel.add(referenceZero).add(referenceOne).add(referenceTwo).add(referenceFour).add(referenceThree).add(author);
 }
 
+// MODIFIKASI: fungsi redraw sekarang bisa memicu ulang inspeksi
 function redraw(layer, opacity) {
     var info = dataInfo[layer];
     map.layers().forEach(function(l) {
@@ -100,32 +101,42 @@ function redraw(layer, opacity) {
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
-                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                    margin: '8px 5px',
+                    textAlign: 'center',
+                    stretch: 'horizontal'
                   }
                 }));
     legend.add(checkboxSbwp);
     legend.add(ui.Label({ value: 'Pilih Layer Tampilan:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(select);
     legend.add(ui.Label({ value: 'Atur Opasitas:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(opacitySlider);
 
-    if (layer === 'none') return;
+    if (layer === 'none') {
+        // TAMBAHAN: Jika ada titik inspeksi, perbarui panel datanya
+        if (lastInspectedPoint) {
+            inspectPoint(lastInspectedPoint.geom, lastInspectedPoint.coords);
+        }
+        return;
+    }
     info.vis.opacity = opacity;
     var visImg = info.img.visualize(info.vis);
 
     if (/optik/.test(layer) || /radar/.test(layer)) {
         legend.add(ui.Label({ value: info.desc, style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } }));
         map.addLayer(visImg, {}, layer, true);
-        return;
+    } else {
+        legend.add(ui.Label({ value: info.desc, style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } }));
+        classNames.forEach(function(label, index) {
+            var colorBox = ui.Label({ style: { backgroundColor: thePalette[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
+            var textLabel = ui.Label({ value: index + ': ' + label, style: { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } });
+            legend.add(ui.Panel({ widgets: [colorBox, textLabel], layout: ui.Panel.Layout.flow('horizontal'), style: { margin: '4px 0px' } }));
+        });
+        map.addLayer(visImg, {}, layer, true);
     }
 
-    legend.add(ui.Label({ value: info.desc, style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } }));
-    classNames.forEach(function(label, index) {
-        var colorBox = ui.Label({ style: { backgroundColor: thePalette[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
-        var textLabel = ui.Label({ value: index + ': ' + label, style: { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } });
-        legend.add(ui.Panel({ widgets: [colorBox, textLabel], layout: ui.Panel.Layout.flow('horizontal'), style: { margin: '4px 0px' } }));
-    });
-    map.addLayer(visImg, {}, layer, true);
+    // TAMBAHAN: Panggil ulang inspeksi jika ada titik yang sudah dipilih
+    if (lastInspectedPoint) {
+        inspectPoint(lastInspectedPoint.geom, lastInspectedPoint.coords);
+    }
 }
 
 // =======================================================================================
@@ -200,6 +211,9 @@ dataPanel.add(ui.Label({
 var legend = ui.Panel({ style: { position: 'bottom-left', width: '25%', padding: '8px' } });
 var dot = null;
 
+// VARIABEL BARU untuk menyimpan titik inspeksi
+var lastInspectedPoint = null; 
+
 var sbwpLayer = ui.Map.Layer(sbwp, {color: 'gray'}, 'Sub Batas Wilayah Perencanaan');
 var checkboxSbwp = ui.Checkbox({ label: 'Tampilkan Batas Wilayah', value: true, onChange: function(checked) { sbwpLayer.setShown(checked); } });
 
@@ -218,63 +232,58 @@ map.add(dataPanel);
 map.add(legend);
 map.layers().add(sbwpLayer);
 
-map.onClick(function(coords) {
-    if (dot) map.remove(dot);
-    var point = ee.Geometry.Point(coords.lon, coords.lat);
-    dot = ui.Map.Layer(point, { color: 'red' }, 'Titik Inspeksi');
-    map.layers().add(dot);
-
+// FUNGSI BARU: Logika untuk menginspeksi titik dipisahkan ke fungsi sendiri
+function inspectPoint(point, coords) {
     dataPanel.clear();
     dataPanel.add(ui.Label({
                   value: 'Panel Data',
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
-                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                    margin: '8px 5px',
+                    textAlign: 'center',
+                    stretch: 'horizontal'
                   }
                 }));
-    // PERBAIKAN: Menggunakan variabel 'sbwp' yang konsisten
+
     var isInShp = rawa_pening_shp.filterBounds(point).size();
     
     isInShp.evaluate(function(size) {
         var selectedLayerKey = select.getValue();
         if (size === 0) {
-          print(selectedLayerKey)
-          if (selectedLayerKey === 'none') {
+            if (selectedLayerKey === 'none') {
                 dataPanel.clear();
-                dataPanel.add(ui.Label({
+                 dataPanel.add(ui.Label({
                   value: 'Panel Data',
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
-                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                    margin: '8px 5px',
+                    textAlign: 'center',
+                    stretch: 'horizontal'
                   }
                 }));
                 dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
-                return
+                return;
             } else {
-              dataPanel.add(ui.Label({
-                  value: 'Objek berada di luar jangkauan penelitian.',
-                  style: { fontWeight: 'bold', color: 'red' }
-              }));
+                dataPanel.add(ui.Label({
+                    value: 'Objek berada di luar jangkauan penelitian.',
+                    style: { fontWeight: 'bold', color: 'red' }
+                }));
             }
-            return
+            return;
         } else {
             dataPanel.add(ui.Label('Memuat data piksel...'));
             if (selectedLayerKey === 'none') {
                 dataPanel.clear();
-                dataPanel.add(ui.Label({
+                 dataPanel.add(ui.Label({
                   value: 'Panel Data',
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
-                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                    margin: '8px 5px',
+                    textAlign: 'center',
+                    stretch: 'horizontal'
                   }
                 }));
                 dataPanel.add(ui.Label('Pilih layer terlebih dahulu untuk inspeksi.'));
@@ -288,9 +297,9 @@ map.onClick(function(coords) {
                   style: {
                     fontWeight: 'bold',
                     fontSize: '18px',
-                    margin: '8px 5px',    // Sedikit spasi di atas dan bawah
-                    textAlign: 'center',   // ⬅️ Membuat teks rata tengah
-                    stretch: 'horizontal'  // ⬅️ Membuat label memenuhi lebar panel
+                    margin: '8px 5px',
+                    textAlign: 'center',
+                    stretch: 'horizontal'
                   }
                 }));
                 dataPanel.add(ui.Label({ value: title, style: { fontWeight: 'bold', fontSize: '16px', margin: '0 0 8px 0' } }));
@@ -303,17 +312,17 @@ map.onClick(function(coords) {
                         dataPanel.add(ui.Label(classLabel + classIndex + ' (' + classNames[classIndex] + ')', { fontWeight: 'bold' }));
                     }
                     fullBandsToInspect.forEach(function(key) {
-                      if (data.hasOwnProperty(key)) {
-                        var value = data[key];
-                        var color = bandColorMap[key] || "black";
-                        dataPanel.add(ui.Label(key + ': ' + (value !== null && value !== undefined ? value.toFixed(4) : 'No data'), {
-                          border: '1px solid ' + color,
-                          color: color,
-                          padding: '2px 6px',
-                          margin: '2px 0',
-                          borderRadius: '4px'
-                        }));
-                      }
+                        if (data.hasOwnProperty(key)) {
+                            var value = data[key];
+                            var color = bandColorMap[key] || "black";
+                            dataPanel.add(ui.Label(key + ': ' + (value !== null && value !== undefined ? value.toFixed(4) : 'No data'), {
+                                border: '1px solid ' + color,
+                                color: color,
+                                padding: '2px 6px',
+                                margin: '2px 0',
+                                borderRadius: '4px'
+                            }));
+                        }
                     });
                 } else {
                     dataPanel.add(ui.Label('Tidak ada data pada titik ini.'));
@@ -349,6 +358,20 @@ map.onClick(function(coords) {
             }
         }
     });
+}
+
+// MODIFIKASI: map.onClick sekarang lebih sederhana
+map.onClick(function(coords) {
+    if (dot) map.remove(dot);
+    var point = ee.Geometry.Point(coords.lon, coords.lat);
+    dot = ui.Map.Layer(point, { color: 'red' }, 'Titik Inspeksi');
+    map.layers().add(dot);
+
+    // Simpan titik dan koordinat yang baru diklik
+    lastInspectedPoint = {geom: point, coords: coords};
+    
+    // Panggil fungsi inspeksi
+    inspectPoint(point, coords);
 });
 
 redraw('none', 0.75);
