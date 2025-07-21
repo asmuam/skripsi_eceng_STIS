@@ -322,74 +322,93 @@ app.boot = {
     intro.forEach(function(widget) { app.ui.panels.intro.add(widget); });
   },
 
-  /**
-   * Mengisi konten untuk panel legenda, termasuk semua kontrol.
-   */
-  populateLegendPanel: function() {
-    app.ui.panels.legend.clear();
-    app.ui.panels.legend.add(ui.Label('Panel Legenda', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' }));
+/**
+ * Mengisi konten untuk panel legenda, termasuk semua kontrol.
+ */
+populateLegendPanel: function() {
+  app.ui.panels.legend.clear();
+  app.ui.panels.legend.add(ui.Label('Panel Legenda', { fontWeight: 'bold', fontSize: '18px', margin: '8px 5px', textAlign: 'center', stretch: 'horizontal' }));
 
-    var checkboxSbwp = ui.Checkbox({
-      label: 'Tampilkan Batas Wilayah',
-      value: app.ui.sbwpLayer.getShown(),
-      onChange: function(checked) {
-        app.ui.sbwpLayer.setShown(checked);
-      }
-    });
-    app.ui.panels.legend.add(checkboxSbwp);
-
-    var items = Object.keys(DATA_LAYERS).map(function(key) {
-      return { label: DATA_LAYERS[key].name, value: key };
-    });
-    items.push({ label: 'Pilih Layer', value: 'none' });
-    
-    var opacityValue = 0.75;
-    if(DATA_LAYERS[app.state.currentLayerKey]) {
-      opacityValue = DATA_LAYERS[app.state.currentLayerKey].vis.opacity;
+  var checkboxSbwp = ui.Checkbox({
+    label: 'Tampilkan Batas Wilayah',
+    value: app.ui.sbwpLayer.getShown(),
+    onChange: function(checked) {
+      app.ui.sbwpLayer.setShown(checked);
     }
+  });
+  app.ui.panels.legend.add(checkboxSbwp);
 
-    var select = ui.Select({
-      items: items,
-      value: app.state.currentLayerKey,
-      style: { margin: '8px 0px', stretch: 'horizontal' },
-      onChange: function(layerKey) {
-        updateMapLayer(layerKey, opacitySlider.getValue());
-      }
-    });
-    
-    var opacityTextbox = ui.Textbox({ value: opacityValue.toFixed(2), placeholder: '0.0-1.0', style: { width: '70px', margin: '0 0 0 8px' }});
-    var opacitySlider = ui.Slider({ min: 0, max: 1, value: opacityValue, step: 0.01, style: { stretch: 'horizontal' }});
-    
-    opacitySlider.onChange(function(value) {
-      opacityTextbox.setValue(value.toFixed(2), false);
+  var items = Object.keys(DATA_LAYERS).map(function(key) {
+    return { label: DATA_LAYERS[key].name, value: key };
+  });
+  items.push({ label: 'Pilih Layer', value: 'none' });
+  
+  // ======================= PERBAIKAN UTAMA DI SINI =======================
+  // Logika untuk mendapatkan nilai opasitas yang aman.
+  var opacityValue;
+  var currentLayerInfo = DATA_LAYERS[app.state.currentLayerKey];
+  
+  // Cek apakah layer info ada dan properti opacity sudah pernah diatur.
+  if (currentLayerInfo && currentLayerInfo.vis.opacity !== undefined) {
+    opacityValue = currentLayerInfo.vis.opacity;
+  } else {
+    opacityValue = 0.75; // Jika tidak, gunakan nilai default.
+  }
+  // =====================================================================
+
+  var select = ui.Select({
+    items: items,
+    value: app.state.currentLayerKey,
+    style: { margin: '8px 0px', stretch: 'horizontal' },
+    onChange: function(layerKey) {
+      // Ambil nilai terakhir dari slider saat dropdown diganti.
+      updateMapLayer(layerKey, opacitySlider.getValue());
+    }
+  });
+  
+  var opacityTextbox = ui.Textbox({
+    value: opacityValue.toFixed(2), // Sekarang opacityValue dijamin berupa angka.
+    placeholder: '0.0-1.0',
+    style: { width: '70px', margin: '0 0 0 8px' }
+  });
+  var opacitySlider = ui.Slider({
+    min: 0,
+    max: 1,
+    value: opacityValue, // Sekarang opacityValue dijamin berupa angka.
+    step: 0.01,
+    style: { stretch: 'horizontal' }
+  });
+  
+  opacitySlider.onChange(function(value) {
+    opacityTextbox.setValue(value.toFixed(2), false);
+    updateMapLayer(select.getValue(), value);
+  });
+  opacityTextbox.onChange(function(text) {
+    var value = parseFloat(text);
+    if (!isNaN(value) && value >= 0 && value <= 1) {
+      opacitySlider.setValue(value, false);
       updateMapLayer(select.getValue(), value);
-    });
-    opacityTextbox.onChange(function(text) {
-      var value = parseFloat(text);
-      if (!isNaN(value) && value >= 0 && value <= 1) {
-        opacitySlider.setValue(value, false);
-        updateMapLayer(select.getValue(), value);
-      }
-    });
-    
-    var opacityControlPanel = ui.Panel([opacitySlider, opacityTextbox], ui.Panel.Layout.flow('horizontal'));
-
-    app.ui.panels.legend.add(ui.Label('Pilih Layer Tampilan:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(select);
-    app.ui.panels.legend.add(ui.Label('Atur Opasitas:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(opacityControlPanel);
-    
-    var currentKey = app.state.currentLayerKey;
-    if (currentKey !== 'none') {
-      app.ui.panels.legend.add(ui.Label(DATA_LAYERS[currentKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
-      
-      if (!/optik|radar/.test(currentKey)) {
-        CONFIG.CLASS_NAMES.forEach(function(label, index) {
-          var colorBox = ui.Label({ style: { backgroundColor: CONFIG.PALETTE[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
-          var textLabel = ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } );
-          app.ui.panels.legend.add(ui.Panel([colorBox, textLabel], ui.Panel.Layout.flow('horizontal'), { margin: '4px 0px' }));
-        });
-      }
     }
-  },
+  });
+  
+  var opacityControlPanel = ui.Panel([opacitySlider, opacityTextbox], ui.Panel.Layout.flow('horizontal'));
+
+  app.ui.panels.legend.add(ui.Label('Pilih Layer Tampilan:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(select);
+  app.ui.panels.legend.add(ui.Label('Atur Opasitas:', { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' })).add(opacityControlPanel);
+  
+  var currentKey = app.state.currentLayerKey;
+  if (currentKey !== 'none') {
+    app.ui.panels.legend.add(ui.Label(DATA_LAYERS[currentKey].desc, { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' }));
+    
+    if (!/optik|radar/.test(currentKey)) {
+      CONFIG.CLASS_NAMES.forEach(function(label, index) {
+        var colorBox = ui.Label({ style: { backgroundColor: CONFIG.PALETTE[index], padding: '8px', margin: '4px', border: '1px solid black', width: '20px', height: '20px' } });
+        var textLabel = ui.Label(index + ': ' + label, { margin: '4px 0px', fontSize: '12px', padding: '0 4px' } );
+        app.ui.panels.legend.add(ui.Panel([colorBox, textLabel], ui.Panel.Layout.flow('horizontal'), { margin: '4px 0px' }));
+      });
+    }
+  }
+},
   
   /**
    * Mengisi layout awal untuk panel data.
