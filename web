@@ -108,7 +108,6 @@ function redraw(layer, opacity) {
                 }));
     legend.add(checkboxSbwp);
     legend.add(ui.Label({ value: 'Pilih Layer Tampilan:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(select);
-    legend.add(ui.Label({ value: 'Atur Opasitas:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(opacitySlider);
     legend.add(ui.Label({ value: 'Atur Opasitas:', style: { fontSize: '14px', fontWeight: 'bold', textAlign: 'left', margin: '4px 0px' } })).add(opacityControlPanel);
     if (layer === 'none') {
         // TAMBAHAN: Jika ada titik inspeksi, perbarui panel datanya
