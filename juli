@@ -7996,24 +7996,24 @@ print('Data Sampel Lengkap:', sampledData);
 // Ekspor tabel data sampel ke Google Drive dalam format CSV.
 Export.table.toDrive({
   collection: sampledData,
-  description: 'csv_sample_drive_jun',
+  description: 'csv_sample_drive_jul',
   folder: 'GEE_Exports',
-  fileNamePrefix: 'data_sample_jun',
+  fileNamePrefix: 'data_sample_jul',
   fileFormat: 'csv',
 });
 
 // Ekspor tabel data sampel sebagai Aset GEE.
 Export.table.toAsset({
   collection: sampledData,
-  description: 'sampel_asset_jun',
-  assetId: 'projects/ee-222111840/assets/sampel_jun',
+  description: 'sampel_asset_jul',
+  assetId: 'projects/ee-222111840/assets/sampel_jul',
 });
 
 // Ekspor citra gabungan yang sudah di-clip ke Google Drive.
 Export.image.toDrive({
   image: combinedImage.clip(rawa_pening_shp),
-  description: 'rawa_pening_image_drive_jun',
-  fileNamePrefix: 'rawa_pening_image_jun',
+  description: 'rawa_pening_image_drive_jul',
+  fileNamePrefix: 'rawa_pening_image_jul',
   folder: 'GEE_Exports',
   region: rawa_pening_shp.geometry(),
   scale: 10,
@@ -8026,8 +8026,8 @@ Export.image.toDrive({
 // Ekspor citra gabungan yang sudah di-clip sebagai Aset GEE.
 Export.image.toAsset({
   image: combinedImage.clip(rawa_pening_shp),
-  description: 'rawa_pening_image_asset_jun',
-  assetId: 'projects/ee-222111840/assets/rawa_pening_image_jun',
+  description: 'rawa_pening_image_asset_jul',
+  assetId: 'projects/ee-222111840/assets/rawa_pening_image_jul',
   region: rawa_pening_shp.geometry(),
   scale: 10,
   maxPixels: 1e13
