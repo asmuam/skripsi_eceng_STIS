@@ -7501,8 +7501,6 @@ var gndvi = image_sen2.expression('(NIR - GREEN) / (NIR + GREEN)', {'GREEN': ima
 var evi = image_sen2.expression('2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {'RED': image_sen2.select('B4'), 'NIR': image_sen2.select('B8'), 'BLUE': image_sen2.select('B2')}).rename('EVI');
 var savi = image_sen2.expression('((NIR - RED) * (1 + L)) / (NIR + RED + L)', {'RED': image_sen2.select('B4'), 'NIR': image_sen2.select('B8'), 'L': 0.5}).rename('SAVI');
 var rendvi = image_sen2.expression('(NIR - RE) / (NIR + RE)', {'NIR': image_sen2.select('B8'), 'RE': image_sen2.select('B5')}).rename('RENDVI');
-var ndii = image_sen2.expression('(NIR - SWIR1) / (NIR + SWIR1)', {'SWIR1': image_sen2.select('B11'), 'NIR': image_sen2.select('B8')}).rename('NDII');
-var lswi = image_sen2.expression('(NIR - SWIR1) / (NIR + SWIR1)', {'NIR': image_sen2.select('B8'), 'SWIR1': image_sen2.select('B11')}).rename('LSWI');
 var fai = image_sen2.expression('NIR - (RED + (SWIR1 - RED) * ((832.8 - 664.6) / (1613.7 - 664.6)))', {'RED': image_sen2.select('B4'), 'NIR': image_sen2.select('B8'), 'SWIR1': image_sen2.select('B11')}).rename('FAI');
 
 // --- Indeks Air ---
@@ -7519,7 +7517,7 @@ var bsi = image_sen2.expression('((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED)
 
 // Tambahkan semua band indeks yang telah dihitung ke dalam citra Sentinel-2.
 image_sen2 = image_sen2.addBands([
-  ndvi, gndvi, evi, savi, rendvi, ndii, lswi, fai,
+  ndvi, gndvi, evi, savi, rendvi, fai,
   ndwi, mndwi, ndbi, nbai, nbi, bsi
 ]);
 
@@ -7531,7 +7529,7 @@ image_sen2 = image_sen2.addBands([
 // Daftar nama band yang akan digunakan dari Sentinel-2 (band asli + indeks).
 var sen2_bands = [
   'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12',
-  'NDVI', 'GNDVI', 'EVI', 'SAVI', 'RENDVI', 'NDII', 'LSWI', 'FAI',
+  'NDVI', 'GNDVI', 'EVI', 'SAVI', 'RENDVI', 'FAI',
   'NDWI', 'MNDWI', 'NDBI', 'NBAI', 'NBI', 'BSI'
 ];
 
