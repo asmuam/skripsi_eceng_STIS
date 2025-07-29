@@ -1,22 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = 
-    /* color: #ff9797 */
-    /* shown: false */
-    ee.Geometry.Polygon(
-        [[[110.40683667438644, -7.258598285643539],
-          [110.40707270877975, -7.26397289538782],
-          [110.40531317966598, -7.270645836274717],
-          [110.3993908621611, -7.28390628247256],
-          [110.41020552890915, -7.304977452367062],
-          [110.42039792316574, -7.315576514007244],
-          [110.42575161235946, -7.319641549198866],
-          [110.43299357669967, -7.31893921592252],
-          [110.44807832019943, -7.318768953143542],
-          [110.46136061924118, -7.318854084541154],
-          [110.46633879917282, -7.3021041694467],
-          [110.45861403720993, -7.268836595747849],
-          [110.46050231235641, -7.256959282962072]]], null, false),
-    bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
+var bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
     dji0095s = 
     /* color: #ff00ff */
     /* shown: false */
@@ -7766,7 +7749,8 @@ var roi =
             {
               "landcover": 0,
               "system:index": "19"
-            })]);
+            })]),
+    roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 /*******************************************************************************
  * Analisis Citra Gabungan
