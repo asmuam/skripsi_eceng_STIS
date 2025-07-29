@@ -2,7 +2,10 @@
 var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi"),
-    eceng = /* color: #21d649 */ee.FeatureCollection(
+    eceng = 
+    /* color: #21d649 */
+    /* shown: false */
+    ee.FeatureCollection(
         [ee.Feature(
             ee.Geometry.Point([110.44227159622245, -7.273135064553922]),
             {
