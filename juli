@@ -7818,7 +7818,7 @@ var targetDateS2 = ee.Date('2024-07-26');
 var targetDateS1 = ee.Date('2024-07-25');
 
 // Tentukan rentang waktu pencarian citra (dalam hari sebelum dan sesudah tanggal target).
-var range = 5;
+var range = 1;
 
 // Akuisisi koleksi citra Sentinel-2.
 // Filter berdasarkan lokasi (roi), rentang tanggal, dan persentase tutupan awan < 10%.
