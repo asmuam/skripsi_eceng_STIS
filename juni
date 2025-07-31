@@ -7578,7 +7578,7 @@ var lahanTerbangunSampled = lahanTerbangunRandom.limit(x, 'random');
 var trainingSamples = ecengSampled.merge(kjaSampled)
                                 .merge(airSampled)
                                 .merge(tanahSampled)
-                                .merge(vegetasiLainRandom)
+                                .merge(vegetasiLainSampled)
                                 .merge(lahanTerbangunSampled);
 
 // Ekstrak nilai piksel dari citra gabungan berdasarkan lokasi titik sampel.
