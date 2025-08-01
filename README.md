@@ -57,7 +57,7 @@ Untuk menggunakan file skripsi di Google Colab, lakukan langkah-langkah berikut:
 
 1. Import hasil pengolahan berupa ke aset google earth, sesuaikan nama file aset pada kode
 2. Jalankan kode web.js
-3. (opsional) Publish web apps [[petunjuk]](https://developers.google.com/earth-engine/tutorials/community/creating-web-apps)
+3. (opsional) Publish web apps [petunjuk](https://developers.google.com/earth-engine/tutorials/community/creating-web-apps)
 
 ## **Labeling**
 
