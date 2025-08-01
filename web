@@ -315,8 +315,10 @@ app.boot = {
       ui.Label('Peta batas wilayah penelitian bersumber dari Peta Sub-Batas Wilayah Perencanaan Danau Rawa Pening yang diterbitkan oleh Balai Besar Wilayah Sungai Pemali Juana.', { fontSize: '0.9vw', fontWeight: 'normal' }),
       ui.Label('Lapisan data (layer) dapat diganti melalui panel legenda.', { fontSize: '0.9vw', fontWeight: 'normal' }),
       ui.Label('Data Tambahan:', { color: 'black', fontWeight: 'bold', textAlign: 'left', margin: '12px 0 0 0' }),
+      ui.Label('🌐 Deteksi Eceng Gondok Rawa Pening 2024', { color: 'blue', fontWeight: 'bold' }, CONFIG.URLS.WEBAPP),
       ui.Label('📁 Aset Balai Besar Wilayah Sungai Pemali Juana', { color: 'blue', fontWeight: 'bold' }, CONFIG.URLS.ASSET),
-      ui.Label('💻 Kode Python untuk Pengolahan', { color: 'blue', fontWeight: 'bold', padding: '0 0 4px 0' }, CONFIG.URLS.CODE),
+      ui.Label('💻 Kode Earth Engine Script', { color: 'blue', fontWeight: 'bold' }, CONFIG.URLS.SOURCE_CODE),
+      ui.Label('💻 Kode Python untuk Pengolahan', { color: 'blue', fontWeight: 'bold', padding: '0 0 4px 0' }, CONFIG.URLS.NOTEBOOK),
       ui.Label('📝 Paper', { color: 'blue', fontWeight: 'bold', padding: '0 0 4px 0' }, CONFIG.URLS.PAPER),
       ui.Label('Created by:', { color: 'black', fontWeight: 'bold', textAlign: 'center', margin: '12px 0 0 0' }),
       ui.Label('222111840@stis.ac.id', { color: 'blue', fontWeight: 'bold', textAlign: 'center' }, CONFIG.URLS.AUTHOR)
