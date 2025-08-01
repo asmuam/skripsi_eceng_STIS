@@ -40,10 +40,12 @@ var CONFIG = {
     "VV": "gray", "VH": "gray"
   },
   URLS: {
-    ASSET: 'https://drive.google.com/drive/folders/17sTGS5TFTqMeb3zHZe9XvSxseOW18UmC?usp=drive_link',
-    CODE: 'https://s.stis.ac.id/NotebookSkripsiEceng',
+    ASSET: 'https://s.stis.ac.id/DriveSkripsiEceng',
+    NOTEBOOK: 'https://s.stis.ac.id/NotebookSkripsiEceng',
     PAPER: 'https://drive.google.com/file/d/1GqTc-PHtt3lH_wgvNOzRXVKS0DMYd0tG/view?usp=drive_link',
-    AUTHOR: 'mailto:222111840@stis.ac.id'
+    AUTHOR: 'mailto:222111840@stis.ac.id',
+    WEBAPP: 'https://s.stis.ac.id/AppVizEceng',
+    SOURCE_CODE: 'https://s.stis.ac.id/KodeSkripsiEceng'
   }
 };
 
