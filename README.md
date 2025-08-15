@@ -109,4 +109,5 @@ Untuk mereplikasi proyek ini dari awal, ikuti langkah-langkah berikut:
 - **Jalankan Skrip Aplikasi Web:**
   1.  Buat satu skrip GEE terakhir untuk file `web`. Salin-tempel kodenya.
   2.  **PENTING:** Di bagian `imports` paling atas skrip `web`, **ganti semua _Asset ID_** (untuk `cnn1_ags`, `rf_jun`, dll.) dengan _Asset ID_ dari citra klasifikasi yang baru saja Anda unggah.
-  3.  Klik tombol `Run`. Aplikasi web visualisasi sekarang akan berjalan di panel GEE Anda menggunakan hasil klasifikasi yang Anda buat sendiri.
+  3.  Klik tombol `Run` untuk melihat preview _web app_. Aplikasi web visualisasi sekarang akan berjalan di panel GEE Anda menggunakan hasil klasifikasi yang Anda buat sendiri.
+  4. Publish _web apps_ [`petunjuk`](https://developers.google.com/earth-engine/tutorials/community/creating-web-apps)
