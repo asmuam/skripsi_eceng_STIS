@@ -90,7 +90,7 @@ Untuk mereplikasi proyek ini dari awal, ikuti langkah-langkah berikut:
   3.  **PENTING:** Ubah path aset di bagian `import` dan `export` pada skrip agar menunjuk ke aset batas wilayah dan folder Google Drive Anda.
   4.  Jalankan setiap skrip. Tujuan utamanya adalah untuk **mengekspor data tabular** (misalnya, ke Google Drive) yang akan digunakan untuk pemodelan.
 
-**2. Proses Pemodelan di Google Colab ☁️**
+**2. Proses Pemodelan di Google Colab**
 
 - **Siapkan Google Drive:**
   1.  Buat folder proyek (misal, `Skripsi_Eceng`) di Google Drive.
