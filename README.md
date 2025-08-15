@@ -41,10 +41,10 @@ Kode sumber untuk membangun aplikasi web ini terdapat pada file `web`.
 ├── aset/
 │   └── (Berisi data-data yang diperlukan untuk mereplikasi proyek
 │          dan data-data hasil eksekusi proyek)
-├── agustus
-├── juni
-├── juli
-├── web
+├── agustus.js
+├── juni.js
+├── juli.js
+├── web.js
 ├── skripsi_eceng.ipynb
 ├── LICENSE
 └── README.md
