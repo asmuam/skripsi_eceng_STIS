@@ -1,3 +1,4 @@
+// #region Imports
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_shp"),
     rawa_pening_sbwp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pening_sbwp"),
@@ -7377,6 +7378,8 @@ var rawa_pening_shp = ee.FeatureCollection("projects/ee-222111840/assets/rawa_pe
               "system:index": "202"
             })]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// #endregion
+
 /*******************************************************************************
  * Analisis Citra Gabungan
  * Sentinel-1 & Sentinel-2 untuk Rawa Pening

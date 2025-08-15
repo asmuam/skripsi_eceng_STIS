@@ -1,3 +1,4 @@
+// #region Imports
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
     dji0095s = 
@@ -7752,6 +7753,8 @@ var bbws = ee.Image("projects/ee-222111840/assets/rawa_pening_bbws"),
             })]),
     roi = ee.FeatureCollection("projects/ee-222111840/assets/roi");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// #endregion
+
 /*******************************************************************************
  * Analisis Citra Gabungan
  * Sentinel-1 & Sentinel-2 untuk Rawa Pening
@@ -8031,4 +8034,12 @@ Export.image.toAsset({
   region: rawa_pening_shp.geometry(),
   scale: 10,
   maxPixels: 1e13
+});
+
+Export.table.toDrive({
+  collection: roi,
+  folder: 'GEE_Exports',
+  description: 'export_roi_shapefile',
+  fileFormat: 'SHP',
+  fileNamePrefix: 'roi'
 });
